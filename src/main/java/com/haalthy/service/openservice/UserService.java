@@ -18,7 +18,7 @@ public class UserService {
 	
     @RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public String getUser(@PathVariable String username) {
+    public User getUser(@PathVariable String username) {
     	return userMapper.getUserByUsername(username);
     }
 

@@ -1,6 +1,10 @@
 package com.haalthy.service.domain;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
+	private static final long serialVersionUID = 8751282105532159742L;
+
 	private int UserID;
 	private String Name;
 	private Byte[] Password;

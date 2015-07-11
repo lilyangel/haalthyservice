@@ -55,8 +55,8 @@ public class EmployeeController {
     @RequestMapping(value = "/list", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public Set getFoobarList() {
-    	 String user = userMapper.getUserByUsername("user1");
-    	 System.out.println(user);
+//    	 String user = userMapper.getUserByUsername("user1");
+//    	 System.out.println(user);
         return Employees;
     }
 

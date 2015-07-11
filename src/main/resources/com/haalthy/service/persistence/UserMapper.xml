@@ -6,9 +6,11 @@
 
   <cache />
 
-  <select id="getUserByUsername" parameterType="string" resultType="string">
+  <select id="getUserByUsername" parameterType="string" resultType="User">
     SELECT
-    	User.Name
+		User.UserID,
+		User.Name,
+		User.Password
     FROM User
     WHERE User.Name = #{username}
   </select>
