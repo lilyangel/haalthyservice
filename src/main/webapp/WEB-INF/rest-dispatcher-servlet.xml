@@ -8,5 +8,5 @@
 
     <mvc:annotation-driven/>
 
-    <context:component-scan base-package="com.haalthy.service, com.haalthy.service.openservice "/>
+    <context:component-scan base-package="com.haalthy.service.controller "/>
 </beans>
