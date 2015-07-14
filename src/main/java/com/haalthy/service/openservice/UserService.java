@@ -12,8 +12,11 @@ public class UserService {
 	@Autowired
 	private UserMapper userMapper;
 	
-    public User getUser(@PathVariable String username) {
+    public User getUser(String username) {
     	return userMapper.getUserByUsername(username);
     }
 
+    public int addUser(User user){
+    	return userMapper.addUser(user);
+    }
 }

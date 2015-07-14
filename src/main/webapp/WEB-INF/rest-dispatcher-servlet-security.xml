@@ -91,7 +91,7 @@
           class="org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler">
         <property name="tokenServices" ref="tokenServices"/>
     </bean>
-
+    
     <!-- Token management -->
     <oauth:authorization-server client-details-service-ref="clientDetails" token-services-ref="tokenServices"
                                 user-approval-handler-ref="userApprovalHandler">

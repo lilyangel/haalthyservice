@@ -10,9 +10,16 @@
     SELECT
 		User.UserID,
 		User.Name,
-		User.Password
+		User.Email,
+		User.createDate,
+		User.updateDate
     FROM User
     WHERE User.Name = #{username}
   </select>
-
+  
+	<insert id="addUser" useGeneratedKeys="true"
+    	keyProperty="userID">
+  		insert into user (name,password,email, createDate, updateDate)
+ 			 values (#{name},#{password},#{email},#{createDate}, #{updateDate})
+	</insert>
 </mapper>
