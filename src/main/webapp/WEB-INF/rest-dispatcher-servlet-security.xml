@@ -91,7 +91,7 @@
           class="org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler">
         <property name="tokenServices" ref="tokenServices"/>
     </bean>
-    
+
     <!-- Token management -->
     <oauth:authorization-server client-details-service-ref="clientDetails" token-services-ref="tokenServices"
                                 user-approval-handler-ref="userApprovalHandler">
@@ -113,8 +113,8 @@
                       authorities="ROLE_CLIENT, ROLE_TRUSTED_CLIENT"
                       redirect-uri="/web"
                       scope="read,write,trust"
-                      access-token-validity="30"
-                      refresh-token-validity="600"/>
+                      access-token-validity="5184000"
+                      refresh-token-validity="5184000"/>
     </oauth:client-details-service>
 
     <sec:global-method-security pre-post-annotations="enabled" proxy-target-class="true">

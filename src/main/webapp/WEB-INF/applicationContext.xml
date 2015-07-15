@@ -49,4 +49,6 @@
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.haalthy.service.persistence" />
     </bean>
+    <bean id="tagService" class="com.haalthy.service.openservice.TagService">
+    </bean>
 </beans>

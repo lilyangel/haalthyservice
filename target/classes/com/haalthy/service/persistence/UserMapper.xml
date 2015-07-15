@@ -9,17 +9,28 @@
   <select id="getUserByUsername" parameterType="string" resultType="User">
     SELECT
 		User.UserID,
-		User.Name,
 		User.Email,
 		User.createDate,
-		User.updateDate
+		User.updateDate,
+		User.Displayname,
+		User.Username,
+		User.Password
     FROM User
-    WHERE User.Name = #{username}
+    WHERE User.Username = #{username}
   </select>
   
 	<insert id="addUser" useGeneratedKeys="true"
     	keyProperty="userID">
-  		insert into user (name,password,email, createDate, updateDate)
- 			 values (#{name},#{password},#{email},#{createDate}, #{updateDate})
+  		INSERT into user (username,displayname,password,email, createDate, updateDate)
+ 			 values (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate})
 	</insert>
+	
+	  <update id="updateUser" parameterType="User">
+    UPDATE User SET
+      EMAIL = #{email},
+      DISPLAYNAME = #{displayname},
+	  PASSWORD = #{password}
+    WHERE username = #{username}
+  </update>
+	
 </mapper>
