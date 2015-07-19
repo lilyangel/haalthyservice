@@ -6,8 +6,9 @@
   <cache />
   	  <select id="getTagList" resultType="Tag">
 	    SELECT
-	      NAME AS Tagname,
-	      DESCRIPTION
+	      NAME,
+	      DESCRIPTION,
+	      TAGID
 	    FROM TAG
 	  </select>
 </mapper>

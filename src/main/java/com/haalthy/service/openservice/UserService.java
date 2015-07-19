@@ -1,7 +1,12 @@
 package com.haalthy.service.openservice;
 
+import com.haalthy.service.domain.Tag;
 import com.haalthy.service.domain.User;
+import com.haalthy.service.domain.UserTag;
 import com.haalthy.service.persistence.UserMapper;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,5 +30,17 @@ public class UserService {
     
     public int updateUser(User user){
     	return userMapper.updateUser(user);
+    }
+    
+    public int addUserTags(List<UserTag> userTagList){
+    	return userMapper.addUserTags(userTagList);
+    }
+    
+    public int deleteUserTag(UserTag userTag){
+    	return userMapper.deleteUserTag(userTag);
+    }
+    
+    public List<Tag> getTagsByUsername(String username){
+    	return userMapper.getTagsByUsername(username);
     }
 }

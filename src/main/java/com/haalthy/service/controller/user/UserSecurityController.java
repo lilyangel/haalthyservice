@@ -1,6 +1,9 @@
 package com.haalthy.service.controller.user;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,10 +20,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haalthy.service.controller.Interface.GetUsersResponse;
+import com.haalthy.service.domain.Follow;
+import com.haalthy.service.domain.Tag;
 import com.haalthy.service.domain.User;
+import com.haalthy.service.domain.UserTag;
+import com.haalthy.service.openservice.FollowService;
 import com.haalthy.service.openservice.UserService;
 import com.haalthy.service.controller.Interface.AddUpdateUserRequest;
 import com.haalthy.service.controller.Interface.AddUpdateUserResponse;
+import com.haalthy.service.controller.Interface.AddUserTagsRequest;
 
 @Controller
 @RequestMapping("/security/user")
@@ -28,9 +36,12 @@ public class UserSecurityController {
 	 
 	@Autowired
 	private transient UserService userService;
-
-	@RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {
-			"application/json" })
+	
+	@Autowired
+	private transient FollowService followService;
+	
+	
+	@RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
 	public GetUsersResponse getUser(@PathVariable String username) {
 		User user = userService.getUserByUsername(username);
@@ -51,8 +62,6 @@ public class UserSecurityController {
 	   AddUpdateUserResponse updateUserResponse = new AddUpdateUserResponse();
 	   Authentication a = SecurityContextHolder.getContext().getAuthentication();
 	   String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-	   System.out.println(username);
-	   System.out.println(currentSessionUsername);
 	   if(currentSessionUsername.equals(username)==false)
 		   updateUserResponse.setStatus("can't eidt this account");
 	   User user = userService.getUserByUsername(username);
@@ -75,4 +84,94 @@ public class UserSecurityController {
 			
        return updateUserResponse;
    }
+   
+	@RequestMapping(value="/follows", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@ResponseBody
+	public List<Follow> getFollowsByUsername(){
+		List<Follow> follows = new ArrayList<Follow>();
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+		System.out.println(currentSessionUsername);
+		follows = followService.getFollowingsByUsername(currentSessionUsername);
+		return follows;
+	}
+	
+    @RequestMapping(value = "/follow/add/{followingusername}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public int addFollowing(@PathVariable String followingusername){
+    	Follow follow = new Follow();
+    	follow.setFollowingUser(followingusername);
+    	follow.setIsActive(1);
+    	
+    	Date now = new Date();
+    	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	String currentDt = sdf.format(now);
+    	follow.setDateInserted(currentDt);
+    	follow.setDateUpdated(currentDt);
+    	
+ 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+ 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+ 	   	
+ 	   follow.setUsername(currentSessionUsername);
+ 	   return followService.addFollowing(follow);
+    }
+    
+    @RequestMapping(value = "/follow/inactive/{followingusername}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public int inactiveFollowing(@PathVariable String followingusername){
+    	Follow follow = new Follow();
+    	
+    	follow.setFollowingUser(followingusername);
+    	follow.setIsActive(0);
+    	
+    	Date now = new Date();
+    	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	String currentDt = sdf.format(now);
+    	follow.setDateUpdated(currentDt);
+    	
+ 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+ 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+ 	    follow.setUsername(currentSessionUsername);
+ 	    
+ 	    return followService.inactiveFollowship(follow);
+    }
+    //input: [1,2]
+    @RequestMapping(value = "/tag/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public int addUserTags(@RequestBody int[] tags){
+    	List<UserTag> userTagList = new ArrayList<UserTag>();
+ 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+ 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+    	Date now = new Date();
+    	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	String currentDt = sdf.format(now);
+    	for(int index = 0; index<tags.length; index++){
+    		UserTag userTag = new UserTag();
+    		userTag.setTagID(tags[index]);
+    		userTag.setUsername(currentSessionUsername);
+    		userTag.setDateInserted(currentDt);
+    		userTagList.add(userTag);
+    	}
+    	return userService.addUserTags(userTagList);
+    }
+    
+    @RequestMapping(value = "/tag/delete", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public int deleteUserTags(@RequestBody int tag){
+    	UserTag userTag = new UserTag();
+    	userTag.setTagID(tag);
+    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+    	userTag.setUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
+    	Date now = new Date();
+    	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    	userTag.setDateInserted(sdf.format(now));
+    	return userService.deleteUserTag(userTag);
+    }
+    
+    @RequestMapping(value = "/tags", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public List<Tag> getTagsByUsername(){
+    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+    	return userService.getTagsByUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
+    }
 }

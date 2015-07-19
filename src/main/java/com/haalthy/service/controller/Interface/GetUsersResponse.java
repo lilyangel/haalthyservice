@@ -1,34 +1,34 @@
 package com.haalthy.service.controller.Interface;
 
 public class GetUsersResponse {
-	private String Email;
-	private String Username;
-	private String Displayname;
-	private String CreateDate;
-	
-	public String getDisplayname() {
-		return Displayname;
-	}
-	public void setDisplayname(String displayname) {
-		Displayname = displayname;
-	}
+	private String email;
+	private String username;
+	private String displayname;
+	private String createDate;
 	public String getEmail() {
-		return Email;
+		return email;
 	}
 	public void setEmail(String email) {
-		Email = email;
+		this.email = email;
 	}
 	public String getUsername() {
-		return Username;
+		return username;
 	}
 	public void setUsername(String username) {
-		Username = username;
+		this.username = username;
+	}
+	public String getDisplayname() {
+		return displayname;
+	}
+	public void setDisplayname(String displayname) {
+		this.displayname = displayname;
 	}
 	public String getCreateDate() {
-		return CreateDate;
+		return createDate;
 	}
 	public void setCreateDate(String createDate) {
-		CreateDate = createDate;
+		this.createDate = createDate;
 	}
+	
 	
 }

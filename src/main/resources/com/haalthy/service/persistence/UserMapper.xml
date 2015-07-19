@@ -20,17 +20,37 @@
   </select>
   
 	<insert id="addUser" useGeneratedKeys="true"
-    	keyProperty="userID">
-  		INSERT into user (username,displayname,password,email, createDate, updateDate)
- 			 values (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate})
+    	keyProperty="UserID" keyColumn="UserID">
+  		INSERT INTO user (username,displayname,password,email, createDate, updateDate)
+ 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate})
 	</insert>
 	
-	  <update id="updateUser" parameterType="User">
+	<update id="updateUser" parameterType="User">
     UPDATE User SET
       EMAIL = #{email},
       DISPLAYNAME = #{displayname},
 	  PASSWORD = #{password}
     WHERE username = #{username}
   </update>
+  
+  <insert id = "addUserTags" parameterType="java.util.List">
+  	INSERT INTO UserTag(Username, TagID, DateInserted)
+  	VALUES
+  	<foreach collection="list" item="UserTag" index="index" separator=",">
+  		(#{UserTag.username}, #{UserTag.tagID}, #{UserTag.dateInserted})
+  	</foreach>
+  	</insert>
+  	<delete id = "deleteUserTag" parameterType = "UserTag">
+		DELETE Post 
+		WHERE TagID = #{tagID} AND  Username= #{username}
+	</delete>
 	
+	<select id = "getTagsByUsername" parameterType = "String" resultType="Tag">
+	SELECT
+		Tag.TagID,
+		Tag.Name,
+		Tag.Description
+	FROM Tag, UserTag
+	WHERE Tag.TagID = UserTag.TagID AND UserTag.username = #{username}
+	</select>
 </mapper>

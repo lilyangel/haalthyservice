@@ -51,4 +51,10 @@
     </bean>
     <bean id="tagService" class="com.haalthy.service.openservice.TagService">
     </bean>
+    <bean id="postService" class="com.haalthy.service.openservice.PostService">
+    </bean>
+     <bean id="commentService" class="com.haalthy.service.openservice.CommentService">
+    </bean>
+    <bean id="followService" class="com.haalthy.service.openservice.FollowService">
+    </bean>
 </beans>

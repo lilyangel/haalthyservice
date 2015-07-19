@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.haalthy.service.persistence.PostMapper">
+  <cache />
+  	  <select id="getPostById" parameterType="int" resultType="Post">
+	    SELECT
+			PostID,
+			Type,
+			InsertUserName,
+			body,
+			Tags,
+			CountComments,
+			CountBookmarks,
+			CountViews,
+			Closed,
+			IsBroadcast,
+			DateInserted,
+			DateUpdated,
+			isActive
+	    FROM POST
+	    WHERE POSTID = #{PostID}
+	  </select>
+	  
+	<insert id="addPost" useGeneratedKeys="true"
+    	keyProperty="postID" keyColumn = "PostID">
+  		INSERT into Post (InsertUserName, body, Tags, CountComments, CountBookmarks, CountViews, Closed, IsBroadcast, DateInserted,DateUpdated, isActive)
+ 			 VALUES (#{insertUserName},#{body},#{tags}, #{countComments}, #{countBookmarks}, #{countViews}, #{closed},#{isBroadcast}, #{dateInserted}, #{dateUpdated}, #{isActive})
+	</insert>
+	
+	<insert id="addPostTag" parameterType="java.util.List">
+		INSERT 
+		into PostTag(PostID, TagName, CreateTime)
+			VALUES
+			<foreach collection="list" item="PostTag" index="index" separator=",">
+       			(#{PostTag.postID}, #{PostTag.tagName}, #{PostTag.createTime})
+       		</foreach>
+	</insert>
+	
+	<update id = "inactivePost" parameterType = "Post">
+		UPDATE Post SET
+			isActive = "0"
+		WHERE POSTID = #{postID} AND InsertUserName = #{insertUserName}
+	</update>
+	
+	<select id = "getPostsByTagnames" resultType = "Post">
+		SELECT
+			PostID,
+			Type,
+			InsertUserName,
+			body,
+			Tags,
+			CountComments,
+			CountBookmarks,
+			CountViews,
+			Closed,
+			IsBroadcast,
+			DateInserted,
+			DateUpdated,
+			isActive
+	    FROM Post 
+	    WHERE PostID IN(
+	    	SELECT PostID 
+	    	FROM PostTag
+	    	WHERE 
+	    		PostTag.Tagname IN
+	      			<foreach item="tagname" index="index" collection="list" open="(" separator="," close=")">
+        				#{tagname}
+  					</foreach>
+	    		
+	    	)
+	</select>
+</mapper>
