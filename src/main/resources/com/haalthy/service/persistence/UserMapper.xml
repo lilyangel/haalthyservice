@@ -8,21 +8,52 @@
 
   <select id="getUserByUsername" parameterType="string" resultType="User">
     SELECT
-		User.UserID,
-		User.Email,
-		User.createDate,
-		User.updateDate,
-		User.Displayname,
-		User.Username,
-		User.Password
+		UserID,
+		Email,
+		CreateDate,
+		UpdateDate,
+		Displayname,
+		Username,
+		Image,
+		Gender,
+		IsSmoking,
+		Pathological,
+		Stage,
+		FollowCount,
+		CancerType,
+		metastasis,
+		Age,
+		Password
     FROM User
     WHERE User.Username = #{username}
   </select>
   
+    <select id="getUserByEmail" parameterType="string" resultType="User">
+    SELECT
+		UserID,
+		Email,
+		CreateDate,
+		UpdateDate,
+		Displayname,
+		Username,
+		Image,
+		Gender,
+		IsSmoking,
+		Pathological,
+		Stage,
+		FollowCount,
+		CancerType,
+		metastasis,
+		Age
+    FROM User
+    WHERE User.Email = #{email}
+  </select>
+  
+  
 	<insert id="addUser" useGeneratedKeys="true"
     	keyProperty="UserID" keyColumn="UserID">
-  		INSERT INTO user (username,displayname,password,email, createDate, updateDate)
- 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate})
+  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age)
+ 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age})
 	</insert>
 	
 	<update id="updateUser" parameterType="User">
@@ -52,5 +83,37 @@
 		Tag.Description
 	FROM Tag, UserTag
 	WHERE Tag.TagID = UserTag.TagID AND UserTag.username = #{username}
+	</select>
+	
+	<update id = "addUserFollowCount" parameterType = "String">
+	Update User SET
+		FollowCount = FollowCount+1
+	WHERE Username = #{username}
+	</update>
+	
+	<update id="deleteUserFollowCount" parameterType = "String">
+	Update User SET
+		FollowCount = FollowCount-1
+	WHERE Username = #{username}
+	</update>
+	
+	<select id = "selectSuggestUsersByTags" parameterType = "SelectUserByTagRange" resultType="User">
+	SELECT
+		UserID,
+		Email,
+		CreateDate,
+		UpdateDate,
+		Displayname,
+		Username,
+		Image,
+		Gender,
+		IsSmoking,
+		Pathological,
+		Stage,
+		Age,
+		FollowCount,
+		CancerType
+    FROM SuggestUserByTags
+    WHERE (TagID = #{tagID}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>
 </mapper>

@@ -52,6 +52,8 @@ public class UserSecurityController {
 		userResponse.setDisplayname(user.getDisplayname());
 		userResponse.setEmail(user.getEmail());
 		userResponse.setCreateDate(user.getCreateDate());
+    	userResponse.setImage(user.getImage());
+
 		return userResponse;
 	}
    
@@ -85,9 +87,9 @@ public class UserSecurityController {
        return updateUserResponse;
    }
    
-	@RequestMapping(value="/follows", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@RequestMapping(value="/followings", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
-	public List<Follow> getFollowsByUsername(){
+	public List<Follow> getFollowingsByUsername(){
 		List<Follow> follows = new ArrayList<Follow>();
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
 		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
@@ -113,6 +115,8 @@ public class UserSecurityController {
  	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	   	
  	   follow.setUsername(currentSessionUsername);
+ 	    	   
+ 	   userService.addUserFollowCount(followingusername);
  	   return followService.addFollowing(follow);
     }
     
@@ -132,26 +136,35 @@ public class UserSecurityController {
  	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
  	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	    follow.setUsername(currentSessionUsername);
- 	    
+ 	   userService.deleteUserFollowCount(followingusername);
  	    return followService.inactiveFollowship(follow);
     }
     //input: [1,2]
     @RequestMapping(value = "/tag/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public int addUserTags(@RequestBody int[] tags){
+    public int addUserTags(@RequestBody ArrayList<Tag> tags){
     	List<UserTag> userTagList = new ArrayList<UserTag>();
  	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
  	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
     	Date now = new Date();
     	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	String currentDt = sdf.format(now);
-    	for(int index = 0; index<tags.length; index++){
+    	Iterator<Tag> tagItr = tags.iterator();
+    	if(tagItr.hasNext()){
     		UserTag userTag = new UserTag();
-    		userTag.setTagID(tags[index]);
+    		userTag.setTagID(tagItr.next().getTagId());
     		userTag.setUsername(currentSessionUsername);
     		userTag.setDateInserted(currentDt);
     		userTagList.add(userTag);
     	}
+//    	
+//    	for(int index = 0; index<tags.size(); index++){
+//    		UserTag userTag = new UserTag();
+//    		userTag.setTagID(tags.get(index).getTagId());
+//    		userTag.setUsername(currentSessionUsername);
+//    		userTag.setDateInserted(currentDt);
+//    		userTagList.add(userTag);
+//    	}
     	return userService.addUserTags(userTagList);
     }
     
@@ -174,4 +187,5 @@ public class UserSecurityController {
     	Authentication a = SecurityContextHolder.getContext().getAuthentication();
     	return userService.getTagsByUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
     }
+    
 }

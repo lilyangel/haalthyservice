@@ -1,5 +1,6 @@
 package com.haalthy.service.openservice;
 
+import com.haalthy.service.domain.SelectUserByTagRange;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.domain.User;
 import com.haalthy.service.domain.UserTag;
@@ -43,4 +44,17 @@ public class UserService {
     public List<Tag> getTagsByUsername(String username){
     	return userMapper.getTagsByUsername(username);
     }
+    
+    public int addUserFollowCount(String username){
+    	return userMapper.addUserFollowCount(username);
+    }
+    
+    public int deleteUserFollowCount(String username){
+    	return userMapper.deleteUserFollowCount(username);
+    }
+    
+	public List<User> selectSuggestUsersByTags(SelectUserByTagRange selectUserByTagRange){
+		return userMapper.selectSuggestUsersByTags(selectUserByTagRange);
+	}
+
 }
