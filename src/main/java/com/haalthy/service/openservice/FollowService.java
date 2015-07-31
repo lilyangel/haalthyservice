@@ -22,4 +22,8 @@ public class FollowService {
 	public int inactiveFollowship(Follow follow){
 		return followMapper.inactiveFollowship(follow);
 	}
+	
+	public List<Follow> getFollowingsByUsernameAndFollowingname(Follow follow){
+		return followMapper.getFollowingsByUsernameAndFollowingname(follow);		
+	}
 }

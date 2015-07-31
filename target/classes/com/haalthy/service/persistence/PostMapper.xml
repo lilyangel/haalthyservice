@@ -31,10 +31,10 @@
 	
 	<insert id="addPostTag" parameterType="java.util.List">
 		INSERT 
-		into PostTag(PostID, TagName, CreateTime)
+		into PostTag(PostID, TagID, CreateTime)
 			VALUES
 			<foreach collection="list" item="PostTag" index="index" separator=",">
-       			(#{PostTag.postID}, #{PostTag.tagName}, #{PostTag.createTime})
+       			(#{PostTag.postID}, #{PostTag.tagId}, #{PostTag.createTime})
        		</foreach>
 	</insert>
 	
@@ -44,7 +44,7 @@
 		WHERE POSTID = #{postID} AND InsertUserName = #{insertUserName}
 	</update>
 	
-	<select id = "getPostsByTagnames" resultType = "Post">
+	<select id = "getPostsByTagnames" parameterType="java.util.List" resultType = "Post">
 		SELECT
 			PostID,
 			Type,
@@ -58,17 +58,18 @@
 			IsBroadcast,
 			DateInserted,
 			DateUpdated,
-			isActive
-	    FROM Post 
+			isActive,
+			image
+	    FROM Post, User
 	    WHERE PostID IN(
 	    	SELECT PostID 
 	    	FROM PostTag
 	    	WHERE 
-	    		PostTag.Tagname IN
-	      			<foreach item="tagname" index="index" collection="list" open="(" separator="," close=")">
-        				#{tagname}
+	    		PostTag.TagID IN
+	      			<foreach item="tag" index="index" collection="list" open="(" separator="," close=")">
+        				#{tag.tagId}
   					</foreach>
 	    		
-	    	)
+	    	)AND (Post.InsertUserName = User.Username)
 	</select>
 </mapper>

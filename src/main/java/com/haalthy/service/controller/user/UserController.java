@@ -49,6 +49,7 @@ public class UserController {
 //    	return userResponse;
     }
     
+    //{"gender":"M","password":"password","pathological":"adenocarcinoma","metastasis":"bone;其他","age":"61","isSmoking":1,"cancerType":"lung","email":"user3@qq.com","username":"user3","stage":1}
     @RequestMapping(value = "/add",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
     public AddUpdateUserResponse addUser(@RequestBody User user) {
@@ -95,7 +96,7 @@ public class UserController {
     		selectUserByTagRange.setTagID(tags[i]);
     		List<User> suggestUsers = userService.selectSuggestUsersByTags(selectUserByTagRange);
     		Iterator<User> userItr = suggestUsers.iterator();
-    		if(userItr.hasNext()){
+    		while(userItr.hasNext()){
     			User newSuggestUser = userItr.next();
     			if(set.add(newSuggestUser.getUsername())){
     				users.add(newSuggestUser);

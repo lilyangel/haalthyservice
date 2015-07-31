@@ -12,6 +12,15 @@
 		FROM Follow WHERE Username = #{username} AND IsActive = 1;
 	</select>
 	
+	<select id="getFollowingsByUsernameAndFollowingname" parameterType="Follow" resultType="Follow">
+		SELECT
+			FollowID,
+			Username,
+			FollowingUser,
+			DateInserted
+		FROM Follow WHERE Username = #{username} AND FollowingUser = #{followingUser} AND IsActive = 1;
+	</select>
+	
 	<insert id="addFollowing" useGeneratedKeys="true"
     	keyProperty="FollowID" keyColumn="FollowID">
   		INSERT into Follow (Username,FollowingUser,DateInserted, DateUpdated, IsActive)

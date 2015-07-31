@@ -10,4 +10,6 @@ public interface FollowMapper {
 	public int addFollowing(Follow follow);
 	
 	public int inactiveFollowship(Follow follow);
+	
+	public List<Follow> getFollowingsByUsernameAndFollowingname(Follow follow);
 }

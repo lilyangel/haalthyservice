@@ -1,6 +1,8 @@
 package com.haalthy.service.domain;
 
 import java.io.Serializable;
+//import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Post implements Serializable{
 	private static final long serialVersionUID = 8751282105532159742L;
@@ -14,10 +16,30 @@ public class Post implements Serializable{
 	private int countViews;
 	private int closed;
 	private int isBroadcast;
-	private String dateInserted;
-	private String dateUpdated;
+	private Timestamp dateInserted;
+	private Timestamp dateUpdated;
 	private int isActive;
+	private byte[] image;
 	
+	
+	public Timestamp getDateUpdated() {
+		return dateUpdated;
+	}
+	public void setDateUpdated(Timestamp dateUpdated) {
+		this.dateUpdated = dateUpdated;
+	}
+	public Timestamp getDateInserted() {
+		return dateInserted;
+	}
+	public void setDateInserted(Timestamp dateInserted) {
+		this.dateInserted = dateInserted;
+	}
+	public byte[] getImage() {
+		return image;
+	}
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
 	public int getIsActive() {
 		return isActive;
 	}
@@ -84,17 +106,4 @@ public class Post implements Serializable{
 	public void setIsBroadcast(int isBroadcast) {
 		this.isBroadcast = isBroadcast;
 	}
-	public String getDateInserted() {
-		return this.dateInserted;
-	}
-	public void setDateInserted(String dateInserted) {
-		this.dateInserted = dateInserted;
-	}
-	public String getDateUpdated() {
-		return this.dateUpdated;
-	}
-	public void setDateUpdated(String dateUpdated) {
-		this.dateUpdated = dateUpdated;
-	}
-	
 }

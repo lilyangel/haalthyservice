@@ -1,7 +1,8 @@
 package com.haalthy.service.controller.post;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import com.haalthy.service.controller.Interface.AddPostRequest;
 import com.haalthy.service.controller.Interface.AddUpdatePostResponse;
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostTag;
+import com.haalthy.service.domain.Tag;
 import com.haalthy.service.openservice.PostService;
 
 @Controller
@@ -28,12 +30,25 @@ public class PostSecurityController {
 	@Autowired
 	private transient PostService postService;
 	
-//	http://localhost:8080/haalthyservice/security/post/add?access_token=
-//	{
-//		"body": "it's a test",
-//		"tags":["lung cancer", "squamous carcinoma"],
+//	{"body": "it's a test",
 //		"closed":0,
-//		"isBroadcast": 0
+//		"isBroadcast": 0,
+//		"tags":
+//		[{
+//		"name": "tarceva",
+//		"description": "tarceva",
+//		"tagId": 3
+//		},
+//		{
+//		"name": "易瑞沙",
+//		"description": "",
+//		"tagId": 4
+//		},
+//		{
+//		"name": "腺癌",
+//		"description": "",
+//		"tagId": 5
+//		}]
 //		}
     @RequestMapping(value = "/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
@@ -47,11 +62,10 @@ public class PostSecurityController {
     	post.setCountViews(0);
     	post.setIsActive(1);
     	
-    	Date now = new Date();
-    	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    	String currentDt = sdf.format(now);
-    	post.setDateInserted(currentDt);
-    	post.setDateUpdated(currentDt);
+        java.util.Date today = new java.util.Date();
+    	Timestamp now = new java.sql.Timestamp(today.getTime());
+    	post.setDateInserted(now);
+    	post.setDateUpdated(now);
     	
  	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
  	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
@@ -61,10 +75,10 @@ public class PostSecurityController {
     	post.setIsBroadcast(addPostRequest.getIsBroadcast());
     	
     	String tagString = null;
-    	Iterator<String> tagItr = addPostRequest.getTags().iterator();
+    	Iterator<Tag> tagItr = addPostRequest.getTags().iterator();
     	StringBuilder stringBuilder = new StringBuilder();
         while(tagItr.hasNext()) {
-            String tag = tagItr.next();
+            String tag = tagItr.next().getName();
             stringBuilder.append(tag);
             stringBuilder.append("**");
          }
@@ -74,12 +88,12 @@ public class PostSecurityController {
         
         int insertPostRow = postService.addPost(post);
         List<PostTag> postTagList = new ArrayList<PostTag>();
-        Iterator<String> tagDBItr = addPostRequest.getTags().iterator();
+        Iterator<Tag> tagDBItr = addPostRequest.getTags().iterator();
         while(tagDBItr.hasNext()) {
         	PostTag postTag = new PostTag();
         	postTag.setPostID(post.getPostID());
-        	postTag.setTagName(tagDBItr.next());
-        	postTag.setCreateTime(currentDt);
+        	postTag.setTagId(tagDBItr.next().getTagId());
+        	postTag.setCreateTime(now);
         	postTagList.add(postTag);
         }
         int insertPostTagRow = postService.addPostTag(postTagList);

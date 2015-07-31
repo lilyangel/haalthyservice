@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostTag;
+import com.haalthy.service.domain.Tag;
 
 public interface PostMapper {
 	Post getPostById(int postID);
@@ -15,5 +16,5 @@ public interface PostMapper {
 	
 	int inactivePost(Post post);
 	
-	List<Post> getPostsByTagnames(ArrayList<String> tagname);
+	List<Post> getPostsByTagnames(ArrayList<Tag> tag);
 }

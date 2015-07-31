@@ -1,12 +1,14 @@
 package com.haalthy.service.openservice;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostTag;
+import com.haalthy.service.domain.Tag;
 import com.haalthy.service.persistence.PostMapper;
 
 public class PostService {
@@ -29,7 +31,7 @@ public class PostService {
 		return postMapper.inactivePost(post);
 	}
 	
-	public List<Post> getPostsByTagnames(ArrayList<String> tagname){
-		return postMapper.getPostsByTagnames(tagname);
+	public List<Post> getPostsByTagnames(ArrayList<Tag> tag){
+		return postMapper.getPostsByTagnames(tag);
 	}
 }

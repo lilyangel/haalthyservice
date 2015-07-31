@@ -100,7 +100,8 @@ public class UserSecurityController {
 	
     @RequestMapping(value = "/follow/add/{followingusername}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public int addFollowing(@PathVariable String followingusername){
+    public AddUpdateUserResponse addFollowing(@PathVariable String followingusername){
+    	AddUpdateUserResponse addUpdateUserResponse = new AddUpdateUserResponse();
     	Follow follow = new Follow();
     	follow.setFollowingUser(followingusername);
     	follow.setIsActive(1);
@@ -115,9 +116,14 @@ public class UserSecurityController {
  	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	   	
  	   follow.setUsername(currentSessionUsername);
- 	    	   
- 	   userService.addUserFollowCount(followingusername);
- 	   return followService.addFollowing(follow);
+ 	   List<Follow> follows = followService.getFollowingsByUsernameAndFollowingname(follow);
+ 	   if(follows.size()>0){
+ 		   addUpdateUserResponse.setStatus("following exist");
+ 	   }else if(followService.addFollowing(follow)>0){
+ 	 	   userService.addUserFollowCount(followingusername);
+ 		  addUpdateUserResponse.setStatus("add Following Successful!");
+ 	   }
+ 	   return addUpdateUserResponse;
     }
     
     @RequestMapping(value = "/follow/inactive/{followingusername}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
@@ -150,7 +156,7 @@ public class UserSecurityController {
     	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     	String currentDt = sdf.format(now);
     	Iterator<Tag> tagItr = tags.iterator();
-    	if(tagItr.hasNext()){
+    	while(tagItr.hasNext()){
     		UserTag userTag = new UserTag();
     		userTag.setTagID(tagItr.next().getTagId());
     		userTag.setUsername(currentSessionUsername);
