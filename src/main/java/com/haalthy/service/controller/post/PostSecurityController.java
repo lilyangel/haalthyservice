@@ -71,7 +71,7 @@ public class PostSecurityController {
  	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	   	
  	   	
-    	post.setInsertUserName(currentSessionUsername);
+    	post.setInsertUsername(currentSessionUsername);
     	post.setIsBroadcast(addPostRequest.getIsBroadcast());
     	
     	String tagString = null;
@@ -113,7 +113,7 @@ public class PostSecurityController {
  	   	 	   
  	   	Post post = new Post();
  	   	post.setPostID(postid);
- 	   	post.setInsertUserName(currentSessionUsername);
+ 	   	post.setInsertUsername(currentSessionUsername);
 
  	   if(postService.inactivePost(post)!=0)
     		updatePostResponse.setStatus("inactive successful!");

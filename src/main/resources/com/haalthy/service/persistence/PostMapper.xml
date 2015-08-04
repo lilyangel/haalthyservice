@@ -18,15 +18,16 @@
 			IsBroadcast,
 			DateInserted,
 			DateUpdated,
-			isActive
-	    FROM POST
-	    WHERE POSTID = #{PostID}
+			isActive,
+			image
+	    FROM POST, User
+	    WHERE POSTID = #{PostID} AND Post.InsertUserName = User.username
 	  </select>
 	  
 	<insert id="addPost" useGeneratedKeys="true"
     	keyProperty="postID" keyColumn = "PostID">
   		INSERT into Post (InsertUserName, body, Tags, CountComments, CountBookmarks, CountViews, Closed, IsBroadcast, DateInserted,DateUpdated, isActive)
- 			 VALUES (#{insertUserName},#{body},#{tags}, #{countComments}, #{countBookmarks}, #{countViews}, #{closed},#{isBroadcast}, #{dateInserted}, #{dateUpdated}, #{isActive})
+ 			 VALUES (#{insertUsername},#{body},#{tags}, #{countComments}, #{countBookmarks}, #{countViews}, #{closed},#{isBroadcast}, #{dateInserted}, #{dateUpdated}, #{isActive})
 	</insert>
 	
 	<insert id="addPostTag" parameterType="java.util.List">
@@ -41,10 +42,10 @@
 	<update id = "inactivePost" parameterType = "Post">
 		UPDATE Post SET
 			isActive = "0"
-		WHERE POSTID = #{postID} AND InsertUserName = #{insertUserName}
+		WHERE POSTID = #{postID} AND InsertUserName = #{insertUsername}
 	</update>
 	
-	<select id = "getPostsByTagnames" parameterType="java.util.List" resultType = "Post">
+	<select id = "getPostsByTags" resultType = "Post">
 		SELECT
 			PostID,
 			Type,
@@ -66,10 +67,15 @@
 	    	FROM PostTag
 	    	WHERE 
 	    		PostTag.TagID IN
-	      			<foreach item="tag" index="index" collection="list" open="(" separator="," close=")">
+	      			<foreach item="tag" index="index" collection="tags" open="(" separator="," close=")">
         				#{tag.tagId}
   					</foreach>
 	    		
-	    	)AND (Post.InsertUserName = User.Username)
+	    	)AND (Post.InsertUserName = User.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
+	    	ORDER BY DateInserted DESC
 	</select>
+	
+	<update id = "increasePostCountComment" parameterType="int">
+		UPDATE Post SET CountComments = CountComments+1 WHERE PostID = #{postID}
+	</update>
 </mapper>

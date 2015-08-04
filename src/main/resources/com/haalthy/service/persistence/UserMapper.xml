@@ -71,9 +71,9 @@
   		(#{UserTag.username}, #{UserTag.tagID}, #{UserTag.dateInserted})
   	</foreach>
   	</insert>
-  	<delete id = "deleteUserTag" parameterType = "UserTag">
-		DELETE Post 
-		WHERE TagID = #{tagID} AND  Username= #{username}
+  	<delete id = "deleteUserTags" parameterType = "String">
+		DELETE FROM UserTag 
+		WHERE  Username= #{username}
 	</delete>
 	
 	<select id = "getTagsByUsername" parameterType = "String" resultType="Tag">

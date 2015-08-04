@@ -6,7 +6,7 @@ public class Comment  implements Serializable{
 	private static final long serialVersionUID = 8751282105532159742L;
 	private int commentID;
 	private int postID;
-	private String insertUserName;
+	private String insertUsername;
 	private String body;
 	private int countBookmarks;
 	private String dateInserted;
@@ -22,12 +22,6 @@ public class Comment  implements Serializable{
 	}
 	public void setPostID(int postID) {
 		this.postID = postID;
-	}
-	public String getInsertUserName() {
-		return insertUserName;
-	}
-	public void setInsertUserName(String insertUserName) {
-		this.insertUserName = insertUserName;
 	}
 	public String getBody() {
 		return body;
@@ -52,6 +46,12 @@ public class Comment  implements Serializable{
 	}
 	public void setIsActive(int isActive) {
 		this.isActive = isActive;
+	}
+	public String getInsertUsername() {
+		return insertUsername;
+	}
+	public void setInsertUsername(String insertUsername) {
+		this.insertUsername = insertUsername;
 	}
 	
 }

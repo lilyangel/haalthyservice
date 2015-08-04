@@ -8,7 +8,7 @@ public class Post implements Serializable{
 	private static final long serialVersionUID = 8751282105532159742L;
 	private int postID;
 	private String type;
-	private String insertUserName;
+	private String insertUsername;
 	private String body;
 	private String tags;
 	private int countComments;
@@ -22,6 +22,12 @@ public class Post implements Serializable{
 	private byte[] image;
 	
 	
+	public String getInsertUsername() {
+		return insertUsername;
+	}
+	public void setInsertUsername(String insertUsername) {
+		this.insertUsername = insertUsername;
+	}
 	public Timestamp getDateUpdated() {
 		return dateUpdated;
 	}
@@ -57,12 +63,6 @@ public class Post implements Serializable{
 	}
 	public void setType(String type) {
 		this.type = type;
-	}
-	public String getInsertUserName() {
-		return this.insertUserName;
-	}
-	public void setInsertUserName(String insertUserName) {
-		this.insertUserName = insertUserName;
 	}
 	public String getBody() {
 		return this.body;

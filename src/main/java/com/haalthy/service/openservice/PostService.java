@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.haalthy.service.controller.Interface.GetPostsByTagsRequest;
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostTag;
 import com.haalthy.service.domain.Tag;
@@ -31,7 +32,14 @@ public class PostService {
 		return postMapper.inactivePost(post);
 	}
 	
-	public List<Post> getPostsByTagnames(ArrayList<Tag> tag){
-		return postMapper.getPostsByTagnames(tag);
+//	public List<Post> getPostsByTagnames(ArrayList<Tag> tag){
+//		return postMapper.getPostsByTagnames(tag);
+//	}
+	public List<Post> getPostsByTags(GetPostsByTagsRequest request){
+		return postMapper.getPostsByTags(request);
+	}
+	
+	public int increasePostCountComment(int postID){
+		return postMapper.increasePostCountComment(postID);
 	}
 }

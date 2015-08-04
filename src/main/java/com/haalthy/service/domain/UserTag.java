@@ -1,10 +1,12 @@
 package com.haalthy.service.domain;
 
+import java.sql.Timestamp;
+
 public class UserTag {
 	private static final long serialVersionUID = 8751282105532159742L;
 	private String username;
 	private int tagID;
-	private String dateInserted;
+	private Timestamp dateInserted;
 	
 	public String getUsername() {
 		return username;
@@ -18,10 +20,10 @@ public class UserTag {
 	public void setTagID(int tagID) {
 		this.tagID = tagID;
 	}
-	public String getDateInserted() {
+	public Timestamp getDateInserted() {
 		return dateInserted;
 	}
-	public void setDateInserted(String dateInserted) {
+	public void setDateInserted(Timestamp dateInserted) {
 		this.dateInserted = dateInserted;
 	}
 	

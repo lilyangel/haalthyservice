@@ -28,6 +28,7 @@ import com.haalthy.service.domain.Tag;
 import com.haalthy.service.openservice.PostService;
 import com.haalthy.service.controller.Interface.AddPostRequest;
 import com.haalthy.service.controller.Interface.AddUpdatePostResponse;
+import com.haalthy.service.controller.Interface.GetPostsByTagsRequest;
 
 @Controller
 @RequestMapping("/open/post")
@@ -37,8 +38,12 @@ public class PostController {
 	
     @RequestMapping(value = "/{postid}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public Post getPostById(@PathVariable int postid){
-    	return postService.getPostById(postid);
+    public Post getPostById(@PathVariable int postid) throws IOException{
+    	Post post = postService.getPostById(postid);
+    	if(post.getImage()!=null){
+    		post.setImage(scale(post.getImage(), 32, 32));
+    	}
+    	return post;
     }
 
 //    [{
@@ -53,14 +58,16 @@ public class PostController {
 //		}]
     @RequestMapping(value = "/tags", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public List<Post> getPostById(@RequestBody ArrayList<Tag> tags) throws IOException{
-    	List<Post> posts = postService.getPostsByTagnames(tags);
+    public List<Post> getPostByTags(@RequestBody GetPostsByTagsRequest request) throws IOException{
+    	List<Post> posts = postService.getPostsByTags(request);
     	Iterator<Post> postItr = posts.iterator();
     	while(postItr.hasNext()){
     		Post currentPost = postItr.next();
-    		currentPost.setImage(scale(currentPost.getImage(), 32, 32));
+    		if(currentPost.getImage()!=null){
+    			currentPost.setImage(scale(currentPost.getImage(), 32, 32));
+    		}
     	}
-    	return postService.getPostsByTagnames(tags);
+    	return postService.getPostsByTags(request);
     }
     
     public byte[] scale(byte[] fileData, int width, int height) throws IOException {

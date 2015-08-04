@@ -37,8 +37,8 @@ public class UserService {
     	return userMapper.addUserTags(userTagList);
     }
     
-    public int deleteUserTag(UserTag userTag){
-    	return userMapper.deleteUserTag(userTag);
+    public int deleteUserTags(String username){
+    	return userMapper.deleteUserTags(username);
     }
     
     public List<Tag> getTagsByUsername(String username){

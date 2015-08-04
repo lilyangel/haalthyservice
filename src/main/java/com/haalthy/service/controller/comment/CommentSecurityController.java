@@ -17,12 +17,16 @@ import com.haalthy.service.controller.Interface.AddCommentRequest;
 import com.haalthy.service.controller.Interface.AddUpdateCommentResponse;
 import com.haalthy.service.domain.Comment;
 import com.haalthy.service.openservice.CommentService;
+import com.haalthy.service.openservice.PostService;
 
 @Controller
 @RequestMapping("/security/comment")
 public class CommentSecurityController {
 	@Autowired
 	private transient CommentService commentService;
+	
+	@Autowired
+	private transient PostService postService;
 		
     @RequestMapping(value = "/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
@@ -33,7 +37,7 @@ public class CommentSecurityController {
     	
  	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
  	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-    	comment.setInsertUserName(currentSessionUsername);
+    	comment.setInsertUsername(currentSessionUsername);
     	
     	Date now = new Date();
     	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -41,6 +45,7 @@ public class CommentSecurityController {
     	comment.setDateInserted(currentDt);
     	comment.setIsActive(1);
     	comment.setPostID(addCommentRequest.getPostID());
+    	postService.increasePostCountComment(addCommentRequest.getPostID());
     	if(commentService.addComment(comment)>0)
     		addCommentResponse.setStatus("create comment sucessful!");
     	return addCommentResponse;
@@ -56,7 +61,7 @@ public class CommentSecurityController {
  	   	
  	   	Comment comment = new Comment();
  	   	comment.setCommentID(commentid);
- 	   	comment.setInsertUserName(currentSessionUsername);
+ 	   	comment.setInsertUsername(currentSessionUsername);
     	if(commentService.inactiveComment(comment)!=0)
     		updateCommentResponse.setStatus("inactive successful!");
     	else 

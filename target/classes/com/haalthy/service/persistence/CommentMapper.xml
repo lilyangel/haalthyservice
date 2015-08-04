@@ -8,7 +8,7 @@
 	    SELECT
 	    	CommentID,
 			PostID,
-			InsertUserName,
+			InsertUsername,
 			body,
 			CountBookmarks,
 			DateInserted,
@@ -20,12 +20,12 @@
 	<insert id="addComment" useGeneratedKeys="true"
     	keyProperty="commentID" keyColumn = "CommentID">
   		INSERT into Comment (InsertUserName, body, CountBookmarks,DateInserted, IsActive, PostID)
- 			 VALUES (#{insertUserName},#{body}, #{countBookmarks},  #{dateInserted}, #{isActive}, #{postID})
+ 			 VALUES (#{insertUsername},#{body}, #{countBookmarks},  #{dateInserted}, #{isActive}, #{postID})
 	</insert>
 	
 	<update id = "inactiveComment" parameterType = "Comment">
 		UPDATE Comment SET
 			IsActive = "0"
-		WHERE CommentID = #{commentID} AND InsertUserName = #{insertUserName}
+		WHERE CommentID = #{commentID} AND InsertUserName = #{insertUsername}
 	</update>
 </mapper>

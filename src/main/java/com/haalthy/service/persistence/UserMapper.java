@@ -19,7 +19,7 @@ public interface UserMapper {
 	  
 	  int addUserTags(List<UserTag> userTagList);
 	  
-	  int deleteUserTag(UserTag userTag);
+	  int deleteUserTags(String username);
 	  
 	  List<Tag> getTagsByUsername(String username);
 	  

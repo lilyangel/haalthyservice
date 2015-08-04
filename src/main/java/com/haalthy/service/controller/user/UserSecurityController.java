@@ -1,11 +1,10 @@
 package com.haalthy.service.controller.user;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haalthy.service.controller.Interface.GetUsersResponse;
+import com.haalthy.service.controller.Interface.TagList;
 import com.haalthy.service.domain.Follow;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.domain.User;
@@ -146,46 +146,38 @@ public class UserSecurityController {
  	    return followService.inactiveFollowship(follow);
     }
     //input: [1,2]
-    @RequestMapping(value = "/tag/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/tag/update", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public int addUserTags(@RequestBody ArrayList<Tag> tags){
+    public int updateUserTags(@RequestBody TagList tags){
     	List<UserTag> userTagList = new ArrayList<UserTag>();
  	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
  	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-    	Date now = new Date();
-    	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    	String currentDt = sdf.format(now);
-    	Iterator<Tag> tagItr = tags.iterator();
+        java.util.Date today = new java.util.Date();
+    	Timestamp now = new java.sql.Timestamp(today.getTime());
+    	Iterator<Tag> tagItr = tags.getTags().iterator();
     	while(tagItr.hasNext()){
     		UserTag userTag = new UserTag();
     		userTag.setTagID(tagItr.next().getTagId());
     		userTag.setUsername(currentSessionUsername);
-    		userTag.setDateInserted(currentDt);
+    		userTag.setDateInserted(now);
     		userTagList.add(userTag);
     	}
-//    	
-//    	for(int index = 0; index<tags.size(); index++){
-//    		UserTag userTag = new UserTag();
-//    		userTag.setTagID(tags.get(index).getTagId());
-//    		userTag.setUsername(currentSessionUsername);
-//    		userTag.setDateInserted(currentDt);
-//    		userTagList.add(userTag);
-//    	}
+    	userService.deleteUserTags(currentSessionUsername);
     	return userService.addUserTags(userTagList);
     }
     
-    @RequestMapping(value = "/tag/delete", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
-    @ResponseBody
-    public int deleteUserTags(@RequestBody int tag){
-    	UserTag userTag = new UserTag();
-    	userTag.setTagID(tag);
-    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
-    	userTag.setUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
-    	Date now = new Date();
-    	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    	userTag.setDateInserted(sdf.format(now));
-    	return userService.deleteUserTag(userTag);
-    }
+//    @RequestMapping(value = "/tag/delete", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+//    @ResponseBody
+//    public int deleteUserTags(@RequestBody int tag){
+//    	UserTag userTag = new UserTag();
+//    	userTag.setTagID(tag);
+//    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+//    	userTag.setUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
+//    	Date now = new Date();
+//    	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//    	userTag.setDateInserted(sdf.format(now));
+//    	return userService.deleteUserTag(userTag);
+//    }
     
     @RequestMapping(value = "/tags", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
