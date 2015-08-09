@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haalthy.service.controller.Interface.AddPostRequest;
 import com.haalthy.service.controller.Interface.AddUpdatePostResponse;
+import com.haalthy.service.controller.Interface.GetFeedsRequest;
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostTag;
 import com.haalthy.service.domain.Tag;
@@ -57,6 +58,7 @@ public class PostSecurityController {
     	Post post = new Post();
     	post.setBody(addPostRequest.getBody());
     	post.setClosed(addPostRequest.getClosed());
+    	post.setType(addPostRequest.getType());
     	post.setCountBookmarks(0);
     	post.setCountComments(0);;
     	post.setCountViews(0);
@@ -75,29 +77,31 @@ public class PostSecurityController {
     	post.setIsBroadcast(addPostRequest.getIsBroadcast());
     	
     	String tagString = null;
-    	Iterator<Tag> tagItr = addPostRequest.getTags().iterator();
-    	StringBuilder stringBuilder = new StringBuilder();
-        while(tagItr.hasNext()) {
-            String tag = tagItr.next().getName();
-            stringBuilder.append(tag);
-            stringBuilder.append("**");
-         }
-        tagString = stringBuilder.toString();
-        
-        post.setTags(tagString);
-        
-        int insertPostRow = postService.addPost(post);
-        List<PostTag> postTagList = new ArrayList<PostTag>();
-        Iterator<Tag> tagDBItr = addPostRequest.getTags().iterator();
-        while(tagDBItr.hasNext()) {
-        	PostTag postTag = new PostTag();
-        	postTag.setPostID(post.getPostID());
-        	postTag.setTagId(tagDBItr.next().getTagId());
-        	postTag.setCreateTime(now);
-        	postTagList.add(postTag);
-        }
-        int insertPostTagRow = postService.addPostTag(postTagList);
-        if(insertPostRow != 0 && insertPostTagRow != 0)
+		if (addPostRequest.getTags() != null) {
+			Iterator<Tag> tagItr = addPostRequest.getTags().iterator();
+			StringBuilder stringBuilder = new StringBuilder();
+			while (tagItr.hasNext()) {
+				String tag = tagItr.next().getName();
+				stringBuilder.append(tag);
+				stringBuilder.append("**");
+			}
+			tagString = stringBuilder.toString();
+			post.setTags(tagString);
+		}
+		int insertPostRow = postService.addPost(post);
+		if (addPostRequest.getTags() != null) {
+			List<PostTag> postTagList = new ArrayList<PostTag>();
+			Iterator<Tag> tagDBItr = addPostRequest.getTags().iterator();
+			while (tagDBItr.hasNext()) {
+				PostTag postTag = new PostTag();
+				postTag.setPostID(post.getPostID());
+				postTag.setTagId(tagDBItr.next().getTagId());
+				postTag.setCreateTime(now);
+				postTagList.add(postTag);
+			}
+			postService.addPostTag(postTagList);
+		}
+        if(insertPostRow != 0 )
         	addPostResponse.setStatus("insert post successful");
         return addPostResponse;
     }
@@ -120,5 +124,14 @@ public class PostSecurityController {
     	else 
     		updatePostResponse.setStatus("inactive unsuccessful");
     	return updatePostResponse;
+    }
+    
+    @RequestMapping(value = "/feeds", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public List<Post> getFeeds(GetFeedsRequest getFeedsRequest){
+ 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
+ 	    getFeedsRequest.setUsername(currentSessionUsername);
+ 	    postService.getFeeds(getFeedsRequest);
+    	return null;
     }
 }

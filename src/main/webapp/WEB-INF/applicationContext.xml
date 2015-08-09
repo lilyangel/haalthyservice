@@ -16,10 +16,10 @@
    <!-- in-memory database and a datasource -->
  	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="url"
-			value="jdbc:mysql://localhost:3306/haalthy">
+			value="jdbc:mysql://192.168.1.60:3306/haalthy">
 		</property>
 		<property name="username" value="root"></property>
-		<property name="password" value=""></property>
+		<property name="password" value="183200a"></property>
 		<property name="driverClassName"
 			value="com.mysql.jdbc.Driver">
 		</property>

@@ -9,8 +9,16 @@ public class AddPostRequest {
 	private String body;
 	private int closed;
 	private int isBroadcast;
+	private String type;
 	private List<Tag> tags;
 	
+	
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 	public List<Tag> getTags() {
 		return tags;
 	}

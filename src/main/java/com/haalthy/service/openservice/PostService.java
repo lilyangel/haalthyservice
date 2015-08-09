@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.haalthy.service.controller.Interface.GetFeedsRequest;
 import com.haalthy.service.controller.Interface.GetPostsByTagsRequest;
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostTag;
@@ -41,5 +42,9 @@ public class PostService {
 	
 	public int increasePostCountComment(int postID){
 		return postMapper.increasePostCountComment(postID);
+	}
+	
+	public List<Post> getFeeds(GetFeedsRequest request){
+		return postMapper.getFeeds(request);
 	}
 }
