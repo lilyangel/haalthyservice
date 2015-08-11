@@ -1,6 +1,7 @@
 package com.haalthy.service.controller.post;
 
 import java.util.ArrayList;
+import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Iterator;
@@ -128,11 +129,19 @@ public class PostSecurityController {
     
     @RequestMapping(value = "/feeds", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public List<Post> getFeeds(@RequestBody GetFeedsRequest getFeedsRequest){
+    public List<Post> getFeeds(@RequestBody GetFeedsRequest getFeedsRequest) throws IOException{
  	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	    getFeedsRequest.setUsername(currentSessionUsername);
- 	    postService.getFeeds(getFeedsRequest);
-    	return null;
+ 	    List<Post> posts = postService.getFeeds(getFeedsRequest);
+    	Iterator<Post> postItr = posts.iterator();
+    	ImageService imageService = null;
+    	while(postItr.hasNext()){
+    		Post currentPost = postItr.next();
+    		if(currentPost.getImage()!=null){
+    			currentPost.setImage(imageService.scale(currentPost.getImage(), 32, 32));
+    		}
+    	}
+ 	    return posts;
     }
     
     @RequestMapping(value = "/posts", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
