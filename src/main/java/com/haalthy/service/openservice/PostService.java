@@ -47,4 +47,8 @@ public class PostService {
 	public List<Post> getFeeds(GetFeedsRequest request){
 		return postMapper.getFeeds(request);
 	}
+	
+	public List<Post> getPosts(GetFeedsRequest request){
+		return postMapper.getPosts(request);
+	}
 }

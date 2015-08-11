@@ -24,4 +24,7 @@ public interface PostMapper {
 	int increasePostCountComment(int postID);
 	
 	List<Post> getFeeds(GetFeedsRequest request);
+	
+	List<Post> getPosts(GetFeedsRequest request);
+
 }

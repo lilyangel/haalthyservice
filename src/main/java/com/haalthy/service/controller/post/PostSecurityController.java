@@ -126,12 +126,21 @@ public class PostSecurityController {
     	return updatePostResponse;
     }
     
-    @RequestMapping(value = "/feeds", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/feeds", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public List<Post> getFeeds(GetFeedsRequest getFeedsRequest){
+    public List<Post> getFeeds(@RequestBody GetFeedsRequest getFeedsRequest){
  	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	    getFeedsRequest.setUsername(currentSessionUsername);
  	    postService.getFeeds(getFeedsRequest);
+    	return null;
+    }
+    
+    @RequestMapping(value = "/posts", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public List<Post> getPosts(@RequestBody GetFeedsRequest getFeedsRequest){
+ 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
+ 	    getFeedsRequest.setUsername(currentSessionUsername);
+ 	    postService.getPosts(getFeedsRequest);
     	return null;
     }
 }

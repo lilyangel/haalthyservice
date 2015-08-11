@@ -101,6 +101,40 @@
 	    	ORDER BY DateInserted DESC
 	</select>
 	
+	<select id = "getPosts" resultType = "Post">
+		SELECT
+			PostID,
+			Type,
+			InsertUserName,
+			body,
+			Tags,
+			CountComments,
+			CountBookmarks,
+			CountViews,
+			Closed,
+			IsBroadcast,
+			DateInserted,
+			DateUpdated,
+			isActive,
+			User.image
+	    FROM Post, User
+	    WHERE (Post.InsertUserName IN(
+	    	SELECT FollowingUser 
+	    	FROM Follow
+	    	WHERE 
+	    		Username = #{username}
+	    	))
+	    	OR(
+	    	PostID IN(
+	    	SELECT PostID 
+	    	FROM PostTag
+	    	WHERE 
+	    		PostTag.TagID IN
+	      			(SELECT TagID FROM UserTag WHERE Username = #{username})
+	    	))
+	    	AND (Post.InsertUserName = User.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)
+	    	ORDER BY DateInserted DESC
+	</select>
 	<update id = "increasePostCountComment" parameterType="int">
 		UPDATE Post SET CountComments = CountComments+1 WHERE PostID = #{postID}
 	</update>
