@@ -46,7 +46,7 @@
 	</update>
 	
 	<select id = "getPostsByTags" resultType = "Post">
-		SELECT
+		SELECT DISTINCT
 			PostID,
 			Type,
 			InsertUserName,
@@ -76,7 +76,7 @@
 	</select>
 	
 	<select id = "getFeeds" resultType = "Post">
-		SELECT
+		SELECT DISTINCT
 			PostID,
 			Type,
 			InsertUserName,
@@ -102,7 +102,7 @@
 	</select>
 	
 	<select id = "getPosts" resultType = "Post">
-		SELECT
+		SELECT DISTINCT
 			PostID,
 			Type,
 			InsertUserName,

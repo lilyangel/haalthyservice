@@ -134,7 +134,7 @@ public class PostSecurityController {
  	    getFeedsRequest.setUsername(currentSessionUsername);
  	    List<Post> posts = postService.getFeeds(getFeedsRequest);
     	Iterator<Post> postItr = posts.iterator();
-    	ImageService imageService = null;
+    	ImageService imageService = new ImageService();
     	while(postItr.hasNext()){
     		Post currentPost = postItr.next();
     		if(currentPost.getImage()!=null){
@@ -149,7 +149,6 @@ public class PostSecurityController {
     public List<Post> getPosts(@RequestBody GetFeedsRequest getFeedsRequest){
  	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	    getFeedsRequest.setUsername(currentSessionUsername);
- 	    postService.getPosts(getFeedsRequest);
-    	return null;
+ 	    return postService.getPosts(getFeedsRequest);
     }
 }

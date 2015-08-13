@@ -62,7 +62,7 @@ public class PostController {
     public List<Post> getPostByTags(@RequestBody GetPostsByTagsRequest request) throws IOException{
     	List<Post> posts = postService.getPostsByTags(request);
     	Iterator<Post> postItr = posts.iterator();
-    	ImageService imageService = null;
+    	ImageService imageService = new ImageService();
     	while(postItr.hasNext()){
     		Post currentPost = postItr.next();
     		if(currentPost.getImage()!=null){
