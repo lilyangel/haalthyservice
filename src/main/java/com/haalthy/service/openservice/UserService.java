@@ -1,5 +1,6 @@
 package com.haalthy.service.openservice;
 
+import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
 import com.haalthy.service.domain.SelectUserByTagRange;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.domain.User;
@@ -55,6 +56,12 @@ public class UserService {
     
 	public List<User> selectSuggestUsersByTags(SelectUserByTagRange selectUserByTagRange){
 		return userMapper.selectSuggestUsersByTags(selectUserByTagRange);
+	}
+	public  List<User> searchUsers(String[] keyword){
+		return userMapper.searchUsers(keyword);
+	}
+	public  List<User> selectSuggestUsersByProfile(GetSuggestUsersByProfileRequest getSuggestUsersByProfileRequest){
+		return userMapper.selectSuggestUsersByProfile(getSuggestUsersByProfileRequest);
 	}
 
 }

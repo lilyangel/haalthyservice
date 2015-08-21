@@ -2,6 +2,7 @@ package com.haalthy.service.persistence;
 
 import java.util.List;
 
+import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
 import com.haalthy.service.domain.SelectUserByTagRange;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.domain.User;
@@ -28,4 +29,8 @@ public interface UserMapper {
 	  int deleteUserFollowCount(String username);
 	  
 	  List<User> selectSuggestUsersByTags(SelectUserByTagRange selectUserByTagRange);
+	  
+	  List<User> searchUsers(String[] keyword);
+	  
+	  List<User> selectSuggestUsersByProfile(GetSuggestUsersByProfileRequest getSuggestUsersByProfileRequest);
 }

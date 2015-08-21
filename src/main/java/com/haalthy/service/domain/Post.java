@@ -1,13 +1,13 @@
 package com.haalthy.service.domain;
 
 import java.io.Serializable;
+import com.haalthy.service.configuration.*;
 //import java.sql.Date;
 import java.sql.Timestamp;
 
 public class Post implements Serializable{
 	private static final long serialVersionUID = 8751282105532159742L;
 	private int postID;
-	private String type;
 	private String insertUsername;
 	private String body;
 	private String tags;
@@ -20,8 +20,70 @@ public class Post implements Serializable{
 	private Timestamp dateUpdated;
 	private int isActive;
 	private byte[] image;
+	private int type;
+	private int treatmentID;
+	private int patientStatusID;
+	private String gender;
+	private String pathological;
+	private int age;
+	private String cancerType;
+	private String metastasis;
+	private int stage;
 	
-	
+	public String getGender() {
+		return gender;
+	}
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+	public String getPathological() {
+		return pathological;
+	}
+	public void setPathological(String pathological) {
+		this.pathological = pathological;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	public String getCancerType() {
+		return cancerType;
+	}
+	public void setCancerType(String cancerType) {
+		this.cancerType = cancerType;
+	}
+	public String getMetastasis() {
+		return metastasis;
+	}
+	public void setMetastasis(String metastasis) {
+		this.metastasis = metastasis;
+	}
+	public int getStage() {
+		return stage;
+	}
+	public void setStage(int stage) {
+		this.stage = stage;
+	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
+	public int getTreatmentID() {
+		return treatmentID;
+	}
+	public void setTreatmentID(int treatmentID) {
+		this.treatmentID = treatmentID;
+	}
+	public int getPatientStatusID() {
+		return patientStatusID;
+	}
+	public void setPatientStatusID(int patientStatusID) {
+		this.patientStatusID = patientStatusID;
+	}
 	public String getInsertUsername() {
 		return insertUsername;
 	}
@@ -57,12 +119,6 @@ public class Post implements Serializable{
 	}
 	public void setPostID(int postID) {
 		this.postID = postID;
-	}
-	public String getType() {
-		return this.type;
-	}
-	public void setType(String type) {
-		this.type = type;
 	}
 	public String getBody() {
 		return this.body;

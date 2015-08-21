@@ -58,5 +58,6 @@
     </bean>
     <bean id="followService" class="com.haalthy.service.openservice.FollowService">
     </bean>
-
+    <bean id="patientService" class="com.haalthy.service.openservice.PatientService">
+    </bean>
 </beans>

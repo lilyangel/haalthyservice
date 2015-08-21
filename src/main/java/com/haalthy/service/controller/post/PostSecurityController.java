@@ -1,5 +1,5 @@
 package com.haalthy.service.controller.post;
-
+import com.haalthy.service.configuration.*;
 import java.util.ArrayList;
 import java.io.IOException;
 import java.sql.Date;
@@ -22,6 +22,7 @@ import com.haalthy.service.controller.Interface.AddPostRequest;
 import com.haalthy.service.controller.Interface.AddUpdatePostResponse;
 import com.haalthy.service.controller.Interface.GetFeedsRequest;
 import com.haalthy.service.domain.Post;
+import com.haalthy.service.domain.PostAndUser;
 import com.haalthy.service.domain.PostTag;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.openservice.PostService;
@@ -59,7 +60,8 @@ public class PostSecurityController {
     	Post post = new Post();
     	post.setBody(addPostRequest.getBody());
     	post.setClosed(addPostRequest.getClosed());
-    	post.setType(addPostRequest.getType());
+    	PostType postType = PostType.valueOf(addPostRequest.getType());
+    	post.setType(postType.getValue());
     	post.setCountBookmarks(0);
     	post.setCountComments(0);;
     	post.setCountViews(0);
@@ -149,6 +151,12 @@ public class PostSecurityController {
     public List<Post> getPosts(@RequestBody GetFeedsRequest getFeedsRequest){
  	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	    getFeedsRequest.setUsername(currentSessionUsername);
- 	    return postService.getPosts(getFeedsRequest);
+ 	    List<Post> posts = postService.getPosts(getFeedsRequest);
+//    	Iterator<Post> postItr = posts.iterator();
+//    	while(postItr.hasNext()){
+//    		Post post= postItr.next();
+//    		post.setPatientProfile(post.getGender()+"**"+post.getAge()+"**"+post.getPathological()+"**"+post.getStage()+"**"+post.getMetastasis());
+//    	}
+ 	    return posts;
     }
 }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.haalthy.service.persistence.PatientMapper">
+  <cache />
+   <select id = "getTreatmentsByUser" parameterType="String" resultType="Treatment">
+   		SELECT 
+   			TreatmentID,
+   			Username,
+			Name,
+			Description,
+			Dosage,
+			beginDate,
+			endDate,
+			IsPosted
+		FROM TREATMENT
+			WHERE username = #{username}
+   </select>
+   
+   <select id = "getPatientStatusByTreatment" parameterType = "int" resultType = "PatientStatus">
+   		SELECT 
+   			StatusID,
+			Username,
+			ClinicReport,
+			SymptomDesc,
+			SideEffect,
+			InsertedDate,
+			TreatmentID,
+			IsPosted
+		FROM PATIENTSTATUS
+			WHERE treatmentID = #{treatmentID}
+   </select>
+  
+  <insert id = "insertTreatment" useGeneratedKeys="true"
+    	keyProperty="treatmentID" keyColumn = "treatmentID">
+  	INSERT INTO TREATMENT(Username, Name, Description, Dosage, BeginDate, EndDate, IsPosted) VALUES(
+  		#{username}, #{name}, #{description}, #{dosage}, #{beginDate}, #{endDate}, #{isPosted}
+  	)
+  </insert>
+  
+    <insert id = "insertPatientStatus" useGeneratedKeys="true"
+    	keyProperty="statusID" keyColumn = "statusID">
+  	INSERT INTO TREATMENT(Username,
+			ClinicReport,
+			SymptomDesc,
+			SideEffect,
+			InsertedDate,
+			TreatmentID,
+			IsPosted) VALUES(
+  		#{username}, #{clinicReport}, #{symptomDesc}, #{sideEffect}, #{insertDate}, #{treatmentID}, #{isPosted}
+  	)
+  </insert>
+  
+</mapper>

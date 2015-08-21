@@ -3,8 +3,10 @@ package com.haalthy.service.controller.user;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.haalthy.service.controller.Interface.GetUsersResponse;
 import com.haalthy.service.controller.Interface.TagList;
 import com.haalthy.service.domain.Follow;
+import com.haalthy.service.domain.SelectUserByTagRange;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.domain.User;
 import com.haalthy.service.domain.UserTag;
@@ -29,6 +32,8 @@ import com.haalthy.service.openservice.UserService;
 import com.haalthy.service.controller.Interface.AddUpdateUserRequest;
 import com.haalthy.service.controller.Interface.AddUpdateUserResponse;
 import com.haalthy.service.controller.Interface.AddUserTagsRequest;
+import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
+import com.haalthy.service.controller.Interface.GetSuggestUsersByTagsRequest;
 
 @Controller
 @RequestMapping("/security/user")
@@ -186,4 +191,11 @@ public class UserSecurityController {
     	return userService.getTagsByUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
     }
     
+    @RequestMapping(value = "/suggestedusers",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
+    @ResponseBody
+    public List<User> getSuggestUsersByProfile(@RequestBody GetSuggestUsersByProfileRequest getSuggestUsersByProfileRequest) {
+    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+    	getSuggestUsersByProfileRequest.setUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
+    	return userService.selectSuggestUsersByProfile(getSuggestUsersByProfileRequest);
+    }
 }

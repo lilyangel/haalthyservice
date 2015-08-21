@@ -105,4 +105,12 @@ public class UserController {
     	}
     	return users;
     }
+    
+    @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
+    @ResponseBody
+    public List<User> searchUsers(@RequestBody String keywords){
+    	String[] keyword = keywords.split(keywords);
+    	return userService.searchUsers(keyword);
+    }
+    
 }

@@ -1,7 +1,5 @@
 package com.haalthy.service.openservice;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.haalthy.service.controller.Interface.GetFeedsRequest;
 import com.haalthy.service.controller.Interface.GetPostsByTagsRequest;
 import com.haalthy.service.domain.Post;
+import com.haalthy.service.domain.PostAndUser;
 import com.haalthy.service.domain.PostTag;
-import com.haalthy.service.domain.Tag;
 import com.haalthy.service.persistence.PostMapper;
 
 public class PostService {
