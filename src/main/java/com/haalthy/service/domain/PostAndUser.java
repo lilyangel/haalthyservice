@@ -1,10 +1,11 @@
 package com.haalthy.service.domain;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 import com.haalthy.service.configuration.PostType;
 
-public class PostAndUser {
+public class PostAndUser implements Serializable{
 	private static final long serialVersionUID = 4L;
 	private int postID;
 	private String insertUsername;

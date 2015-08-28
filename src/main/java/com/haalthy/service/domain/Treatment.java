@@ -1,20 +1,26 @@
 package com.haalthy.service.domain;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Treatment {
+public class Treatment implements Serializable{
 	private static final long serialVersionUID = 8751282105532159742L;
 
 	private int treatmentID;
 	private String username;
-	private String name;
+	private String treatmentName;
 	private String description;
 	private String dosage;
 	private Timestamp beginDate;
 	private Timestamp endDate;
 	private int isPosted;
 	
-	
+	public String getTreatmentName() {
+		return treatmentName;
+	}
+	public void setTreatmentName(String treatmentName) {
+		this.treatmentName = treatmentName;
+	}
 	public int getIsPosted() {
 		return isPosted;
 	}
@@ -32,12 +38,6 @@ public class Treatment {
 	}
 	public void setUsername(String username) {
 		this.username = username;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
 	}
 	public String getDescription() {
 		return description;
@@ -63,6 +63,4 @@ public class Treatment {
 	public void setEndDate(Timestamp endDate) {
 		this.endDate = endDate;
 	}
-	
-	
 }

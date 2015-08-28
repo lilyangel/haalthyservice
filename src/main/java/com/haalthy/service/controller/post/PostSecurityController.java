@@ -60,8 +60,9 @@ public class PostSecurityController {
     	Post post = new Post();
     	post.setBody(addPostRequest.getBody());
     	post.setClosed(addPostRequest.getClosed());
-    	PostType postType = PostType.valueOf(addPostRequest.getType());
-    	post.setType(postType.getValue());
+//    	PostType postType = PostType.valueOf(addPostRequest.getType());
+//    	post.setType(postType.getValue());
+    	post.setType(0);
     	post.setCountBookmarks(0);
     	post.setCountComments(0);;
     	post.setCountViews(0);

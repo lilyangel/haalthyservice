@@ -2,7 +2,6 @@ package com.haalthy.service.domain;
 
 import java.io.Serializable;
 import com.haalthy.service.configuration.*;
-//import java.sql.Date;
 import java.sql.Timestamp;
 
 public class Post implements Serializable{

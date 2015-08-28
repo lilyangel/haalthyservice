@@ -26,8 +26,8 @@
 	  
 	<insert id="addPost" useGeneratedKeys="true"
     	keyProperty="postID" keyColumn = "PostID">
-  		INSERT into Post (InsertUserName, body, Tags, CountComments, CountBookmarks, CountViews, Closed, IsBroadcast, DateInserted,DateUpdated, isActive)
- 			 VALUES (#{insertUsername},#{body},#{tags}, #{countComments}, #{countBookmarks}, #{countViews}, #{closed},#{isBroadcast}, #{dateInserted}, #{dateUpdated}, #{isActive})
+  		INSERT into Post (InsertUserName, body, Tags, CountComments, CountBookmarks, CountViews, Closed, IsBroadcast, DateInserted,DateUpdated, isActive, Type)
+ 			 VALUES (#{insertUsername},#{body},#{tags}, #{countComments}, #{countBookmarks}, #{countViews}, #{closed},#{isBroadcast}, #{dateInserted}, #{dateUpdated}, #{isActive}, #{type})
 	</insert>
 	
 	<insert id="addPostTag" parameterType="java.util.List">
@@ -130,7 +130,9 @@
 	    	FROM Follow
 	    	WHERE 
 	    		Username = #{username}
-	    	))
+	    	))OR(
+	    	Post.InsertUserName = #{username}
+	    	)
 	    	OR(
 	    	PostID IN(
 	    	SELECT PostID 

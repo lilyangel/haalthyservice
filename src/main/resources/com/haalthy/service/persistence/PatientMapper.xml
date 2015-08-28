@@ -4,11 +4,26 @@
 
 <mapper namespace="com.haalthy.service.persistence.PatientMapper">
   <cache />
+  
+  <select id="getTreatmentFormat" resultType="TreatmentFormat">
+     	SELECT 
+   			TreatmentFormatID,
+   			name
+		FROM TREATMENTFORMAT
+   </select>
+   
+   <select id="getPatientStatusFormat" resultType="PatientStatusFormat">
+     	SELECT 
+   			statusFormatID,
+   			statusName
+		FROM PATIENTSTATUSFORMAT
+   </select>
+   
    <select id = "getTreatmentsByUser" parameterType="String" resultType="Treatment">
    		SELECT 
    			TreatmentID,
    			Username,
-			Name,
+			TreatmentName,
 			Description,
 			Dosage,
 			beginDate,
@@ -34,21 +49,19 @@
   
   <insert id = "insertTreatment" useGeneratedKeys="true"
     	keyProperty="treatmentID" keyColumn = "treatmentID">
-  	INSERT INTO TREATMENT(Username, Name, Description, Dosage, BeginDate, EndDate, IsPosted) VALUES(
-  		#{username}, #{name}, #{description}, #{dosage}, #{beginDate}, #{endDate}, #{isPosted}
+  	INSERT INTO TREATMENT(Username, treatmentName, Description, Dosage, BeginDate, EndDate, IsPosted) VALUES(
+  		#{username}, #{treatmentName}, #{description}, #{dosage}, #{beginDate}, #{endDate}, #{isPosted}
   	)
   </insert>
   
     <insert id = "insertPatientStatus" useGeneratedKeys="true"
     	keyProperty="statusID" keyColumn = "statusID">
-  	INSERT INTO TREATMENT(Username,
+  	INSERT INTO PATIENTSTATUS(Username,
 			ClinicReport,
-			SymptomDesc,
-			SideEffect,
+			statusDesc,
 			InsertedDate,
-			TreatmentID,
 			IsPosted) VALUES(
-  		#{username}, #{clinicReport}, #{symptomDesc}, #{sideEffect}, #{insertDate}, #{treatmentID}, #{isPosted}
+  		#{username}, #{clinicReport}, #{statusDesc}, #{insertedDate}, #{isPosted}
   	)
   </insert>
   

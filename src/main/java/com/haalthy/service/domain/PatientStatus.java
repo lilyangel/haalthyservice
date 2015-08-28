@@ -1,20 +1,24 @@
 package com.haalthy.service.domain;
 
 import java.sql.Timestamp;
+import java.io.Serializable;
 
 public class PatientStatus {
 	private static final long serialVersionUID = 8751282105532159742L;
 
 	private int statusID;
-	private int treatmentID;
 	private String username;
 	private String clinicReport;
-	private String SymptomDesc;
-	private String SideEffect;
+	private String statusDesc;
 	private Timestamp insertedDate;
 	private int isPosted;
 	
-	
+	public String getStatusDesc() {
+		return statusDesc;
+	}
+	public void setStatusDesc(String statusDesc) {
+		this.statusDesc = statusDesc;
+	}
 	public int getIsPosted() {
 		return isPosted;
 	}
@@ -27,12 +31,6 @@ public class PatientStatus {
 	public void setStatusID(int statusID) {
 		this.statusID = statusID;
 	}
-	public int getTreatmentID() {
-		return treatmentID;
-	}
-	public void setTreatmentID(int treatmentID) {
-		this.treatmentID = treatmentID;
-	}
 	public String getUsername() {
 		return username;
 	}
@@ -44,18 +42,6 @@ public class PatientStatus {
 	}
 	public void setClinicReport(String clinicReport) {
 		this.clinicReport = clinicReport;
-	}
-	public String getSymptomDesc() {
-		return SymptomDesc;
-	}
-	public void setSymptomDesc(String symptomDesc) {
-		SymptomDesc = symptomDesc;
-	}
-	public String getSideEffect() {
-		return SideEffect;
-	}
-	public void setSideEffect(String sideEffect) {
-		SideEffect = sideEffect;
 	}
 	public Timestamp getInsertedDate() {
 		return insertedDate;
