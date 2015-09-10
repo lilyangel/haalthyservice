@@ -3,7 +3,7 @@ package com.haalthy.service.domain;
 import java.sql.Timestamp;
 import java.io.Serializable;
 
-public class PatientStatus {
+public class PatientStatus implements Serializable{
 	private static final long serialVersionUID = 8751282105532159742L;
 
 	private int statusID;
@@ -49,6 +49,4 @@ public class PatientStatus {
 	public void setInsertedDate(Timestamp insertedDate) {
 		this.insertedDate = insertedDate;
 	}
-	
-	
 }

@@ -1,12 +1,11 @@
 package com.haalthy.service.controller.user;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,21 +19,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.haalthy.service.controller.Interface.GetUsersResponse;
 import com.haalthy.service.controller.Interface.TagList;
+import com.haalthy.service.domain.ClinicReport;
 import com.haalthy.service.domain.Follow;
-import com.haalthy.service.domain.SelectUserByTagRange;
+import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.Tag;
+import com.haalthy.service.domain.Treatment;
 import com.haalthy.service.domain.User;
 import com.haalthy.service.domain.UserTag;
 import com.haalthy.service.openservice.FollowService;
+import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.UserService;
 import com.haalthy.service.controller.Interface.AddUpdateUserRequest;
 import com.haalthy.service.controller.Interface.AddUpdateUserResponse;
-import com.haalthy.service.controller.Interface.AddUserTagsRequest;
 import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
-import com.haalthy.service.controller.Interface.GetSuggestUsersByTagsRequest;
-
+import com.haalthy.service.controller.Interface.GetUserDetailResponse;
+import com.haalthy.service.configuration.ImageService;
 @Controller
 @RequestMapping("/security/user")
 public class UserSecurityController {
@@ -45,21 +45,38 @@ public class UserSecurityController {
 	@Autowired
 	private transient FollowService followService;
 	
+	@Autowired
+	private transient PatientService patientService;
+	
 	
 	@RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
-	public GetUsersResponse getUser(@PathVariable String username) {
+	public User getUser(@PathVariable String username) throws IOException {
+		ImageService imageService = new ImageService();
 		User user = userService.getUserByUsername(username);
-		if (user == null)
-			return null;
-		GetUsersResponse userResponse = new GetUsersResponse();
-		userResponse.setUsername(user.getUsername());
-		userResponse.setDisplayname(user.getDisplayname());
-		userResponse.setEmail(user.getEmail());
-		userResponse.setCreateDate(user.getCreateDate());
-    	userResponse.setImage(user.getImage());
-
-		return userResponse;
+		if(user!=null && user.getImage()!=null){
+			user.setImage(imageService.scale(user.getImage(), 64, 64));			
+		}
+		return user;
+	}
+	
+	@RequestMapping(value = "/detail/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@ResponseBody
+	public GetUserDetailResponse getUserDetail(@PathVariable String username) throws IOException {
+		ImageService imageService = new ImageService();
+		User user = userService.getUserByUsername(username);
+		if(user!=null && user.getImage()!=null){
+			user.setImage(imageService.scale(user.getImage(), 88, 88));			
+		}
+		List<Treatment> treatments = patientService.getTreatmentsByUser(username);
+		List<PatientStatus> patientStatus = patientService.getPatientStatusByUser(username);
+		List<ClinicReport> clinicReport = patientService.getClinicReportByUser(username);
+		GetUserDetailResponse getUserDetailResponse = new GetUserDetailResponse();
+		getUserDetailResponse.setUserProfile(user);
+		getUserDetailResponse.setTreatments(treatments);
+		getUserDetailResponse.setPatientStatus(patientStatus);
+		getUserDetailResponse.setClinicReport(clinicReport);
+		return getUserDetailResponse;
 	}
    
    @RequestMapping(value = "/update",method = RequestMethod.PUT, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})

@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haalthy.service.configuration.*;
+import com.haalthy.service.controller.Interface.AddPatientStatusRequest;
 import com.haalthy.service.controller.Interface.AddTreatmentsRequest;
+import com.haalthy.service.domain.ClinicReport;
 import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.Treatment;
@@ -27,6 +29,7 @@ import com.haalthy.service.openservice.PostService;
 
 public class PatientSecurityController {
 	PostType postType;
+	private Authentication a = SecurityContextHolder.getContext().getAuthentication();
 	
 	@Autowired
 	private transient PatientService patientService;
@@ -75,17 +78,28 @@ public class PatientSecurityController {
     
     @RequestMapping(value = "/patientStatus/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public int addPatientStatus(@RequestBody PatientStatus patientStatus){
+    public int addPatientStatus(@RequestBody AddPatientStatusRequest addPatientStatusRequest){
  	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
  	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+        java.util.Date today = new java.util.Date();
+    	Timestamp now = new java.sql.Timestamp(today.getTime());
+    	
+    	PatientStatus patientStatus = addPatientStatusRequest.getPatientStatus();
+    	ClinicReport clinicReport = addPatientStatusRequest.getClinicReport();
+    	
+    	clinicReport.setUsername(currentSessionUsername);
+    	clinicReport.setDateInserted(now);
+    	int insertClinicReportCount = patientService.insertClinicReport(clinicReport);
+    	
+    	patientStatus.setInsertedDate(now);
  	    patientStatus.setUsername(currentSessionUsername);
     	int insertCount = patientService.insertPatientStatus(patientStatus);
+    	
     	if(patientStatus.getIsPosted()==1){
-            java.util.Date today = new java.util.Date();
-        	Timestamp now = new java.sql.Timestamp(today.getTime());
+    		String postBodyStr = "CLINICREPORT:" + clinicReport.getClinicReport() + " " + "PATIENTSTATUS:" + patientStatus.getStatusDesc();  
     		Post post = new Post();
     		post.setClosed(0);
-    		post.setBody(patientStatus.getStatusDesc());
+    		post.setBody(postBodyStr);
     		post.setPatientStatusID(patientStatus.getStatusID());
     		post.setCountBookmarks(0);
     		post.setCountComments(0);
@@ -101,4 +115,12 @@ public class PatientSecurityController {
     	return insertCount;
     }
     
+    @RequestMapping(value = "/clinicreport/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public int addClinicReport(@RequestBody ClinicReport clinicReport){
+ 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+ 	   	clinicReport.setUsername(currentSessionUsername);
+ 	   	
+ 	   	return 0;
+    }
 }

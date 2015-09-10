@@ -1,7 +1,5 @@
 package com.haalthy.service.controller.Interface;
 
-import java.util.List;
-
 public class GetSuggestUsersByTagsRequest {
 	int[] tags;
 	int rangeBegin;

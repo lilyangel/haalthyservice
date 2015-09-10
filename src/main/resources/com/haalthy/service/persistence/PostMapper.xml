@@ -141,7 +141,7 @@
 	    		PostTag.TagID IN
 	      			(SELECT TagID FROM UserTag WHERE Username = #{username})
 	    	)))
-	    	AND (Post.InsertUserName = User.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)
+	    	AND (Post.InsertUserName = User.Username) AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)
 	    	ORDER BY DateInserted DESC
 	</select>
 	<update id = "increasePostCountComment" parameterType="int">

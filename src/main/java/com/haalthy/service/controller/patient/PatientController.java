@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haalthy.service.configuration.*;
 import com.haalthy.service.controller.Interface.TreatmentWithPatientStatus;
+import com.haalthy.service.domain.ClinicReportFormat;
 import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.PatientStatusFormat;
 import com.haalthy.service.domain.Treatment;
 import com.haalthy.service.domain.TreatmentFormat;
 import com.haalthy.service.openservice.PatientService;
+import com.haalthy.service.domain.ClinicReportFormat;
+
 @Controller
 @RequestMapping("/open/patient")
 public class PatientController {
@@ -56,6 +59,12 @@ public class PatientController {
     @ResponseBody
     public List<TreatmentFormat> getTreatmentFormat(){
     	return patientService.getTreatmentFormat();
+    }
+    
+    @RequestMapping(value = "/clinicreportformat", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public List<ClinicReportFormat> getClinicReportFormat(){
+    	return patientService.getClinicReportFormat();
     }
     
     @RequestMapping(value = "/patientstatusformat", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})

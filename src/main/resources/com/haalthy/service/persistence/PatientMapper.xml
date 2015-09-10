@@ -19,6 +19,13 @@
 		FROM PATIENTSTATUSFORMAT
    </select>
    
+   <select id="getClinicReportFormat" resultType="ClinicReportFormat">
+     	SELECT 
+   			reportFormatID,
+   			clinicItem
+		FROM ClinicReportFormat
+   </select>
+   
    <select id = "getTreatmentsByUser" parameterType="String" resultType="Treatment">
    		SELECT 
    			TreatmentID,
@@ -31,22 +38,33 @@
 			IsPosted
 		FROM TREATMENT
 			WHERE username = #{username}
+		ORDER BY endDate DESC
    </select>
-   
-   <select id = "getPatientStatusByTreatment" parameterType = "int" resultType = "PatientStatus">
+  
+   <select id = "getPatientStatusByUser" parameterType="String" resultType="PatientStatus">
    		SELECT 
    			StatusID,
 			Username,
 			ClinicReport,
-			SymptomDesc,
-			SideEffect,
+			StatusDesc,
 			InsertedDate,
-			TreatmentID,
 			IsPosted
 		FROM PATIENTSTATUS
-			WHERE treatmentID = #{treatmentID}
+			WHERE username = #{username}
+		ORDER BY InsertedDate DESC
    </select>
-  
+   
+   <select id = "getClinicReportByUser" parameterType="String" resultType="ClinicReport">
+   		SELECT 
+   			username,
+			clinicReport,
+			dateInserted,
+			isPosted
+		FROM CLINICREPORT
+			WHERE username = #{username}
+		ORDER BY dateInserted DESC
+   </select>
+
   <insert id = "insertTreatment" useGeneratedKeys="true"
     	keyProperty="treatmentID" keyColumn = "treatmentID">
   	INSERT INTO TREATMENT(Username, treatmentName, Description, Dosage, BeginDate, EndDate, IsPosted) VALUES(
@@ -65,4 +83,13 @@
   	)
   </insert>
   
+  <insert id = "insertClinicReport" useGeneratedKeys="true"
+    	keyProperty="ClinicReportID" keyColumn = "ClinicReportID">
+  	INSERT INTO ClinicReport(Username,
+			ClinicReport,
+			DateInserted,
+			IsPosted) VALUES(
+  		#{username}, #{clinicReport}, #{dateInserted}, #{isPosted}
+  	)
+  </insert>
 </mapper>

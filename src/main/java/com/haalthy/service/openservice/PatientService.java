@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.haalthy.service.domain.ClinicReport;
+import com.haalthy.service.domain.ClinicReportFormat;
 import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.PatientStatusFormat;
 import com.haalthy.service.domain.Treatment;
@@ -38,5 +40,21 @@ public class PatientService {
 	
 	public List<PatientStatusFormat> getPatientStatusFormat(){
 		return patientMapper.getPatientStatusFormat();
+	}
+	
+	public List<PatientStatus> getPatientStatusByUser(String username){
+		return patientMapper.getPatientStatusByUser(username);
+	}
+	
+	public List<ClinicReportFormat> getClinicReportFormat(){
+		return patientMapper.getClinicReportFormat();
+	}
+	
+	public int insertClinicReport(ClinicReport clinicReport){
+		return patientMapper.insertClinicReport(clinicReport);
+	}
+	
+	public List<ClinicReport> getClinicReportByUser(String username){
+		return patientMapper.getClinicReportByUser(username);
 	}
 }
