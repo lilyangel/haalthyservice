@@ -25,5 +25,6 @@ public interface PostMapper {
 	List<Post> getFeeds(GetFeedsRequest request);
 	
 	List<Post> getPosts(GetFeedsRequest request);
-
+	
+	List<Post> getPostsByUsername(String username);
 }

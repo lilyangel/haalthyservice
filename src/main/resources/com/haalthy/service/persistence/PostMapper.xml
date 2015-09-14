@@ -147,4 +147,25 @@
 	<update id = "increasePostCountComment" parameterType="int">
 		UPDATE Post SET CountComments = CountComments+1 WHERE PostID = #{postID}
 	</update>
+	
+	<select id = "getPostsByUsername" resultType = "Post">
+		SELECT DISTINCT
+			PostID,
+			Type,
+			InsertUserName,
+			body,
+			Tags,
+			CountComments,
+			CountBookmarks,
+			CountViews,
+			Closed,
+			IsBroadcast,
+			DateInserted,
+			DateUpdated,
+			isActive
+		FROM Post
+		WHERE insertUserName = #{username} AND type = 0
+	</select>
+	
 </mapper>
+

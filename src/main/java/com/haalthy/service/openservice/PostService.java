@@ -49,4 +49,9 @@ public class PostService {
 	public List<Post> getPosts(GetFeedsRequest request){
 		return postMapper.getPosts(request);
 	}
+	
+	public 	List<Post> getPostsByUsername(String username){
+		return postMapper.getPostsByUsername(username);
+	}
+
 }

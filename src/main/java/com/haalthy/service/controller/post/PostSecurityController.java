@@ -160,4 +160,10 @@ public class PostSecurityController {
 //    	}
  	    return posts;
     }
+    
+    @RequestMapping(value = "/posts/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public List<Post> getPostsByUsername(@PathVariable String username){
+    	return postService.getPostsByUsername(username);
+    }
 }
