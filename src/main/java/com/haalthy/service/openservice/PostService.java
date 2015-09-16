@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.haalthy.service.controller.Interface.GetFeedsRequest;
 import com.haalthy.service.controller.Interface.GetPostsByTagsRequest;
+import com.haalthy.service.domain.Comment;
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostAndUser;
 import com.haalthy.service.domain.PostTag;
@@ -52,6 +53,10 @@ public class PostService {
 	
 	public 	List<Post> getPostsByUsername(String username){
 		return postMapper.getPostsByUsername(username);
+	}
+	
+	public List<Comment> getCommentsByUsername(String username){
+		return postMapper.getCommentsByUsername(username);
 	}
 
 }

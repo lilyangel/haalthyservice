@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.haalthy.service.domain.Follow;
+import com.haalthy.service.domain.User;
 import com.haalthy.service.persistence.FollowMapper;
 
 public class FollowService {
@@ -25,5 +26,13 @@ public class FollowService {
 	
 	public List<Follow> getFollowingsByUsernameAndFollowingname(Follow follow){
 		return followMapper.getFollowingsByUsernameAndFollowingname(follow);		
+	}
+	
+	public List<User> getFollowerUsersByUsername(String username){
+		return followMapper.getFollowerUsersByUsername(username);
+	}
+	
+	public List<User> getFollowingUsersByUsername(String username){
+		return followMapper.getFollowingUsersByUsername(username);
 	}
 }

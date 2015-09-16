@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.haalthy.service.controller.Interface.AddPostRequest;
 import com.haalthy.service.controller.Interface.AddUpdatePostResponse;
 import com.haalthy.service.controller.Interface.GetFeedsRequest;
+import com.haalthy.service.domain.Comment;
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostAndUser;
 import com.haalthy.service.domain.PostTag;
@@ -165,5 +166,11 @@ public class PostSecurityController {
     @ResponseBody
     public List<Post> getPostsByUsername(@PathVariable String username){
     	return postService.getPostsByUsername(username);
+    }
+    
+    @RequestMapping(value = "/comments/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public List<Comment> getCommentsByUsername(@PathVariable String username){
+    	return postService.getCommentsByUsername(username);
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.haalthy.service.controller.Interface.GetFeedsRequest;
 import com.haalthy.service.controller.Interface.GetPostsByTagsRequest;
+import com.haalthy.service.domain.Comment;
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostAndUser;
 import com.haalthy.service.domain.PostTag;
@@ -27,4 +28,6 @@ public interface PostMapper {
 	List<Post> getPosts(GetFeedsRequest request);
 	
 	List<Post> getPostsByUsername(String username);
+	
+	List<Comment> getCommentsByUsername(String username);
 }

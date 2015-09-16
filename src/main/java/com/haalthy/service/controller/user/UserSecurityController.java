@@ -48,7 +48,6 @@ public class UserSecurityController {
 	@Autowired
 	private transient PatientService patientService;
 	
-	
 	@RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
 	public User getUser(@PathVariable String username) throws IOException {
@@ -119,6 +118,26 @@ public class UserSecurityController {
 		follows = followService.getFollowingsByUsername(currentSessionUsername);
 		return follows;
 	}
+	
+	@RequestMapping(value="/followingusers", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@ResponseBody
+	public List<User> getFollowingusersByUsername(){
+		List<User> users = new ArrayList<User>();
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+		return followService.getFollowingUsersByUsername(currentSessionUsername);
+	}
+	
+	
+	@RequestMapping(value="/followerusers", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@ResponseBody
+	public List<User> getFollowersByUsername(){
+		List<User> users = new ArrayList<User>();
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+		return followService.getFollowerUsersByUsername(currentSessionUsername);
+	}
+	
 	
     @RequestMapping(value = "/follow/add/{followingusername}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
@@ -214,5 +233,23 @@ public class UserSecurityController {
     	Authentication a = SecurityContextHolder.getContext().getAuthentication();
     	getSuggestUsersByProfileRequest.setUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
     	return userService.selectSuggestUsersByProfile(getSuggestUsersByProfileRequest);
+    }
+    
+    @RequestMapping(value = "/resetpassword",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
+    @ResponseBody
+    public int resetPassword(@RequestBody String password){
+ 	   User user = new User();
+ 	   Authentication a = SecurityContextHolder.getContext().getAuthentication();
+ 	   String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+ 	   user.setUsername(currentSessionUsername);
+ 	   if(password!=null && password!=""){
+ 		   System.out.println(password);
+ 		   System.out.println(currentSessionUsername);
+ 		   BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+ 		   String hashedPassword = passwordEncoder.encode(password);
+ 		   System.out.println(hashedPassword);
+ 		   user.setPassword(hashedPassword);
+		}
+		return userService.resetPassword(user);
     }
 }

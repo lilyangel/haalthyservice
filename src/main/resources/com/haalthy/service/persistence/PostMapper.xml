@@ -167,5 +167,17 @@
 		WHERE insertUserName = #{username} AND type = 0
 	</select>
 	
+	<select id = "getCommentsByUsername" resultType = "COMMENT">
+		SELECT 	
+			CommentID,
+			PostID,
+			InsertUsername,
+			Body,
+			CountBookmarks,
+			DateInserted
+		FROM COMMENT
+		WHERE InsertUsername = #{username} AND IsActive = 1
+	</select>
+	
 </mapper>
 

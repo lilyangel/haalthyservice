@@ -63,5 +63,7 @@ public class UserService {
 	public  List<User> selectSuggestUsersByProfile(GetSuggestUsersByProfileRequest getSuggestUsersByProfileRequest){
 		return userMapper.selectSuggestUsersByProfile(getSuggestUsersByProfileRequest);
 	}
-
+	public int resetPassword(User user){
+		return userMapper.resetPassword(user);
+	}
 }

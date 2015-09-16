@@ -29,7 +29,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         }
     	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     	if(passwordEncoder.matches(password, user.getPassword()) == false){
-
+    		System.out.println("incorrect password");
     		return null;
     	}
     	else{

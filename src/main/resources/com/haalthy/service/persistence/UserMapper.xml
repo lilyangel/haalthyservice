@@ -161,5 +161,10 @@
     FROM SuggestUserByProfile
     WHERE (SuggestedUsername = #{username}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>
-
+	
+	<update id="resetPassword" parameterType="User">
+    UPDATE User SET
+	  PASSWORD = #{password}
+    WHERE username = #{username}
+  </update>
 </mapper>

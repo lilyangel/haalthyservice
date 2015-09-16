@@ -33,4 +33,6 @@ public interface UserMapper {
 	  List<User> searchUsers(String[] keyword);
 	  
 	  List<User> selectSuggestUsersByProfile(GetSuggestUsersByProfileRequest getSuggestUsersByProfileRequest);
+	  
+	  int resetPassword(User user);
 }

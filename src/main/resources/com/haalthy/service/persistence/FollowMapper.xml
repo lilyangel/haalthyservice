@@ -12,6 +12,46 @@
 		FROM Follow WHERE Username = #{username} AND IsActive = 1;
 	</select>
 	
+	<select id="getFollowerUsersByUsername" parameterType="string" resultType="User">
+		SELECT
+			UserID,
+			Email,
+			CreateDate,
+			UpdateDate,
+			Displayname,
+			User.Username,
+			Image,
+			Gender,
+			IsSmoking,
+			Pathological,
+			Stage,
+			FollowCount,
+			CancerType,
+			metastasis,
+			Age
+		FROM Follow, User WHERE FollowingUser = #{username} AND IsActive = 1 AND Follow.Username = User.Username;
+	</select>
+	
+	<select id="getFollowingUsersByUsername" parameterType="string" resultType="User">
+		SELECT
+			UserID,
+			Email,
+			CreateDate,
+			UpdateDate,
+			Displayname,
+			User.Username,
+			Image,
+			Gender,
+			IsSmoking,
+			Pathological,
+			Stage,
+			FollowCount,
+			CancerType,
+			metastasis,
+			Age
+		FROM Follow, User WHERE Follow.Username = #{username} AND IsActive = 1 AND User.username = Follow.followingUser;
+	</select>
+	
 	<select id="getFollowingsByUsernameAndFollowingname" parameterType="Follow" resultType="Follow">
 		SELECT
 			FollowID,
