@@ -39,7 +39,7 @@ public class PostController {
     @RequestMapping(value = "/{postid}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public Post getPostById(@PathVariable int postid) throws IOException{
-    	ImageService imageService = null;
+    	ImageService imageService = new ImageService();
     	Post post = postService.getPostById(postid);
     	if(post.getImage()!=null){
     		post.setImage(imageService.scale(post.getImage(), 32, 32));
