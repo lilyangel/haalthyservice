@@ -3,6 +3,7 @@ package com.haalthy.service.domain;
 import java.io.Serializable;
 import com.haalthy.service.configuration.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class Post implements Serializable{
 	private static final long serialVersionUID = 8751282105532159742L;
@@ -28,7 +29,21 @@ public class Post implements Serializable{
 	private String cancerType;
 	private String metastasis;
 	private int stage;
+	private int hasImage;
+	private List<byte[]> postImageList;
 	
+	public List<byte[]> getPostImageList() {
+		return postImageList;
+	}
+	public void setPostImageList(List<byte[]> postImageList) {
+		this.postImageList = postImageList;
+	}
+	public int getHasImage() {
+		return hasImage;
+	}
+	public void setHasImage(int hasImage) {
+		this.hasImage = hasImage;
+	}
 	public String getGender() {
 		return gender;
 	}

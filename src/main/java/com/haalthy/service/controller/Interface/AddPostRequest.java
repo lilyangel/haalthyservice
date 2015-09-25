@@ -11,8 +11,21 @@ public class AddPostRequest {
 	private int isBroadcast;
 	private String type;
 	private List<Tag> tags;
+	private List<String> mentionUsers;
+	private List<byte[]> images;
 	
-	
+	public List<String> getMentionUsers() {
+		return mentionUsers;
+	}
+	public void setMentionUsers(List<String> mentionUsers) {
+		this.mentionUsers = mentionUsers;
+	}
+	public List<byte[]> getImages() {
+		return images;
+	}
+	public void setImages(List<byte[]> images) {
+		this.images = images;
+	}
 	public String getType() {
 		return type;
 	}

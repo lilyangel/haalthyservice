@@ -8,6 +8,7 @@
   <select id="getTreatmentFormat" resultType="TreatmentFormat">
      	SELECT 
    			TreatmentFormatID,
+   			Type,
    			name
 		FROM TREATMENTFORMAT
    </select>

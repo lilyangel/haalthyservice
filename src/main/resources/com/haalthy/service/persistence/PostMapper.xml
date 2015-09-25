@@ -26,8 +26,15 @@
 	  
 	<insert id="addPost" useGeneratedKeys="true"
     	keyProperty="postID" keyColumn = "PostID">
-  		INSERT into Post (InsertUserName, body, Tags, CountComments, CountBookmarks, CountViews, Closed, IsBroadcast, DateInserted,DateUpdated, isActive, Type)
- 			 VALUES (#{insertUsername},#{body},#{tags}, #{countComments}, #{countBookmarks}, #{countViews}, #{closed},#{isBroadcast}, #{dateInserted}, #{dateUpdated}, #{isActive}, #{type})
+  		INSERT into Post (InsertUserName, body, Tags, CountComments, CountBookmarks, CountViews, Closed, IsBroadcast, DateInserted,DateUpdated, isActive, Type, HasImage)
+ 			 VALUES (#{insertUsername},#{body},#{tags}, #{countComments}, #{countBookmarks}, #{countViews}, #{closed},#{isBroadcast}, #{dateInserted}, #{dateUpdated}, #{isActive}, #{type}, #{hasImage})
+	</insert>
+	
+	<insert id="addMention" parameterType="java.util.List">
+		INSERT INTO UserBeMentionedByPost (Username, PostID, IsUnRead) VALUES
+			<foreach collection="list" item="Mention" index="index" separator=",">
+			(#{Mention.username}, #{Mention.postID}, #{Mention.isUnRead})
+			</foreach>
 	</insert>
 	
 	<insert id="addPostTag" parameterType="java.util.List">

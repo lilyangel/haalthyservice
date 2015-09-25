@@ -1,11 +1,19 @@
 package com.haalthy.service.controller.post;
 import com.haalthy.service.configuration.*;
 import java.util.ArrayList;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -22,6 +30,7 @@ import com.haalthy.service.controller.Interface.AddPostRequest;
 import com.haalthy.service.controller.Interface.AddUpdatePostResponse;
 import com.haalthy.service.controller.Interface.GetFeedsRequest;
 import com.haalthy.service.domain.Comment;
+import com.haalthy.service.domain.Mention;
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostAndUser;
 import com.haalthy.service.domain.PostTag;
@@ -56,7 +65,7 @@ public class PostSecurityController {
 //		}
     @RequestMapping(value = "/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public AddUpdatePostResponse addPost(@RequestBody AddPostRequest addPostRequest){
+    public AddUpdatePostResponse addPost(@RequestBody AddPostRequest addPostRequest) throws IOException{
     	AddUpdatePostResponse addPostResponse = new AddUpdatePostResponse();
     	Post post = new Post();
     	post.setBody(addPostRequest.getBody());
@@ -65,7 +74,7 @@ public class PostSecurityController {
 //    	post.setType(postType.getValue());
     	post.setType(0);
     	post.setCountBookmarks(0);
-    	post.setCountComments(0);;
+    	post.setCountComments(0);
     	post.setCountViews(0);
     	post.setIsActive(1);
     	
@@ -80,6 +89,12 @@ public class PostSecurityController {
  	   	
     	post.setInsertUsername(currentSessionUsername);
     	post.setIsBroadcast(addPostRequest.getIsBroadcast());
+    	
+    	if (addPostRequest.getImages() != null){
+    		post.setHasImage(1);
+    	}else{
+    		post.setHasImage(0);
+    	}
     	
     	String tagString = null;
 		if (addPostRequest.getTags() != null) {
@@ -106,11 +121,49 @@ public class PostSecurityController {
 			}
 			postService.addPostTag(postTagList);
 		}
+	    if (addPostRequest.getMentionUsers() != null) {
+	    	List<Mention> mentionList = new ArrayList<Mention>();
+	    	Iterator<String> usernameItr = addPostRequest.getMentionUsers().iterator();
+	    	while (usernameItr.hasNext()){
+	    		Mention mention = new Mention();
+	    		mention.setIsUnRead(1);
+	    		mention.setPostID(post.getPostID());
+	    		String mUsername = usernameItr.next();
+	    		System.out.println(mUsername);
+	    		mention.setUsername(mUsername);
+	    		
+	    		mentionList.add(mention);
+	    	}
+	    	postService.addMention(mentionList);
+	    }
+    	if (addPostRequest.getImages() != null){
+    		Iterator<byte[]> imageItr = addPostRequest.getImages().iterator();
+    		int index = 1;
+    		while(imageItr.hasNext()){
+    			byte[] imageInByte = imageItr.next();
+    			
+    			// convert byte array back to BufferedImage
+    			InputStream in = new ByteArrayInputStream(imageInByte);
+    			BufferedImage bImageFromConvert = ImageIO.read(in);
+    			
+//    		    ImageInputStream imgStream = ImageIO.createImageInputStream( in );
+//    		    Iterator<ImageReader> iter = ImageIO.getImageReaders( imgStream );
+//
+//    		    ImageReader imgReader = iter.next();
+//
+//    		    System.out.println(imgReader.getFormatName());
+//    			System.out.println(imageInByte);
+//    			System.out.println(bImageFromConvert);
+    			String path = "/Users/lily/haalthyServer/post/" + Integer.toString(post.getPostID()) + "."+ index +".jpg";
+    			ImageIO.write(bImageFromConvert, "jpg", new File(path));
+    			index++;
+    			in.close();
+    		}
+    	}
         if(insertPostRow != 0 )
         	addPostResponse.setStatus("insert post successful");
         return addPostResponse;
     }
-    
     //http://localhost:8080/haalthyservice/security/post/inactive/42?access_token=
     
     @RequestMapping(value = "/inactive/{postid}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})

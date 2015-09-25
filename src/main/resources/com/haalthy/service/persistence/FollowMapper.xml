@@ -29,7 +29,8 @@
 			CancerType,
 			metastasis,
 			Age
-		FROM Follow, User WHERE FollowingUser = #{username} AND IsActive = 1 AND Follow.Username = User.Username;
+		FROM Follow, User WHERE FollowingUser = #{username} AND IsActive = 1 AND Follow.Username = User.Username 
+		ORDER BY Username ASC;
 	</select>
 	
 	<select id="getFollowingUsersByUsername" parameterType="string" resultType="User">
@@ -49,7 +50,9 @@
 			CancerType,
 			metastasis,
 			Age
-		FROM Follow, User WHERE Follow.Username = #{username} AND IsActive = 1 AND User.username = Follow.followingUser;
+		FROM Follow, User WHERE Follow.Username = #{username} AND IsActive = 1 AND User.username = Follow.followingUser 
+		ORDER BY Username ASC;
+		
 	</select>
 	
 	<select id="getFollowingsByUsernameAndFollowingname" parameterType="Follow" resultType="Follow">

@@ -8,7 +8,10 @@
 	    SELECT
 	      NAME,
 	      DESCRIPTION,
-	      TAGID
+	      TAGID,
+	      TypeName,
+	      TypeRank,
+	      RankInType
 	    FROM TAG
 	  </select>
 </mapper>
