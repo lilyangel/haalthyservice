@@ -69,6 +69,7 @@ public class PostController {
     			currentPost.setImage(imageService.scale(currentPost.getImage(), 32, 32));
     		}
     	}
+    	System.out.println(request.getBegin());
     	return postService.getPostsByTags(request);
     }
 
