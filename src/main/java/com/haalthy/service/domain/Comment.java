@@ -1,6 +1,7 @@
 package com.haalthy.service.domain;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 public class Comment  implements Serializable{
 	private static final long serialVersionUID = 8751282105532159742L;
@@ -9,8 +10,16 @@ public class Comment  implements Serializable{
 	private String insertUsername;
 	private String body;
 	private int countBookmarks;
-	private String dateInserted;
+	private Timestamp dateInserted;
 	private int isActive;
+	private byte[] image;
+	
+	public byte[] getImage() {
+		return image;
+	}
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
 	public int getCommentID() {
 		return commentID;
 	}
@@ -35,10 +44,11 @@ public class Comment  implements Serializable{
 	public void setCountBookmarks(int countBookmarks) {
 		this.countBookmarks = countBookmarks;
 	}
-	public String getDateInserted() {
+
+	public Timestamp getDateInserted() {
 		return dateInserted;
 	}
-	public void setDateInserted(String dateInserted) {
+	public void setDateInserted(Timestamp dateInserted) {
 		this.dateInserted = dateInserted;
 	}
 	public int getIsActive() {

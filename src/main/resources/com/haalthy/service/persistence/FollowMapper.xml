@@ -69,10 +69,41 @@
   		INSERT into Follow (Username,FollowingUser,DateInserted, DateUpdated, IsActive)
  			 values (#{username},#{followingUser},#{dateInserted}, #{dateUpdated}, #{isActive})
 	</insert>
-	<update id = "inactiveFollowship" parameterType = "Follow">
+	
+	<update id="inactiveFollowship" parameterType="Follow">
 		UPDATE Follow SET
 			isActive = "0",
 			DateUpdated = #{dateUpdated}
 		WHERE Username = #{username} AND FollowingUser = #{followingUser}
 	</update>
+	
+	<update id="updateNewFollowerCount" parameterType="String">
+		UPDATE NewFollowerCount SET
+			Count = Count + 1
+		WHERE Username = #{username}
+	</update>
+	
+	<insert id="insertNewFollowerCount" parameterType="String">
+		INSERT INTO  NewFollowerCount (Username, Count)
+		VALUES (#{username}, 1)
+	</insert>
+	
+	<select id="selectNewFollowerCount" parameterType="String" resultType="NewFollowerCount">
+		SELECT Count,
+			   Username
+		 FROM NewFollowerCount
+		WHERE Username = #{username}
+	</select>
+	
+	<update id="refreshNewFollowerCount" parameterType="String">
+		UPDATE NewFollowerCount SET
+			Count = 0
+		WHERE Username = #{username}
+	</update>
+	
+	<select id="isFollowingUser" parameterType="Follow" resultType="int">
+		SELECT count(*) 
+		FROM FOLLOW
+		WHERE Username = #{username} AND FollowingUser = #{followingUser}
+	</select>
 </mapper>

@@ -6,7 +6,14 @@ public class GetFeedsRequest {
 	private Timestamp begin;
 	private Timestamp end;
 	private String username;
+	private int count;
 	
+	public int getCount() {
+		return count;
+	}
+	public void setCount(int count) {
+		this.count = count;
+	}
 	public String getUsername() {
 		return username;
 	}

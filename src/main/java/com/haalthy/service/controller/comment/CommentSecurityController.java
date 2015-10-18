@@ -1,5 +1,6 @@
 package com.haalthy.service.controller.comment;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,10 @@ public class CommentSecurityController {
     	comment.setInsertUsername(currentSessionUsername);
     	
     	Date now = new Date();
-    	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    	String currentDt = sdf.format(now);
-    	comment.setDateInserted(currentDt);
+//    	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//    	String currentDt = sdf.format(now);
+    	Timestamp ts_now = new Timestamp(now.getTime());
+    	comment.setDateInserted(ts_now);
     	comment.setIsActive(1);
     	comment.setPostID(addCommentRequest.getPostID());
     	postService.increasePostCountComment(addCommentRequest.getPostID());

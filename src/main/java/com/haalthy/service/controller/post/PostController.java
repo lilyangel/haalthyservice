@@ -60,7 +60,15 @@ public class PostController {
     @RequestMapping(value = "/tags", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public List<Post> getPostByTags(@RequestBody GetPostsByTagsRequest request) throws IOException{
-    	List<Post> posts = postService.getPostsByTags(request);
+    	List<Post> posts = null;
+ 	    if (request.getCount() == 0){
+ 	    	request.setCount(50);
+ 	    }
+    	if((request.getTags() == null) || (request.getTags().size() == 0)){
+    		posts = postService.getAllBroadcast(request);
+    	}else{
+    		posts = postService.getPostsByTags(request);
+    	}
     	Iterator<Post> postItr = posts.iterator();
     	ImageService imageService = new ImageService();
     	while(postItr.hasNext()){
@@ -70,7 +78,23 @@ public class PostController {
     		}
     	}
     	System.out.println(request.getBegin());
-    	return postService.getPostsByTags(request);
-    }
 
+    	return posts;
+    }
+    
+    @RequestMapping(value = "/tags/count", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public int getPostsByTagsCount(@RequestBody GetPostsByTagsRequest request) throws IOException{
+    	int postCount = 0;
+    	if((request.getTags() == null) || (request.getTags().size() == 0)){
+    		postCount = postService.getAllBroadcastCount(request);
+        	System.out.println(postCount);
+
+    	}else{
+    		postCount = postService.getPostsByTagsCount(request);
+        	System.out.println(postCount);
+
+    	}
+    	return postCount;
+    }
 }

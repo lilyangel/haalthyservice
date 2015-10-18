@@ -29,4 +29,14 @@ public interface PatientMapper {
 	int insertClinicReport(ClinicReport clinicReport);
 	
 	List<ClinicReport> getClinicReportByUser(String username);
+	
+	List<Treatment> getPostedTreatmentsByUser(String username);
+
+	List<PatientStatus> getPostedPatientStatusByUser(String username);
+	
+	List<ClinicReport> getPostedClinicReportByUser(String username);
+	
+	int updateTreatmentById(Treatment treatment);
+	
+	int deleteTreatmentById(int treatmentId);
 }

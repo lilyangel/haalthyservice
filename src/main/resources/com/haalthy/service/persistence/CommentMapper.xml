@@ -12,9 +12,11 @@
 			body,
 			CountBookmarks,
 			DateInserted,
-			isActive
-	    FROM COMMENT
-	    WHERE POSTID = #{postID} AND IsActive = 1
+			isActive,
+			image
+	    FROM COMMENT, User
+	    WHERE POSTID = #{postID} AND IsActive = 1 AND (Comment.InsertUsername = User.Username)
+	    ORDER BY DateInserted DESC    
 	  </select>
 	  
 	<insert id="addComment" useGeneratedKeys="true"

@@ -1,5 +1,4 @@
 package com.haalthy.service.controller.post;
-import com.haalthy.service.configuration.*;
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -36,6 +35,8 @@ import com.haalthy.service.domain.PostAndUser;
 import com.haalthy.service.domain.PostTag;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.openservice.PostService;
+
+import com.haalthy.service.configuration.*;
 
 @Controller
 @RequestMapping("/security/post")
@@ -206,6 +207,9 @@ public class PostSecurityController {
     public List<Post> getPosts(@RequestBody GetFeedsRequest getFeedsRequest){
  	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	    getFeedsRequest.setUsername(currentSessionUsername);
+ 	    if (getFeedsRequest.getCount() == 0){
+ 	    	getFeedsRequest.setCount(50);
+ 	    }
  	    List<Post> posts = postService.getPosts(getFeedsRequest);
 //    	Iterator<Post> postItr = posts.iterator();
 //    	while(postItr.hasNext()){
@@ -213,6 +217,14 @@ public class PostSecurityController {
 //    		post.setPatientProfile(post.getGender()+"**"+post.getAge()+"**"+post.getPathological()+"**"+post.getStage()+"**"+post.getMetastasis());
 //    	}
  	    return posts;
+    }
+    
+    @RequestMapping(value = "/postcount", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+	public int getUpdatedPostCount(@RequestBody GetFeedsRequest getFeedsRequest){
+ 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
+ 	    getFeedsRequest.setUsername(currentSessionUsername);
+    	return postService.getUpdatedPostCount(getFeedsRequest);
     }
     
     @RequestMapping(value = "/posts/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
@@ -226,4 +238,19 @@ public class PostSecurityController {
     public List<Comment> getCommentsByUsername(@PathVariable String username){
     	return postService.getCommentsByUsername(username);
     }
+    
+    @RequestMapping(value = "/mentionedpost/unreadcount", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+	public int getUnreadMentionedPostCountByUsername(){
+ 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
+		return postService.getUnreadMentionedPostCountByUsername(currentSessionUsername);
+	}
+	
+    @RequestMapping(value = "/mentionedpost/list", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+	public List<Post> getMentionedPostsByUsername(){
+ 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
+		return postService.getMentionedPostsByUsername(currentSessionUsername);
+	}
+    
 }

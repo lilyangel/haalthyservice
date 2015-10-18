@@ -16,13 +16,25 @@ public class User implements Serializable {
 	private String gender;
 	private int isSmoking;
 	private String pathological;
-	private String stage;
+	private int stage;
 	private int age;
 	private int followCount;
 	private String cancerType;
 	private String metastasis;
+	private String userType;
 	
-	
+	public int getStage() {
+		return stage;
+	}
+	public void setStage(int stage) {
+		this.stage = stage;
+	}
+	public String getUserType() {
+		return userType;
+	}
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
 	public String getEmail() {
 		return email;
 	}
@@ -100,12 +112,6 @@ public class User implements Serializable {
 	}
 	public void setPathological(String pathological) {
 		this.pathological = pathological;
-	}
-	public String getStage() {
-		return stage;
-	}
-	public void setStage(String stage) {
-		this.stage = stage;
 	}
 	public byte[] getImage() {
 		return image;

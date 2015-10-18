@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.haalthy.service.controller.Interface.TagList;
 import com.haalthy.service.domain.ClinicReport;
 import com.haalthy.service.domain.Follow;
+import com.haalthy.service.domain.NewFollowerCount;
 import com.haalthy.service.domain.PatientStatus;
+import com.haalthy.service.domain.SuggestedUserPair;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.domain.Treatment;
 import com.haalthy.service.domain.User;
@@ -30,11 +32,13 @@ import com.haalthy.service.domain.UserTag;
 import com.haalthy.service.openservice.FollowService;
 import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.UserService;
+
+import com.haalthy.service.configuration.ImageService;
+
 import com.haalthy.service.controller.Interface.AddUpdateUserRequest;
 import com.haalthy.service.controller.Interface.AddUpdateUserResponse;
 import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
 import com.haalthy.service.controller.Interface.GetUserDetailResponse;
-import com.haalthy.service.configuration.ImageService;
 @Controller
 @RequestMapping("/security/user")
 public class UserSecurityController {
@@ -67,9 +71,22 @@ public class UserSecurityController {
 		if(user!=null && user.getImage()!=null){
 			user.setImage(imageService.scale(user.getImage(), 88, 88));			
 		}
-		List<Treatment> treatments = patientService.getTreatmentsByUser(username);
-		List<PatientStatus> patientStatus = patientService.getPatientStatusByUser(username);
-		List<ClinicReport> clinicReport = patientService.getClinicReportByUser(username);
+		
+ 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+ 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+ 	   	
+		List<Treatment> treatments = null;
+		List<PatientStatus> patientStatus = null;
+		List<ClinicReport> clinicReport = null;
+		if (currentSessionUsername.equals(username)) {
+			treatments = patientService.getTreatmentsByUser(username);
+			patientStatus = patientService.getPatientStatusByUser(username);
+			clinicReport = patientService.getClinicReportByUser(username);
+		} else {
+			treatments = patientService.getPostedTreatmentsByUser(username);
+			patientStatus = patientService.getPostedPatientStatusByUser(username);
+			clinicReport = patientService.getPostedClinicReportByUser(username);
+		}
 		GetUserDetailResponse getUserDetailResponse = new GetUserDetailResponse();
 		getUserDetailResponse.setUserProfile(user);
 		getUserDetailResponse.setTreatments(treatments);
@@ -78,36 +95,145 @@ public class UserSecurityController {
 		return getUserDetailResponse;
 	}
    
-   @RequestMapping(value = "/update",method = RequestMethod.PUT, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
-   @ResponseBody
-   public AddUpdateUserResponse updateUser(@RequestBody AddUpdateUserRequest updateUserRequest) {
-	   String username = updateUserRequest.getUsername();
-	   AddUpdateUserResponse updateUserResponse = new AddUpdateUserResponse();
-	   Authentication a = SecurityContextHolder.getContext().getAuthentication();
-	   String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-	   if(currentSessionUsername.equals(username)==false)
-		   updateUserResponse.setStatus("can't eidt this account");
-	   User user = userService.getUserByUsername(username);
+//   @RequestMapping(value = "/update",method = RequestMethod.PUT, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
+//   @ResponseBody
+//   public AddUpdateUserResponse updateUser(@RequestBody AddUpdateUserRequest updateUserRequest) {
+//	   String username = updateUserRequest.getUsername();
+//	   AddUpdateUserResponse updateUserResponse = new AddUpdateUserResponse();
+//	   Authentication a = SecurityContextHolder.getContext().getAuthentication();
+//	   String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+//	   if(currentSessionUsername.equals(username)==false)
+//		   updateUserResponse.setStatus("can't eidt this account");
+//	   User user = userService.getUserByUsername(username);
+//	   /*
+//	    *       	
+//	    *       EMAIL = #{email},
+//      			DISPLAYNAME = #{displayname},
+//		UpdateDate = #{updateDate}
+//		Image = #{image}
+//		Gender = #{gender}
+//		IsSmoking = #{isSmoking}
+//		Pathological = #{pathological}
+//		Stage = #{stage}
+//		CancerType = #{cancerType}
+//		metastasis = #{metastasis}
+//		Age = #{age}
+//	    * */
+//		if (user == null)
+//			updateUserResponse.setStatus("couldn't find this user in Database");;
+//		if(updateUserRequest.getEmail()!=null && updateUserRequest.getEmail()!="")
+//			user.setEmail(updateUserRequest.getEmail());
+//		if(updateUserRequest.getDisplayname()!=null && updateUserRequest.getDisplayname()!=""){
+//			user.setDisplayname(updateUserRequest.getDisplayname());
+//		}
+//		if(updateUserRequest.getImage()!=null){
+//			user.setImage(updateUserRequest.getImage());
+//		}
+//		if (userService.updateUser(user) == 1)
+//			updateUserResponse.setStatus("update successful!");
+//		else
+//			updateUserResponse.setStatus("update db error");
+//			
+//       return updateUserResponse;
+//   }
+
+	@RequestMapping(value = "/update", method = RequestMethod.POST, headers = "Accept=application/json", produces = {
+			"application/json" }, consumes = { "application/json" })
+	@ResponseBody
+	public AddUpdateUserResponse updateUser(@RequestBody User updateUser) {
+		String username = updateUser.getUsername();
+		AddUpdateUserResponse updateUserResponse = new AddUpdateUserResponse();
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest()
+				.getAuthorizationParameters().get("username");
+		if (currentSessionUsername.equals(username) == false)
+			updateUserResponse.setStatus("can't eidt this account");
+		User user = userService.getUserByUsername(username);
+		/*
+		 * 
+		 * EMAIL = #{email}, 
+		 * DISPLAYNAME = #{displayname}, 
+		 * UpdateDate = #{updateDate} 
+		 * Image = #{image} 
+		 * Gender = #{gender} 
+		 * IsSmoking = #{isSmoking} 
+		 * Pathological = #{pathological} 
+		 * Stage = #{stage}
+		 * CancerType = #{cancerType} 
+		 * metastasis = #{metastasis} 
+		 * Age = #{age}
+		 */
 		if (user == null)
-			updateUserResponse.setStatus("couldn't find this user in Database");;
-		if(updateUserRequest.getEmail()!=null && updateUserRequest.getEmail()!="")
-			user.setEmail(updateUserRequest.getEmail());
-		if(updateUserRequest.getPassword()!=null && updateUserRequest.getPassword()!=""){
-	    	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-	    	String hashedPassword = passwordEncoder.encode(updateUserRequest.getPassword());
-	    	user.setPassword(hashedPassword);
+			updateUserResponse.setStatus("couldn't find this user in Database");
+		
+		if (updateUser.getEmail() != null && updateUser.getEmail() != "")
+			user.setEmail(updateUser.getEmail());
+		if (updateUser.getDisplayname() != null && updateUser.getDisplayname() != "") {
+			user.setDisplayname(updateUser.getDisplayname());
 		}
-		if(updateUserRequest.getDisplayname()!=null && updateUserRequest.getDisplayname()!=""){
-			user.setDisplayname(updateUserRequest.getDisplayname());
+		if (updateUser.getImage() != null) {
+			user.setImage(updateUser.getImage());
 		}
+		if (updateUser.getGender() != null && updateUser.getGender() != ""){
+			user.setGender(updateUser.getGender());
+		}
+//		if (updateUser.getIsSmoking()){
+//			user.setIsSmoking(updateUser.getIsSmoking());
+//		}
+		
+		if(updateUser.getPathological() != null && updateUser.getPathological() != ""){
+			user.setPathological(updateUser.getPathological());
+		}
+		if(updateUser.getStage() != 0){
+			user.setStage(updateUser.getStage());
+		}
+		if(updateUser.getCancerType() != null && updateUser.getCancerType() != ""){
+			user.setCancerType(updateUser.getCancerType());
+		}
+		if(updateUser.getMetastasis() != null && updateUser.getMetastasis() != ""){
+			user.setMetastasis(updateUser.getMetastasis());
+		}
+//		if(updateUser.getAge() != null){
+//			
+//		}
+		System.out.println(updateUser.getIsSmoking());
+		System.out.println(user.getImage());
 		if (userService.updateUser(user) == 1)
 			updateUserResponse.setStatus("update successful!");
 		else
 			updateUserResponse.setStatus("update db error");
-			
-       return updateUserResponse;
-   }
-   
+
+		return updateUserResponse;
+	}
+	
+	@RequestMapping(value="/newfollow/count", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@ResponseBody
+	public NewFollowerCount selectNewFollowerCount(){
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+		return followService.selectNewFollowerCount(currentSessionUsername);
+	}
+	
+	@RequestMapping(value="/newfollow/increase/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@ResponseBody
+	public int increaseNewFollowerCount(@PathVariable String username){
+//		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+//		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+		int returnValue = 0;
+		returnValue = followService.updateNewFollowerCount(username);
+		if(returnValue == 0)
+			returnValue = followService.insertNewFollowerCount(username);
+		return returnValue;
+	}
+	
+	@RequestMapping(value="/newfollow/refresh", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@ResponseBody
+	public int refreshNewFollowerCount(){
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+		return followService.refreshNewFollowerCount(currentSessionUsername);
+	}
+	
 	@RequestMapping(value="/followings", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
 	public List<Follow> getFollowingsByUsername(){
@@ -186,10 +312,25 @@ public class UserSecurityController {
  	   userService.deleteUserFollowCount(followingusername);
  	    return followService.inactiveFollowship(follow);
     }
+    
+    @RequestMapping(value = "/follow/isfollowing/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public int isFollowingUser(@PathVariable String username){
+ 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+ 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+ 	   	Follow follow = new Follow();
+ 	   	follow.setFollowingUser(username);
+ 	   	follow.setUsername(currentSessionUsername);
+ 	   	return followService.isFollowingUser(follow);
+    }
+    
     //input: [1,2]
     @RequestMapping(value = "/tag/update", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public int updateUserTags(@RequestBody TagList tags){
+    	if ((tags == null) || (tags.getTags() == null) || (tags.getTags().size() == 0)){
+    		return 0;
+    	}
     	List<UserTag> userTagList = new ArrayList<UserTag>();
  	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
  	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
@@ -251,5 +392,17 @@ public class UserSecurityController {
  		   user.setPassword(hashedPassword);
 		}
 		return userService.resetPassword(user);
+    }
+    
+    @RequestMapping(value = "/deletesuggesteduser/{username}",method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
+    @ResponseBody
+    public int getSuggestUsersByProfile(@PathVariable String username) {
+    	SuggestedUserPair suggestedUserPair = new SuggestedUserPair();
+    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+    	suggestedUserPair.setSuggestedUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
+    	suggestedUserPair.setUsername(username);
+    	System.out.println(suggestedUserPair.getSuggestedUsername());
+    	System.out.println(suggestedUserPair.getUsername());
+    	return userService.deleteFromSuggestUserByProfile(suggestedUserPair);
     }
 }

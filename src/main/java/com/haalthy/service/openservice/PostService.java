@@ -63,4 +63,27 @@ public class PostService {
 	public int addMention(List<Mention> mention){
 		return postMapper.addMention(mention);
 	}
+	
+	public List<Post> getAllBroadcast(GetPostsByTagsRequest request){
+		return postMapper.getAllBroadcast(request);
+	}
+	
+	public int getUpdatedPostCount(GetFeedsRequest request){
+		return postMapper.getUpdatedPostCount(request);
+	}
+	
+	public int getPostsByTagsCount(GetPostsByTagsRequest request){
+		return postMapper.getPostsByTagsCount(request);
+	}
+	
+	public 	int getAllBroadcastCount(GetPostsByTagsRequest request){
+		return postMapper.getAllBroadcastCount(request);
+	}
+	public int getUnreadMentionedPostCountByUsername(String username){
+		return postMapper.getUnreadMentionedPostCountByUsername(username);
+	}
+	
+	public List<Post> getMentionedPostsByUsername(String username){
+		return postMapper.getMentionedPostsByUsername(username);
+	}
 }

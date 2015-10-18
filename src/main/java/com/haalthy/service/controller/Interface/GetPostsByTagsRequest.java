@@ -9,6 +9,14 @@ public class GetPostsByTagsRequest {
 	private List<Tag> tags;
 	private Timestamp begin;
 	private Timestamp end;
+	private int count;
+	
+	public int getCount() {
+		return count;
+	}
+	public void setCount(int count) {
+		this.count = count;
+	}
 	public List<Tag> getTags() {
 		return tags;
 	}
@@ -27,5 +35,4 @@ public class GetPostsByTagsRequest {
 	public void setEnd(Timestamp end) {
 		this.end = end;
 	}
-	
 }

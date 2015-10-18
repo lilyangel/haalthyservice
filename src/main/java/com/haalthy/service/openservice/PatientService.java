@@ -57,4 +57,24 @@ public class PatientService {
 	public List<ClinicReport> getClinicReportByUser(String username){
 		return patientMapper.getClinicReportByUser(username);
 	}
+	
+	public List<Treatment> getPostedTreatmentsByUser(String username){
+		return patientMapper.getPostedTreatmentsByUser(username);
+	}
+
+	public List<PatientStatus> getPostedPatientStatusByUser(String username){
+		return patientMapper.getPostedPatientStatusByUser(username);
+	}
+	
+	public List<ClinicReport> getPostedClinicReportByUser(String username){
+		return patientMapper.getPostedClinicReportByUser(username);
+	}
+	
+	public int updateTreatmentById(Treatment treatment){
+		return patientMapper.updateTreatmentById(treatment);
+	}
+
+	public int deleteTreatmentById(int treatmentId){
+		return patientMapper.deleteTreatmentById(treatmentId);
+	}
 }

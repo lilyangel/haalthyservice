@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
 import com.haalthy.service.domain.SelectUserByTagRange;
+import com.haalthy.service.domain.SuggestedUserPair;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.domain.User;
 import com.haalthy.service.domain.UserTag;
@@ -35,4 +36,6 @@ public interface UserMapper {
 	  List<User> selectSuggestUsersByProfile(GetSuggestUsersByProfileRequest getSuggestUsersByProfileRequest);
 	  
 	  int resetPassword(User user);
+	  
+	  int deleteFromSuggestUserByProfile(SuggestedUserPair suggestedUserPair);
 }

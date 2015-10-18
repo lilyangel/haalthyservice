@@ -33,4 +33,16 @@ public interface PostMapper {
 	List<Comment> getCommentsByUsername(String username);
 	
 	int addMention(List<Mention> mention);
+	
+	List<Post> getAllBroadcast(GetPostsByTagsRequest request);
+	
+	int getUpdatedPostCount(GetFeedsRequest request);
+	
+	int getPostsByTagsCount(GetPostsByTagsRequest request);
+	
+	int getAllBroadcastCount(GetPostsByTagsRequest request);
+	
+	int getUnreadMentionedPostCountByUsername(String username);
+	
+	List<Post> getMentionedPostsByUsername(String username);
 }

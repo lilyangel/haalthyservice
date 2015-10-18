@@ -52,15 +52,23 @@
   
 	<insert id="addUser" useGeneratedKeys="true"
     	keyProperty="UserID" keyColumn="UserID">
-  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age, Image)
- 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age}, #{image})
+  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age, Image, userType)
+ 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age}, #{image}, #{userType})
 	</insert>
 	
 	<update id="updateUser" parameterType="User">
     UPDATE User SET
-      EMAIL = #{email},
-      DISPLAYNAME = #{displayname},
-	  PASSWORD = #{password}
+      	EMAIL = #{email},
+      	DISPLAYNAME = #{displayname},
+		UpdateDate = #{updateDate},
+		Image = #{image},
+		Gender = #{gender},
+		IsSmoking = #{isSmoking},
+		Pathological = #{pathological},
+		Stage = #{stage},
+		CancerType = #{cancerType},
+		metastasis = #{metastasis},
+		Age = #{age}
     WHERE username = #{username}
   </update>
   
@@ -80,7 +88,8 @@
 	SELECT
 		Tag.TagID,
 		Tag.Name,
-		Tag.Description
+		Tag.Description,
+		Tag.typeName
 	FROM Tag, UserTag
 	WHERE Tag.TagID = UserTag.TagID AND UserTag.username = #{username}
 	</select>
@@ -167,4 +176,8 @@
 	  PASSWORD = #{password}
     WHERE username = #{username}
   </update>
+  
+  <delete id="deleteFromSuggestUserByProfile" parameterType = "SuggestedUserPair">
+  	DELETE FROM SuggestUserByProfile where SuggestedUsername = #{suggestedUsername} AND username = #{username}
+  </delete>
 </mapper>

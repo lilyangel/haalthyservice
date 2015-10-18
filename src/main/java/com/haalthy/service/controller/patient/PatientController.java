@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.haalthy.service.configuration.*;
 import com.haalthy.service.controller.Interface.TreatmentWithPatientStatus;
 import com.haalthy.service.domain.ClinicReportFormat;
 import com.haalthy.service.domain.PatientStatus;
@@ -19,6 +18,9 @@ import com.haalthy.service.domain.PatientStatusFormat;
 import com.haalthy.service.domain.Treatment;
 import com.haalthy.service.domain.TreatmentFormat;
 import com.haalthy.service.openservice.PatientService;
+
+import com.haalthy.service.configuration.*;
+
 import com.haalthy.service.domain.ClinicReportFormat;
 
 @Controller
