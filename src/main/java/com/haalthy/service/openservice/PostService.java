@@ -83,7 +83,11 @@ public class PostService {
 		return postMapper.getUnreadMentionedPostCountByUsername(username);
 	}
 	
-	public List<Post> getMentionedPostsByUsername(String username){
-		return postMapper.getMentionedPostsByUsername(username);
+	public List<Post> getMentionedPostsByUsername(GetFeedsRequest request){
+		return postMapper.getMentionedPostsByUsername(request);
+	}
+	
+	public int markMentionedPostAsRead(String username){
+		return postMapper.markMentionedPostAsRead(username);
 	}
 }

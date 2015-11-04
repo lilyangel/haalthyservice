@@ -19,14 +19,15 @@
 			DateInserted,
 			DateUpdated,
 			isActive,
-			image
-	    FROM POST, User
-	    WHERE POSTID = #{PostID} AND Post.InsertUserName = User.username
+			image,
+			displayname
+	    FROM post, user
+	    WHERE POSTID = #{PostID} AND post.InsertUserName = user.username
 	  </select>
 	  
 	<insert id="addPost" useGeneratedKeys="true"
     	keyProperty="postID" keyColumn = "PostID">
-  		INSERT into Post (InsertUserName, body, Tags, CountComments, CountBookmarks, CountViews, Closed, IsBroadcast, DateInserted,DateUpdated, isActive, Type, HasImage)
+  		INSERT into post (InsertUserName, body, Tags, CountComments, CountBookmarks, CountViews, Closed, IsBroadcast, DateInserted,DateUpdated, isActive, Type, HasImage)
  			 VALUES (#{insertUsername},#{body},#{tags}, #{countComments}, #{countBookmarks}, #{countViews}, #{closed},#{isBroadcast}, #{dateInserted}, #{dateUpdated}, #{isActive}, #{type}, #{hasImage})
 	</insert>
 	
@@ -39,15 +40,15 @@
 	
 	<insert id="addPostTag" parameterType="java.util.List">
 		INSERT 
-		into PostTag(PostID, TagID, CreateTime)
+		into postTag(PostID, TagID, CreateTime)
 			VALUES
 			<foreach collection="list" item="PostTag" index="index" separator=",">
-       			(#{PostTag.postID}, #{PostTag.tagId}, #{PostTag.createTime})
+       			(#{postTag.postID}, #{postTag.tagId}, #{postTag.createTime})
        		</foreach>
 	</insert>
 	
 	<update id = "inactivePost" parameterType = "Post">
-		UPDATE Post SET
+		UPDATE post SET
 			isActive = "0"
 		WHERE POSTID = #{postID} AND InsertUserName = #{insertUsername}
 	</update>
@@ -67,17 +68,18 @@
 			DateInserted,
 			DateUpdated,
 			isActive,
-			image
-	    FROM Post, User
+			image,
+			displayname
+	    FROM post, user
 	    WHERE ((PostID IN(
 	    	SELECT PostID 
-	    	FROM PostTag
+	    	FROM postTag
 	    	WHERE 
-	    		PostTag.TagID IN
+	    		postTag.TagID IN
 	      			<foreach item="tag" index="index" collection="tags" open="(" separator="," close=")">
         				#{tag.tagId}
   					</foreach>
-	    	)AND (Post.InsertUserName = User.Username)) OR ((User.IsSuperUser = 1) AND (Post.InsertUserName = User.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
+	    	)AND (post.InsertUserName = User.Username)) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
 	    	ORDER BY DateInserted DESC
 	    LIMIT #{count}    	
 	</select>
@@ -85,17 +87,17 @@
 	<select id = "getPostsByTagsCount" resultType="int">
 		SELECT DISTINCT
 			count(*)
-	    FROM Post, User
+	    FROM post, user
 	    WHERE ((PostID IN(
 	    	SELECT PostID 
-	    	FROM PostTag
+	    	FROM postTag
 	    	WHERE 
-	    		PostTag.TagID IN
+	    		postTag.TagID IN
 	      			<foreach item="tag" index="index" collection="tags" open="(" separator="," close=")">
         				#{tag.tagId}
   					</foreach>
 	    		
-	    	)AND (Post.InsertUserName = User.Username)) OR ((User.IsSuperUser = 1) AND (Post.InsertUserName = User.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
+	    	)AND (post.InsertUserName = user.Username)) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
 	    	ORDER BY DateInserted DESC
 	</select>
 	
@@ -114,14 +116,15 @@
 			DateInserted,
 			DateUpdated,
 			isActive,
-			User.image
-	    FROM Post, User
-	    WHERE Post.InsertUserName IN(
+			user.image,
+			displayname
+	    FROM post, user
+	    WHERE post.InsertUserName IN(
 	    	SELECT FollowingUser 
 	    	FROM Follow
 	    	WHERE 
 	    		Username = #{username}
-	    	)AND (Post.InsertUserName = User.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)
+	    	)AND (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)
 	    	ORDER BY DateInserted DESC
 	</select>
 	
@@ -140,32 +143,34 @@
 			DateInserted,
 			DateUpdated,
 			isActive,
-			User.image,
+			user.image,
 			Gender,
 			IsSmoking,
 			Pathological,
 			Age,
 			CancerType,
 			Metastasis,
-			Stage
-	FROM Post, User
-	    WHERE (((Post.InsertUserName IN(
+			Stage,
+			HasImage,
+			displayname
+	FROM post, user
+	    WHERE (((post.InsertUserName IN(
 	    	SELECT FollowingUser 
 	    	FROM Follow
 	    	WHERE 
 	    		Username = #{username}
 	    	))OR(
-	    	Post.InsertUserName = #{username}
+	    	post.InsertUserName = #{username}
 	    	)
 	    	OR(
 	    	PostID IN(
 	    	SELECT PostID 
-	    	FROM PostTag
+	    	FROM postTag
 	    	WHERE 
-	    		PostTag.TagID IN
-	      			(SELECT TagID FROM UserTag WHERE Username = #{username})
+	    		postTag.TagID IN
+	      			(SELECT TagID FROM userTag WHERE Username = #{username})
 	    	)))
-	    	AND (Post.InsertUserName = User.Username) OR ((User.IsSuperUser = 1) AND (Post.InsertUserName = User.Username)))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)
+	    	AND (post.InsertUserName = user.Username) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username)))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)
 	    	ORDER BY DateInserted DESC
 	    	LIMIT #{count}
 	</select>
@@ -173,29 +178,29 @@
 	<select id = "getUpdatedPostCount" resultType = "int">
 		SELECT DISTINCT
 			count(*)
-		FROM Post, User
-	    WHERE (((Post.InsertUserName IN(
+		FROM post, user
+	    WHERE (((post.InsertUserName IN(
 	    	SELECT FollowingUser 
 	    	FROM Follow
 	    	WHERE 
 	    		Username = #{username}
 	    	))OR(
-	    	Post.InsertUserName = #{username}
+	    	post.InsertUserName = #{username}
 	    	)
 	    	OR(
 	    	PostID IN(
 	    	SELECT PostID 
-	    	FROM PostTag
+	    	FROM postTag
 	    	WHERE 
-	    		PostTag.TagID IN
-	      			(SELECT TagID FROM UserTag WHERE Username = #{username})
+	    		postTag.TagID IN
+	      			(SELECT TagID FROM userTag WHERE Username = #{username})
 	    	)))
-	    	AND (Post.InsertUserName = User.Username) OR ((User.IsSuperUser = 1) AND (Post.InsertUserName = User.Username)))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)
+	    	AND (post.InsertUserName = user.Username) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username)))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)
 	    	ORDER BY DateInserted DESC
 	</select>
 	
 	<update id = "increasePostCountComment" parameterType="int">
-		UPDATE Post SET CountComments = CountComments+1 WHERE PostID = #{postID}
+		UPDATE post SET CountComments = CountComments+1 WHERE PostID = #{postID}
 	</update>
 	
 	<select id = "getPostsByUsername" resultType = "Post">
@@ -213,7 +218,7 @@
 			DateInserted,
 			DateUpdated,
 			isActive
-		FROM Post
+		FROM post
 		WHERE insertUserName = #{username} AND type = 0
 	</select>
 	
@@ -225,7 +230,7 @@
 			Body,
 			CountBookmarks,
 			DateInserted
-		FROM COMMENT
+		FROM Comment
 		WHERE InsertUsername = #{username} AND IsActive = 1
 		ORDER BY DateInserted DESC    
 	</select>
@@ -245,10 +250,11 @@
 			DateInserted,
 			DateUpdated,
 			isActive,
-			image
-	    FROM Post, User
+			image,
+			displayname
+	    FROM post, user
 	    WHERE 
-	    (Post.InsertUserName = User.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
+	    (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
 	    	ORDER BY DateInserted DESC
 	    LIMIT #{count}
 	</select>
@@ -256,7 +262,7 @@
 	<select id = "getAllBroadcastCount" resultType="int">
 		SELECT DISTINCT
 			count(*)
-	    FROM Post, User
+	    FROM post, user
 	    WHERE 
 	     (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
 	    	ORDER BY DateInserted DESC 
@@ -267,9 +273,9 @@
 		WHERE Username = #{username} AND IsUnRead = 1
 	</select>
 	
-	<select id="getMentionedPostsByUsername" parameterType="String" resultType="java.util.List">
+	<select id="getMentionedPostsByUsername" resultType="POST">
 		SELECT DISTINCT
-			PostID,
+			post.PostID,
 			Type,
 			InsertUserName,
 			body,
@@ -282,11 +288,20 @@
 			DateInserted,
 			DateUpdated,
 			isActive,
-			image
-	    FROM Post, User, UserBeMentionedByPost
-	    WHERE (Post.PostID = UserBeMentionedByPost.PostID)
-	    	AND (Post.InsertUserName = User.Username) 
-	    	AND UserBeMentionedByPost.Username = #{username}
-	  </select>
+			image,
+			displayname
+	    FROM post, user, UserBeMentionedByPost
+	    WHERE (post.PostID = UserBeMentionedByPost.PostID)
+	    	AND (post.InsertUserName = user.Username)
+	    	AND (UserBeMentionedByPost.Username = #{username})
+	    	AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) 
+	    	ORDER BY DateInserted DESC
+	    	LIMIT #{count}
+	</select>
+	  
+	<update id="markMentionedPostAsRead" parameterType="String">
+	  	UPDATE UserBeMentionedByPost SET IsUnRead = 0
+	  	WHERE Username = #{username}
+	</update>
 </mapper>
 

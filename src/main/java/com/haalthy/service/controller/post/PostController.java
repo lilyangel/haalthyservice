@@ -5,6 +5,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,7 +36,8 @@ import com.haalthy.service.controller.Interface.GetPostsByTagsRequest;
 public class PostController {
 	@Autowired
 	private transient PostService postService;
-	
+	private static final String imageLocation = "/Users/lily/haalthyServer/post/";
+
     @RequestMapping(value = "/{postid}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public Post getPostById(@PathVariable int postid) throws IOException{
@@ -44,6 +46,24 @@ public class PostController {
     	if(post.getImage()!=null){
     		post.setImage(imageService.scale(post.getImage(), 32, 32));
     	}
+		if (post.getHasImage() != 0) {
+			List<byte[]> postImageList = new ArrayList();
+			int index = 1;
+			while (index <= post.getHasImage()) {
+				BufferedImage img = null;
+				String path = imageLocation + Integer.toString(post.getPostID()) + "." + index + ".small" + ".jpg";
+				File smallImageFile = new File(path);
+				if (smallImageFile.exists()) {
+					img = ImageIO.read(new File(path));
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					ImageIO.write(img, "jpg", baos);
+					byte[] bytes = baos.toByteArray();
+					postImageList.add(bytes);
+				}
+				index++;
+			}
+			post.setPostImageList(postImageList);
+		}
     	return post;
     }
 
@@ -72,12 +92,29 @@ public class PostController {
     	Iterator<Post> postItr = posts.iterator();
     	ImageService imageService = new ImageService();
     	while(postItr.hasNext()){
-    		Post currentPost = postItr.next();
-    		if(currentPost.getImage()!=null){
-    			currentPost.setImage(imageService.scale(currentPost.getImage(), 32, 32));
+    		Post post = postItr.next();
+    		if(post.getImage()!=null){
+    			post.setImage(imageService.scale(post.getImage(), 32, 32));
     		}
+			if (post.getHasImage() != 0) {
+				List<byte[]> postImageList = new ArrayList();
+				int index = 1;
+				while (index <= post.getHasImage()) {
+					BufferedImage img = null;
+					String path = imageLocation + Integer.toString(post.getPostID()) + "." + index + ".small" + ".jpg";
+					File smallImageFile = new File(path);
+					if (smallImageFile.exists()) {
+						img = ImageIO.read(new File(path));
+						ByteArrayOutputStream baos = new ByteArrayOutputStream();
+						ImageIO.write(img, "jpg", baos);
+						byte[] bytes = baos.toByteArray();
+						postImageList.add(bytes);
+					}
+					index++;
+				}
+				post.setPostImageList(postImageList);
+			}
     	}
-    	System.out.println(request.getBegin());
 
     	return posts;
     }
@@ -88,12 +125,9 @@ public class PostController {
     	int postCount = 0;
     	if((request.getTags() == null) || (request.getTags().size() == 0)){
     		postCount = postService.getAllBroadcastCount(request);
-        	System.out.println(postCount);
 
     	}else{
     		postCount = postService.getPostsByTagsCount(request);
-        	System.out.println(postCount);
-
     	}
     	return postCount;
     }

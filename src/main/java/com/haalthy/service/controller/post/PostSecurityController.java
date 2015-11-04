@@ -2,6 +2,7 @@ package com.haalthy.service.controller.post;
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,6 +44,8 @@ import com.haalthy.service.configuration.*;
 public class PostSecurityController {
 	@Autowired
 	private transient PostService postService;
+	
+	private static final String imageLocation = "/Users/lily/haalthyServer/post/";
 	
 //	{"body": "it's a test",
 //		"closed":0,
@@ -92,7 +95,7 @@ public class PostSecurityController {
     	post.setIsBroadcast(addPostRequest.getIsBroadcast());
     	
     	if (addPostRequest.getImages() != null){
-    		post.setHasImage(1);
+    		post.setHasImage(addPostRequest.getImages().size());
     	}else{
     		post.setHasImage(0);
     	}
@@ -130,7 +133,6 @@ public class PostSecurityController {
 	    		mention.setIsUnRead(1);
 	    		mention.setPostID(post.getPostID());
 	    		String mUsername = usernameItr.next();
-	    		System.out.println(mUsername);
 	    		mention.setUsername(mUsername);
 	    		
 	    		mentionList.add(mention);
@@ -141,22 +143,21 @@ public class PostSecurityController {
     		Iterator<byte[]> imageItr = addPostRequest.getImages().iterator();
     		int index = 1;
     		while(imageItr.hasNext()){
+    	    	ImageService imageService = new ImageService();
     			byte[] imageInByte = imageItr.next();
+    			byte[] smallImageInByte = imageService.scale(imageInByte, 128, 128);
     			
     			// convert byte array back to BufferedImage
     			InputStream in = new ByteArrayInputStream(imageInByte);
     			BufferedImage bImageFromConvert = ImageIO.read(in);
-    			
-//    		    ImageInputStream imgStream = ImageIO.createImageInputStream( in );
-//    		    Iterator<ImageReader> iter = ImageIO.getImageReaders( imgStream );
-//
-//    		    ImageReader imgReader = iter.next();
-//
-//    		    System.out.println(imgReader.getFormatName());
-//    			System.out.println(imageInByte);
-//    			System.out.println(bImageFromConvert);
-    			String path = "/Users/lily/haalthyServer/post/" + Integer.toString(post.getPostID()) + "."+ index +".jpg";
+    			String path = imageLocation + Integer.toString(post.getPostID()) + "."+ index +".jpg";
     			ImageIO.write(bImageFromConvert, "jpg", new File(path));
+    			
+    	    	in = new ByteArrayInputStream(smallImageInByte);
+    	    	bImageFromConvert = ImageIO.read(in);
+    			path = imageLocation + Integer.toString(post.getPostID()) + "."+ index + ".small" +".jpg";
+    			ImageIO.write(bImageFromConvert, "jpg", new File(path));
+    	    	
     			index++;
     			in.close();
     		}
@@ -204,18 +205,35 @@ public class PostSecurityController {
     
     @RequestMapping(value = "/posts", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public List<Post> getPosts(@RequestBody GetFeedsRequest getFeedsRequest){
+    public List<Post> getPosts(@RequestBody GetFeedsRequest getFeedsRequest) throws IOException{
  	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	    getFeedsRequest.setUsername(currentSessionUsername);
  	    if (getFeedsRequest.getCount() == 0){
  	    	getFeedsRequest.setCount(50);
  	    }
  	    List<Post> posts = postService.getPosts(getFeedsRequest);
-//    	Iterator<Post> postItr = posts.iterator();
-//    	while(postItr.hasNext()){
-//    		Post post= postItr.next();
-//    		post.setPatientProfile(post.getGender()+"**"+post.getAge()+"**"+post.getPathological()+"**"+post.getStage()+"**"+post.getMetastasis());
-//    	}
+    	Iterator<Post> postItr = posts.iterator();
+		while (postItr.hasNext()) {
+			Post post = postItr.next();
+			if (post.getHasImage() != 0) {
+				List<byte[]> postImageList = new ArrayList();
+				int index = 1;
+				while (index <= post.getHasImage()) {
+					BufferedImage img = null;
+					String path = imageLocation + Integer.toString(post.getPostID()) + "." + index + ".small" + ".jpg";
+					File smallImageFile = new File(path);
+					if (smallImageFile.exists()) {
+						img = ImageIO.read(new File(path));
+						ByteArrayOutputStream baos = new ByteArrayOutputStream();
+						ImageIO.write(img, "jpg", baos);
+						byte[] bytes = baos.toByteArray();
+						postImageList.add(bytes);
+					}
+					index++;
+				}
+				post.setPostImageList(postImageList);
+			}
+		}
  	    return posts;
     }
     
@@ -246,11 +264,41 @@ public class PostSecurityController {
 		return postService.getUnreadMentionedPostCountByUsername(currentSessionUsername);
 	}
 	
-    @RequestMapping(value = "/mentionedpost/list", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/mentionedpost/list", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-	public List<Post> getMentionedPostsByUsername(){
+	public List<Post> getMentionedPostsByUsername(@RequestBody GetFeedsRequest request) throws IOException{
  	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
-		return postService.getMentionedPostsByUsername(currentSessionUsername);
+		request.setUsername(currentSessionUsername);
+ 	    List<Post> posts = postService.getMentionedPostsByUsername(request);
+    	Iterator<Post> postItr = posts.iterator();
+		while (postItr.hasNext()) {
+			Post post = postItr.next();
+			if (post.getHasImage() != 0) {
+				List<byte[]> postImageList = new ArrayList();
+				int index = 1;
+				while (index <= post.getHasImage()) {
+					BufferedImage img = null;
+					String path = imageLocation + Integer.toString(post.getPostID()) + "." + index + ".small" + ".jpg";
+					File smallImageFile = new File(path);
+					if (smallImageFile.exists()) {
+						img = ImageIO.read(new File(path));
+						ByteArrayOutputStream baos = new ByteArrayOutputStream();
+						ImageIO.write(img, "jpg", baos);
+						byte[] bytes = baos.toByteArray();
+						postImageList.add(bytes);
+					}
+					index++;
+				}
+				post.setPostImageList(postImageList);
+			}
+		}
+ 	   	return posts;
 	}
     
+    @RequestMapping(value = "/mentionedpost/markasread", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+	public int refreshUnreadMentionedPostsByUsername(){
+ 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
+ 	   	return postService.markMentionedPostAsRead(currentSessionUsername);
+	}
 }

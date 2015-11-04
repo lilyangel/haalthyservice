@@ -12,6 +12,6 @@
 	      TypeName,
 	      TypeRank,
 	      RankInType
-	    FROM TAG
+	    FROM tag
 	  </select>
 </mapper>

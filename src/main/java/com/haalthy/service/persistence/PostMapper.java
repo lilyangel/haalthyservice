@@ -44,5 +44,7 @@ public interface PostMapper {
 	
 	int getUnreadMentionedPostCountByUsername(String username);
 	
-	List<Post> getMentionedPostsByUsername(String username);
+	List<Post> getMentionedPostsByUsername(GetFeedsRequest request);
+	
+	int markMentionedPostAsRead(String username);
 }

@@ -80,8 +80,6 @@ public class PatientSecurityController {
 	@RequestMapping(value = "/treatment/update", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
 	public int updateTreatment(@RequestBody Treatment treatment) {
-		System.out.println(treatment.getTreatmentID());
-		System.out.println(treatment.getEndDate());
 		return patientService.updateTreatmentById(treatment);
 	}
     
@@ -106,7 +104,8 @@ public class PatientSecurityController {
     	int insertCount = patientService.insertPatientStatus(patientStatus);
     	
     	if(patientStatus.getIsPosted()==1){
-    		String postBodyStr = clinicReport.getClinicReport() + " " + patientStatus.getStatusDesc();  
+//    		String postBodyStr = clinicReport.getClinicReport() + " " + patientStatus.getStatusDesc();
+    		String postBodyStr = patientStatus.getStatusDesc();  
     		Post post = new Post();
     		post.setClosed(0);
     		post.setBody(postBodyStr);
@@ -141,8 +140,6 @@ public class PatientSecurityController {
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
  	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	   	int returnValue = 0;
- 	   	System.out.println(currentSessionUsername);
- 	   	System.out.println(treatment.getUsername());
  	   	if(treatment.getUsername().equals(currentSessionUsername)) {
  	   	returnValue = patientService.deleteTreatmentById(treatment.getTreatmentID());
  	   	}

@@ -24,13 +24,14 @@
 		metastasis,
 		Age,
 		Password
-    FROM User
-    WHERE User.Username = #{username}
+    FROM user
+    WHERE user.Username = #{username}
   </select>
   
     <select id="getUserByEmail" parameterType="string" resultType="User">
     SELECT
 		UserID,
+		password,
 		Email,
 		CreateDate,
 		UpdateDate,
@@ -45,8 +46,8 @@
 		CancerType,
 		metastasis,
 		Age
-    FROM User
-    WHERE User.Email = #{email}
+    FROM user
+    WHERE user.Email = #{email}
   </select>
   
   
@@ -57,7 +58,7 @@
 	</insert>
 	
 	<update id="updateUser" parameterType="User">
-    UPDATE User SET
+    UPDATE user SET
       	EMAIL = #{email},
       	DISPLAYNAME = #{displayname},
 		UpdateDate = #{updateDate},
@@ -73,25 +74,25 @@
   </update>
   
   <insert id = "addUserTags" parameterType="java.util.List">
-  	INSERT INTO UserTag(Username, TagID, DateInserted)
+  	INSERT INTO userTag(Username, TagID, DateInserted)
   	VALUES
-  	<foreach collection="list" item="UserTag" index="index" separator=",">
-  		(#{UserTag.username}, #{UserTag.tagID}, #{UserTag.dateInserted})
+  	<foreach collection="list" item="userTag" index="index" separator=",">
+  		(#{userTag.username}, #{userTag.tagID}, #{userTag.dateInserted})
   	</foreach>
   	</insert>
   	<delete id = "deleteUserTags" parameterType = "String">
-		DELETE FROM UserTag 
+		DELETE FROM userTag 
 		WHERE  Username= #{username}
 	</delete>
 	
 	<select id = "getTagsByUsername" parameterType = "String" resultType="Tag">
 	SELECT
-		Tag.TagID,
-		Tag.Name,
-		Tag.Description,
-		Tag.typeName
-	FROM Tag, UserTag
-	WHERE Tag.TagID = UserTag.TagID AND UserTag.username = #{username}
+		tag.TagID,
+		tag.Name,
+		tag.Description,
+		tag.typeName
+	FROM tag, userTag
+	WHERE tag.TagID = userTag.TagID AND userTag.username = #{username}
 	</select>
 	
 	<update id = "addUserFollowCount" parameterType = "String">
@@ -101,7 +102,7 @@
 	</update>
 	
 	<update id="deleteUserFollowCount" parameterType = "String">
-	Update User SET
+	Update user SET
 		FollowCount = FollowCount-1
 	WHERE Username = #{username}
 	</update>
@@ -144,7 +145,7 @@
 		metastasis,
 		Age,
 		Password
-    FROM User
+    FROM user
     WHERE   	
     <foreach collection="keyword" item="String" index="index" separator=" OR ">
   		Username LIKE "%#{keyword}%" OR Pathological LIKE "%#{keyword}%" OR CancerType LIKE "%#{keyword}%" OR  metastasis LIKE "%#{keyword}%"
@@ -172,7 +173,7 @@
 	</select>
 	
 	<update id="resetPassword" parameterType="User">
-    UPDATE User SET
+    UPDATE user SET
 	  PASSWORD = #{password}
     WHERE username = #{username}
   </update>

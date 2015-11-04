@@ -21,15 +21,17 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
  
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String name = authentication.getName();
-        String password = authentication.getCredentials().toString();
-        User user = userService.getUserByUsername(name);
-        if(user == null){
-        	return null;
-        }
+		String name = authentication.getName();
+		String password = authentication.getCredentials().toString();
+		User user = userService.getUserByUsername(name);
+		if (user == null) {
+			user = userService.getUserByEmail(name);
+			if (user == null) {
+				return null;
+			}
+		}
     	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     	if(passwordEncoder.matches(password, user.getPassword()) == false){
-    		System.out.println("incorrect password");
     		return null;
     	}
     	else{
@@ -37,8 +39,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             grantedAuths.add(new SimpleGrantedAuthority("ROLE_USER"));
             Authentication auth = new UsernamePasswordAuthenticationToken(name, password, grantedAuths);
             return auth;
-        } 
-        
+        }
     }
  
     @Override

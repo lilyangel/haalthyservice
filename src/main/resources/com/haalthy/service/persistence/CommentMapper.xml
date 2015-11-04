@@ -14,8 +14,8 @@
 			DateInserted,
 			isActive,
 			image
-	    FROM COMMENT, User
-	    WHERE POSTID = #{postID} AND IsActive = 1 AND (Comment.InsertUsername = User.Username)
+	    FROM Comment, user
+	    WHERE POSTID = #{postID} AND IsActive = 1 AND (Comment.InsertUsername = user.Username)
 	    ORDER BY DateInserted DESC    
 	  </select>
 	  

@@ -19,7 +19,7 @@
 			CreateDate,
 			UpdateDate,
 			Displayname,
-			User.Username,
+			user.Username,
 			Image,
 			Gender,
 			IsSmoking,
@@ -29,7 +29,7 @@
 			CancerType,
 			metastasis,
 			Age
-		FROM Follow, User WHERE FollowingUser = #{username} AND IsActive = 1 AND Follow.Username = User.Username 
+		FROM Follow, user WHERE FollowingUser = #{username} AND IsActive = 1 AND Follow.Username = user.Username 
 		ORDER BY Username ASC;
 	</select>
 	
@@ -40,7 +40,7 @@
 			CreateDate,
 			UpdateDate,
 			Displayname,
-			User.Username,
+			user.Username,
 			Image,
 			Gender,
 			IsSmoking,
@@ -50,7 +50,7 @@
 			CancerType,
 			metastasis,
 			Age
-		FROM Follow, User WHERE Follow.Username = #{username} AND IsActive = 1 AND User.username = Follow.followingUser 
+		FROM Follow, user WHERE Follow.Username = #{username} AND IsActive = 1 AND user.username = Follow.followingUser 
 		ORDER BY Username ASC;
 		
 	</select>
@@ -103,7 +103,7 @@
 	
 	<select id="isFollowingUser" parameterType="Follow" resultType="int">
 		SELECT count(*) 
-		FROM FOLLOW
+		FROM Follow
 		WHERE Username = #{username} AND FollowingUser = #{followingUser}
 	</select>
 </mapper>

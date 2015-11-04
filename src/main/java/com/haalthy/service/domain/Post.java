@@ -32,7 +32,14 @@ public class Post implements Serializable{
 	private int stage;
 	private int hasImage;
 	private List<byte[]> postImageList;
-	
+	private String displayname;
+
+	public String getDisplayname() {
+		return displayname;
+	}
+	public void setDisplayname(String displayname) {
+		this.displayname = displayname;
+	}
 	public List<byte[]> getPostImageList() {
 		return postImageList;
 	}
