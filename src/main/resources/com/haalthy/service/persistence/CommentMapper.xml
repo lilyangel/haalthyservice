@@ -25,9 +25,36 @@
  			 VALUES (#{insertUsername},#{body}, #{countBookmarks},  #{dateInserted}, #{isActive}, #{postID})
 	</insert>
 	
-	<update id = "inactiveComment" parameterType = "Comment">
+	<update id = "inactiveComment" parameterType="Comment">
 		UPDATE Comment SET
 			IsActive = "0"
 		WHERE CommentID = #{commentID} AND InsertUserName = #{insertUsername}
+	</update>
+	
+	<select id="getUnreadCommentsCount" parameterType="String" resultType="int">
+		SELECT Distinct
+			COUNT(*)
+			FROM Comment
+		WHERE Comment.PostID in (select postID from post where insertUserName=#{username}) and IsPostOwnerRead = 0 AND IsActive = 1  order by dateInserted desc;
+	</select>
+	
+	<select id="getCommentsByUsername" parameterType="String" resultType="Comment">
+		SELECT
+ 	    	CommentID,
+			PostID,
+			InsertUsername,
+			body,
+			CountBookmarks,
+			DateInserted,
+			isActive,
+			image
+			FROM Comment, user
+		WHERE Comment.PostID in (select postID from post where insertUserName=#{username}) AND IsActive = 1 AND (Comment.InsertUsername = user.Username) order by dateInserted desc;
+	</select>
+	
+	<update id="markCommentsAsReadByUsername" parameterType="String">
+		UPDATE Comment SET
+			IsPostOwnerRead = 1
+		WHERE Comment.PostID in (select postID from post where insertUserName=#{username})
 	</update>
 </mapper>

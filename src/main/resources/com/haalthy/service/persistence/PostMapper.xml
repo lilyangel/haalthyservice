@@ -42,7 +42,7 @@
 		INSERT 
 		into postTag(PostID, TagID, CreateTime)
 			VALUES
-			<foreach collection="list" item="PostTag" index="index" separator=",">
+			<foreach collection="list" item="postTag" index="index" separator=",">
        			(#{postTag.postID}, #{postTag.tagId}, #{postTag.createTime})
        		</foreach>
 	</insert>
@@ -79,7 +79,7 @@
 	      			<foreach item="tag" index="index" collection="tags" open="(" separator="," close=")">
         				#{tag.tagId}
   					</foreach>
-	    	)AND (post.InsertUserName = User.Username)) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
+	    	)AND (post.InsertUserName = user.Username)) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
 	    	ORDER BY DateInserted DESC
 	    LIMIT #{count}    	
 	</select>
@@ -304,4 +304,3 @@
 	  	WHERE Username = #{username}
 	</update>
 </mapper>
-

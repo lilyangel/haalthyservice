@@ -234,7 +234,7 @@ public class UserSecurityController {
 		return followService.refreshNewFollowerCount(currentSessionUsername);
 	}
 	
-	@RequestMapping(value="/followings", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@RequestMapping(value="/followings/", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
 	public List<Follow> getFollowingsByUsername(){
 		List<Follow> follows = new ArrayList<Follow>();
@@ -245,23 +245,23 @@ public class UserSecurityController {
 		return follows;
 	}
 	
-	@RequestMapping(value="/followingusers", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@RequestMapping(value="/followingusers/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
-	public List<User> getFollowingusersByUsername(){
-		List<User> users = new ArrayList<User>();
-		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-		return followService.getFollowingUsersByUsername(currentSessionUsername);
+	public List<User> getFollowingusersByUsername(@PathVariable String username){
+//		List<User> users = new ArrayList<User>();
+//		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+//		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+		return followService.getFollowingUsersByUsername(username);
 	}
 	
 	
-	@RequestMapping(value="/followerusers", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@RequestMapping(value="/followerusers/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
-	public List<User> getFollowersByUsername(){
-		List<User> users = new ArrayList<User>();
-		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-		return followService.getFollowerUsersByUsername(currentSessionUsername);
+	public List<User> getFollowersByUsername(@PathVariable String username){
+//		List<User> users = new ArrayList<User>();
+//		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+//		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+		return followService.getFollowerUsersByUsername(username);
 	}
 	
 	

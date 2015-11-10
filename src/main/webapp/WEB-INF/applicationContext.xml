@@ -19,12 +19,12 @@
 			value="jdbc:mysql://lilymysql.cjxzgcls0rkx.rds.cn-north-1.amazonaws.com.cn:3306/haalthy?useUnicode=true&amp;characterEncoding=utf8">
 		</property> -->
 		<property name="url"
-			value="jdbc:mysql://127.0.0.1:3306/haalthy?useUnicode=true&amp;characterEncoding=utf8">
+			value="jdbc:mysql://lilymysql.cjxzgcls0rkx.rds.cn-north-1.amazonaws.com.cn:3306/haalthy?useUnicode=true&amp;characterEncoding=utf8">
 		</property>
 <!-- 		<property name="username" value="lily"></property>
 		<property name="password" value="%TGB3edc"></property>  -->
-		<property name="username" value="root"></property>
-		<property name="password" value=""></property>
+		<property name="username" value="lily"></property>
+		<property name="password" value="%TGB3edc"></property>
 		<property name="driverClassName"
 			value="com.mysql.jdbc.Driver">
 		</property>
@@ -63,5 +63,7 @@
     <bean id="followService" class="com.haalthy.service.openservice.FollowService">
     </bean>
     <bean id="patientService" class="com.haalthy.service.openservice.PatientService">
+    </bean>
+    <bean id="clinicTrailService" class="com.haalthy.service.openservice.ClinicTrailService">
     </bean>
 </beans>

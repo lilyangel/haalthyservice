@@ -123,7 +123,7 @@
 		Age,
 		FollowCount,
 		CancerType
-    FROM SuggestUserByTags
+    FROM suggestUserByTags
     WHERE (TagID = #{tagID}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>
 	

@@ -9,4 +9,10 @@ public interface CommentMapper {
 	int addComment(Comment comment);
 	
 	int inactiveComment(Comment comment);
+	
+	int getUnreadCommentsCount(String username);
+	
+	List<Comment> getCommentsByUsername(String username);
+	
+	int markCommentsAsReadByUsername(String username);
 }

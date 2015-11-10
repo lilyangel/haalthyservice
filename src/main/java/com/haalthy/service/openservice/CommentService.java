@@ -22,4 +22,16 @@ public class CommentService {
 	public int inactiveComment(Comment comment){
 		return commentMapper.inactiveComment(comment);
 	}
+	
+	public int getUnreadCommentsCount(String username){
+		return commentMapper.getUnreadCommentsCount(username);
+	}
+	
+	public List<Comment> getCommentsByUsername(String username){
+		return commentMapper.getCommentsByUsername(username);
+	}
+	
+	public int markCommentsAsReadByUsername(String username){
+		return commentMapper.markCommentsAsReadByUsername(username);
+	}
 }

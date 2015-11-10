@@ -2,6 +2,7 @@ package com.haalthy.service.controller.comment;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -69,5 +70,29 @@ public class CommentSecurityController {
     	else 
     		updateCommentResponse.setStatus("inactive unsuccessful");
     	return updateCommentResponse;
+    }
+    
+    @RequestMapping(value = "/unreadcommentscount", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public int getUnreadCommentsCount(){
+ 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+ 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+    	return commentService.getUnreadCommentsCount(currentSessionUsername);
+    }
+    
+    @RequestMapping(value = "/list", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public List<Comment> getCommentsByUsername(){
+ 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+ 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+    	return commentService.getCommentsByUsername(currentSessionUsername);
+    }
+    
+    @RequestMapping(value = "/readallcomments", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public int markCommentsAsReadByUsername(){
+ 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+ 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+    	return commentService.markCommentsAsReadByUsername(currentSessionUsername);
     }
 }

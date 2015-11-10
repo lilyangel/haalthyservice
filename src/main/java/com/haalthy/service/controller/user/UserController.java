@@ -8,9 +8,11 @@ import com.haalthy.service.controller.Interface.AddUpdateUserRequest;
 import com.haalthy.service.controller.Interface.AddUpdateUserResponse;
 import com.haalthy.service.controller.Interface.GetSuggestUsersByTagsRequest;
 import com.haalthy.service.controller.Interface.GetUsersResponse;
+import com.haalthy.service.domain.ClinicTrailInfo;
 import com.haalthy.service.domain.Follow;
 import com.haalthy.service.domain.SelectUserByTagRange;
 import com.haalthy.service.domain.User;
+import com.haalthy.service.openservice.ClinicTrailService;
 import com.haalthy.service.openservice.UserService;
 
 import java.util.ArrayList;
@@ -38,15 +40,6 @@ public class UserController {
     	User user = userService.getUserByUsername(username);
     	user.setPassword(null);
     	return user;
-//    	if (user == null)
-//    		return null;
-//    	GetUsersResponse userResponse = new GetUsersResponse();
-//    	userResponse.setUsername(user.getUsername());
-//    	userResponse.setDisplayname(user.getDisplayname());
-//    	userResponse.setEmail(user.getEmail());
-//    	userResponse.setCreateDate(user.getCreateDate());
-//    	userResponse.setImage(user.getImage());
-//    	return userResponse;
     }
     
     //{"gender":"M","password":"password","pathological":"adenocarcinoma","metastasis":"bone;其他","age":"61","isSmoking":1,"cancerType":"lung","email":"user3@qq.com","username":"user3","stage":1}
@@ -71,7 +64,7 @@ public class UserController {
     	
     	AddUpdateUserResponse addUserResponse = new AddUpdateUserResponse();
 		if (userService.getUserByEmail(user.getEmail()) != null)
-			addUserResponse.setStatus("this email has been registed, please login");
+			addUserResponse.setStatus("this email has been registed, please use another name");
 		else if (userService.getUserByUsername(user.getUsername()) != null)
 			addUserResponse.setStatus("this name has been registed, please login");
 		else if (userService.addUser(user) == 1)
@@ -112,5 +105,5 @@ public class UserController {
     	String[] keyword = keywords.split(keywords);
     	return userService.searchUsers(keyword);
     }
-    
+
 }

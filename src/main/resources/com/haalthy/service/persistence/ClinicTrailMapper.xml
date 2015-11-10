@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.haalthy.service.persistence.ClinicTrailMapper">
+	<cache />
+	<select id="getClinicTrailInfo" parameterType="ClinicTrailInfo" resultType="ClinicTrailInfo">
+		SELECT 	
+			DrugType,
+			DrugName,
+			SubGroup,
+			Stage,
+			Effect,
+			ResearchInfo,
+			SideEffect,
+			Original
+		FROM clinictrail
+		WHERE  DrugType = #{drugType} AND SubGroup = #{subGroup}
+	</select>
+</mapper>

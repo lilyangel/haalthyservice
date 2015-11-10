@@ -29,6 +29,5 @@ public class ImageService {
     		ImageIO.write(imageBuff, "jpg", buffer);
 
     		return buffer.toByteArray();
-    	
     }
 }
