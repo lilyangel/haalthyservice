@@ -10,21 +10,21 @@
    			TreatmentFormatID,
    			Type,
    			name
-		FROM treatmentformat
+		FROM TREATMENTFORMAT
    </select>
    
    <select id="getPatientStatusFormat" resultType="PatientStatusFormat">
      	SELECT 
    			statusFormatID,
    			statusName
-		FROM patientStatusFormat
+		FROM PATIENTSTATUSFORMAT
    </select>
    
    <select id="getClinicReportFormat" resultType="ClinicReportFormat">
      	SELECT 
    			reportFormatID,
    			clinicItem
-		FROM clinicReportFormat
+		FROM ClinicReportFormat
    </select>
    
    <select id = "getTreatmentsByUser" parameterType="String" resultType="Treatment">
@@ -37,13 +37,13 @@
 			beginDate,
 			endDate,
 			IsPosted
-		FROM treatment
+		FROM TREATMENT
 			WHERE username = #{username}
 		ORDER BY endDate DESC
    </select>
    
    <update id = "updateTreatmentById" parameterType="Treatment">
-   		UPDATE treatment SET
+   		UPDATE Treatment SET
    			TreatmentName = #{treatmentName},
    			Dosage = #{dosage},
    			BeginDate = #{beginDate},
@@ -59,7 +59,7 @@
 			StatusDesc,
 			InsertedDate,
 			IsPosted
-		FROM patientstatus
+		FROM PATIENTSTATUS
 			WHERE username = #{username}
 		ORDER BY InsertedDate DESC
    </select>
@@ -67,12 +67,10 @@
    <select id = "getClinicReportByUser" parameterType="String" resultType="ClinicReport">
    		SELECT 
    			username,
-   			CEA,
-   			CT,
 			clinicReport,
 			dateInserted,
 			isPosted
-		FROM ClinicReport
+		FROM CLINICREPORT
 			WHERE username = #{username}
 		ORDER BY dateInserted DESC
    </select>
@@ -87,7 +85,7 @@
 			beginDate,
 			endDate,
 			IsPosted
-		FROM treatment
+		FROM TREATMENT
 			WHERE username = #{username}  AND IsPosted = 1
 		ORDER BY endDate DESC
    </select>
@@ -100,7 +98,7 @@
 			StatusDesc,
 			InsertedDate,
 			IsPosted
-		FROM patientstatus
+		FROM PATIENTSTATUS
 			WHERE username = #{username}  AND IsPosted = 1
 		ORDER BY InsertedDate DESC
    </select>
@@ -110,24 +108,22 @@
    			username,
 			clinicReport,
 			dateInserted,
-			cea,
-			ct,
 			isPosted
-		FROM ClinicReport
-			WHERE username = #{username}
+		FROM CLINICREPORT
+			WHERE username = #{username} AND IsPosted = 1
 		ORDER BY dateInserted DESC
    </select>
 
   <insert id = "insertTreatment" useGeneratedKeys="true"
     	keyProperty="treatmentID" keyColumn = "treatmentID">
-  	INSERT INTO treatment(Username, treatmentName, Description, Dosage, BeginDate, EndDate, IsPosted) VALUES(
+  	INSERT INTO TREATMENT(Username, treatmentName, Description, Dosage, BeginDate, EndDate, IsPosted) VALUES(
   		#{username}, #{treatmentName}, #{description}, #{dosage}, #{beginDate}, #{endDate}, #{isPosted}
   	)
   </insert>
   
     <insert id = "insertPatientStatus" useGeneratedKeys="true"
     	keyProperty="statusID" keyColumn = "statusID">
-  	INSERT INTO patientstatus(Username,
+  	INSERT INTO PATIENTSTATUS(Username,
 			ClinicReport,
 			statusDesc,
 			InsertedDate,
@@ -139,17 +135,15 @@
   <insert id = "insertClinicReport" useGeneratedKeys="true"
     	keyProperty="ClinicReportID" keyColumn = "ClinicReportID">
   	INSERT INTO ClinicReport(Username,
-  			clinicReport,
-			cea,
-			ct,
+			ClinicReport,
 			DateInserted,
 			IsPosted) VALUES(
-  		#{username},#{clinicReport}, #{CEAValue}, #{CTDesc}, #{dateInserted}, #{isPosted}
+  		#{username}, #{clinicReport}, #{dateInserted}, #{isPosted}
   	)
   </insert>
   
   <delete id = "deleteTreatmentById" parameterType="int">
-  	DELETE FROM treatment
+  	DELETE FROM Treatment
   	Where TreatmentID = #{treatmentId}
   </delete>
 </mapper>

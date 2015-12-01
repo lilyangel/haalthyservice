@@ -93,14 +93,31 @@ public class PatientSecurityController {
     	
     	PatientStatus patientStatus = addPatientStatusRequest.getPatientStatus();
     	ClinicReport clinicReport = addPatientStatusRequest.getClinicReport();
-    	
+    	System.out.println(clinicReport.getClinicReport());
+    	System.out.println(patientStatus.getStatusDesc());
+    	String[] cliniReprotItem= clinicReport.getClinicReport().split("\\*\\*",-1);
+    	for(int i = 0; i<cliniReprotItem.length; i++){
+    		System.out.println(cliniReprotItem[i]);
+    		String[] clinicItemNameAndValue = cliniReprotItem[i].split("\\*", -1);
+    		System.out.println(clinicItemNameAndValue[0]);
+
+    		if(clinicItemNameAndValue[0].equals("CEA")){
+        		System.out.println(clinicItemNameAndValue[1]);
+    			clinicReport.setCEA(Integer.valueOf(clinicItemNameAndValue[1]).floatValue());
+    		}
+    		if(clinicItemNameAndValue[0].equals("CT/MRI")){
+        		System.out.println(clinicItemNameAndValue[1]);
+    			clinicReport.setCT(clinicItemNameAndValue[1]);
+    		}
+    	}
     	clinicReport.setUsername(currentSessionUsername);
-//    	clinicReport.setDateInserted(now);
-    	int insertClinicReportCount = patientService.insertClinicReport(clinicReport);
-    	
+		if (clinicReport.getClinicReport() != "") {
+			int insertClinicReportCount = patientService.insertClinicReport(clinicReport);
+		}
 //    	patientStatus.setInsertedDate(now);
  	    patientStatus.setUsername(currentSessionUsername);
- 	    patientStatus.setStatusDesc(clinicReport.getClinicReport() + " " + patientStatus.getStatusDesc());
+ 	    patientStatus.setStatusDesc(patientStatus.getStatusDesc());
+ 	    patientStatus.setClinicReport(clinicReport.getClinicReport());
     	int insertCount = patientService.insertPatientStatus(patientStatus);
     	
     	if(patientStatus.getIsPosted()==1){

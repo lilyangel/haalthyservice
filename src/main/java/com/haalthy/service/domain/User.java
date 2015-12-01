@@ -22,7 +22,14 @@ public class User implements Serializable {
 	private String cancerType;
 	private String metastasis;
 	private String userType;
+	private String geneticMutation;
 	
+	public String getGeneticMutation() {
+		return geneticMutation;
+	}
+	public void setGeneticMutation(String geneticMutation) {
+		this.geneticMutation = geneticMutation;
+	}
 	public int getStage() {
 		return stage;
 	}

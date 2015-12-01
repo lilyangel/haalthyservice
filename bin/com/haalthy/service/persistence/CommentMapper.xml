@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.haalthy.service.persistence.CommentMapper">
+	<cache />
+	<select id="getCommentsByPostId" parameterType="int" resultType="Comment">
+	    SELECT
+	    	CommentID,
+			PostID,
+			InsertUsername,
+			body,
+			CountBookmarks,
+			DateInserted,
+			isActive,
+			image
+	    FROM COMMENT, User
+	    WHERE POSTID = #{postID} AND IsActive = 1 AND (Comment.InsertUsername = User.Username)
+	    ORDER BY DateInserted DESC    
+	  </select>
+	  
+	<insert id="addComment" useGeneratedKeys="true"
+    	keyProperty="commentID" keyColumn = "CommentID">
+  		INSERT into Comment (InsertUserName, body, CountBookmarks,DateInserted, IsActive, PostID)
+ 			 VALUES (#{insertUsername},#{body}, #{countBookmarks},  #{dateInserted}, #{isActive}, #{postID})
+	</insert>
+	
+	<update id = "inactiveComment" parameterType = "Comment">
+		UPDATE Comment SET
+			IsActive = "0"
+		WHERE CommentID = #{commentID} AND InsertUserName = #{insertUsername}
+	</update>
+</mapper>

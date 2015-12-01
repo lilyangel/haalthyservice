@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.haalthy.service.persistence.FollowMapper">
+	<select id="getFollowingsByUsername" parameterType="string" resultType="Follow">
+		SELECT
+			FollowID,
+			Username,
+			FollowingUser,
+			DateInserted
+		FROM Follow WHERE Username = #{username} AND IsActive = 1;
+	</select>
+	
+	<select id="getFollowerUsersByUsername" parameterType="string" resultType="User">
+		SELECT
+			UserID,
+			Email,
+			CreateDate,
+			UpdateDate,
+			Displayname,
+			User.Username,
+			Image,
+			Gender,
+			IsSmoking,
+			Pathological,
+			Stage,
+			FollowCount,
+			CancerType,
+			metastasis,
+			Age
+		FROM Follow, User WHERE FollowingUser = #{username} AND IsActive = 1 AND Follow.Username = User.Username 
+		ORDER BY Username ASC;
+	</select>
+	
+	<select id="getFollowingUsersByUsername" parameterType="string" resultType="User">
+		SELECT
+			UserID,
+			Email,
+			CreateDate,
+			UpdateDate,
+			Displayname,
+			User.Username,
+			Image,
+			Gender,
+			IsSmoking,
+			Pathological,
+			Stage,
+			FollowCount,
+			CancerType,
+			metastasis,
+			Age
+		FROM Follow, User WHERE Follow.Username = #{username} AND IsActive = 1 AND User.username = Follow.followingUser 
+		ORDER BY Username ASC;
+		
+	</select>
+	
+	<select id="getFollowingsByUsernameAndFollowingname" parameterType="Follow" resultType="Follow">
+		SELECT
+			FollowID,
+			Username,
+			FollowingUser,
+			DateInserted
+		FROM Follow WHERE Username = #{username} AND FollowingUser = #{followingUser} AND IsActive = 1;
+	</select>
+	
+	<insert id="addFollowing" useGeneratedKeys="true"
+    	keyProperty="FollowID" keyColumn="FollowID">
+  		INSERT into Follow (Username,FollowingUser,DateInserted, DateUpdated, IsActive)
+ 			 values (#{username},#{followingUser},#{dateInserted}, #{dateUpdated}, #{isActive})
+	</insert>
+	
+	<update id="inactiveFollowship" parameterType="Follow">
+		UPDATE Follow SET
+			isActive = "0",
+			DateUpdated = #{dateUpdated}
+		WHERE Username = #{username} AND FollowingUser = #{followingUser}
+	</update>
+	
+	<update id="updateNewFollowerCount" parameterType="String">
+		UPDATE NewFollowerCount SET
+			Count = Count + 1
+		WHERE Username = #{username}
+	</update>
+	
+	<insert id="insertNewFollowerCount" parameterType="String">
+		INSERT INTO  NewFollowerCount (Username, Count)
+		VALUES (#{username}, 1)
+	</insert>
+	
+	<select id="selectNewFollowerCount" parameterType="String" resultType="NewFollowerCount">
+		SELECT Count,
+			   Username
+		 FROM NewFollowerCount
+		WHERE Username = #{username}
+	</select>
+	
+	<update id="refreshNewFollowerCount" parameterType="String">
+		UPDATE NewFollowerCount SET
+			Count = 0
+		WHERE Username = #{username}
+	</update>
+	
+	<select id="isFollowingUser" parameterType="Follow" resultType="int">
+		SELECT count(*) 
+		FROM FOLLOW
+		WHERE Username = #{username} AND FollowingUser = #{followingUser}
+	</select>
+</mapper>

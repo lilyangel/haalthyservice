@@ -23,16 +23,14 @@
 		CancerType,
 		metastasis,
 		Age,
-		Password,
-		geneticMutation
-    FROM user
-    WHERE user.Username = #{username}
+		Password
+    FROM User
+    WHERE User.Username = #{username}
   </select>
   
     <select id="getUserByEmail" parameterType="string" resultType="User">
     SELECT
 		UserID,
-		password,
 		Email,
 		CreateDate,
 		UpdateDate,
@@ -46,21 +44,20 @@
 		FollowCount,
 		CancerType,
 		metastasis,
-		Age,
-		geneticMutation
-    FROM user
-    WHERE user.Email = #{email}
+		Age
+    FROM User
+    WHERE User.Email = #{email}
   </select>
   
   
 	<insert id="addUser" useGeneratedKeys="true"
     	keyProperty="UserID" keyColumn="UserID">
-  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age, Image, userType, geneticMutation)
- 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age}, #{image}, #{userType}, #{geneticMutation})
+  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age, Image, userType)
+ 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age}, #{image}, #{userType})
 	</insert>
 	
 	<update id="updateUser" parameterType="User">
-    UPDATE user SET
+    UPDATE User SET
       	EMAIL = #{email},
       	DISPLAYNAME = #{displayname},
 		UpdateDate = #{updateDate},
@@ -71,31 +68,30 @@
 		Stage = #{stage},
 		CancerType = #{cancerType},
 		metastasis = #{metastasis},
-		Age = #{age},
-		geneticMutation = #{geneticMutation}
+		Age = #{age}
     WHERE username = #{username}
   </update>
   
   <insert id = "addUserTags" parameterType="java.util.List">
-  	INSERT INTO userTag(Username, TagID, DateInserted)
+  	INSERT INTO UserTag(Username, TagID, DateInserted)
   	VALUES
-  	<foreach collection="list" item="userTag" index="index" separator=",">
-  		(#{userTag.username}, #{userTag.tagID}, #{userTag.dateInserted})
+  	<foreach collection="list" item="UserTag" index="index" separator=",">
+  		(#{UserTag.username}, #{UserTag.tagID}, #{UserTag.dateInserted})
   	</foreach>
   	</insert>
   	<delete id = "deleteUserTags" parameterType = "String">
-		DELETE FROM userTag 
+		DELETE FROM UserTag 
 		WHERE  Username= #{username}
 	</delete>
 	
 	<select id = "getTagsByUsername" parameterType = "String" resultType="Tag">
 	SELECT
-		tag.TagID,
-		tag.Name,
-		tag.Description,
-		tag.typeName
-	FROM tag, userTag
-	WHERE tag.TagID = userTag.TagID AND userTag.username = #{username}
+		Tag.TagID,
+		Tag.Name,
+		Tag.Description,
+		Tag.typeName
+	FROM Tag, UserTag
+	WHERE Tag.TagID = UserTag.TagID AND UserTag.username = #{username}
 	</select>
 	
 	<update id = "addUserFollowCount" parameterType = "String">
@@ -105,7 +101,7 @@
 	</update>
 	
 	<update id="deleteUserFollowCount" parameterType = "String">
-	Update user SET
+	Update User SET
 		FollowCount = FollowCount-1
 	WHERE Username = #{username}
 	</update>
@@ -125,9 +121,8 @@
 		Stage,
 		Age,
 		FollowCount,
-		CancerType,
-		geneticMutation
-    FROM suggestUserByTags
+		CancerType
+    FROM SuggestUserByTags
     WHERE (TagID = #{tagID}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>
 	
@@ -148,9 +143,8 @@
 		CancerType,
 		metastasis,
 		Age,
-		Password,
-		geneticMutation
-    FROM user
+		Password
+    FROM User
     WHERE   	
     <foreach collection="keyword" item="String" index="index" separator=" OR ">
   		Username LIKE "%#{keyword}%" OR Pathological LIKE "%#{keyword}%" OR CancerType LIKE "%#{keyword}%" OR  metastasis LIKE "%#{keyword}%"
@@ -172,14 +166,13 @@
 		Stage,
 		Age,
 		FollowCount,
-		CancerType,
-		geneticMutation
+		CancerType
     FROM SuggestUserByProfile
     WHERE (SuggestedUsername = #{username}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>
 	
 	<update id="resetPassword" parameterType="User">
-    UPDATE user SET
+    UPDATE User SET
 	  PASSWORD = #{password}
     WHERE username = #{username}
   </update>

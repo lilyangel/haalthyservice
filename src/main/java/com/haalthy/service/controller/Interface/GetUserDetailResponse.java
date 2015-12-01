@@ -12,6 +12,7 @@ public class GetUserDetailResponse {
 	private List<Treatment> treatments;
 	private List<PatientStatus> patientStatus;
 	private List<ClinicReport> clinicReport;
+	
 	public User getUserProfile() {
 		return userProfile;
 	}

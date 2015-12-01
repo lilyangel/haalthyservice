@@ -150,7 +150,6 @@ public class UserSecurityController {
 			updateUserResponse.setStatus("can't eidt this account");
 		User user = userService.getUserByUsername(username);
 		/*
-		 * 
 		 * EMAIL = #{email}, 
 		 * DISPLAYNAME = #{displayname}, 
 		 * UpdateDate = #{updateDate} 
@@ -177,9 +176,7 @@ public class UserSecurityController {
 		if (updateUser.getGender() != null && updateUser.getGender() != ""){
 			user.setGender(updateUser.getGender());
 		}
-//		if (updateUser.getIsSmoking()){
-//			user.setIsSmoking(updateUser.getIsSmoking());
-//		}
+		user.setIsSmoking(updateUser.getIsSmoking());
 		
 		if(updateUser.getPathological() != null && updateUser.getPathological() != ""){
 			user.setPathological(updateUser.getPathological());
@@ -193,9 +190,10 @@ public class UserSecurityController {
 		if(updateUser.getMetastasis() != null && updateUser.getMetastasis() != ""){
 			user.setMetastasis(updateUser.getMetastasis());
 		}
-//		if(updateUser.getAge() != null){
-//			
-//		}
+		if(updateUser.getGeneticMutation()!=null && updateUser.getGeneticMutation() != ""){
+			user.setGeneticMutation(updateUser.getGeneticMutation());
+		}
+		user.setAge(updateUser.getAge());
 		System.out.println(updateUser.getIsSmoking());
 		System.out.println(user.getImage());
 		if (userService.updateUser(user) == 1)
@@ -240,7 +238,6 @@ public class UserSecurityController {
 		List<Follow> follows = new ArrayList<Follow>();
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
 		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-		System.out.println(currentSessionUsername);
 		follows = followService.getFollowingsByUsername(currentSessionUsername);
 		return follows;
 	}
