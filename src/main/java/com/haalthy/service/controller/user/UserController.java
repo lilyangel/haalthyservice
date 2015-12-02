@@ -42,12 +42,29 @@ public class UserController {
     	return user;
     }
     
+    private String decodePassword(String password){
+		System.out.println(password);
+    	String[] codeUnits = password.split("a");
+    	String passwordDecode = "";
+    	for(int i = 0; i< codeUnits.length; i++){
+    		if(!codeUnits[i].equals("")){
+        		int intCode = Integer.valueOf(codeUnits[i]).intValue(); 
+        		System.out.println(intCode);
+        		char a = (char)intCode;
+        		passwordDecode += a;
+        	}
+    	}
+    	return passwordDecode;
+    }
+    
     //{"gender":"M","password":"password","pathological":"adenocarcinoma","metastasis":"bone;其他","age":"61","isSmoking":1,"cancerType":"lung","email":"user3@qq.com","username":"user3","stage":1}
     @RequestMapping(value = "/add",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
     public AddUpdateUserResponse addUser(@RequestBody User user) {
-    	
-    	System.out.println(user.getMetastasis());
+    	System.out.println("add User");
+    	System.out.println(user.getPassword());
+    	user.setPassword(decodePassword(user.getPassword()));
+    	System.out.println(user.getPassword());
     	//set encoded password
     	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     	String hashedPassword = passwordEncoder.encode(user.getPassword());

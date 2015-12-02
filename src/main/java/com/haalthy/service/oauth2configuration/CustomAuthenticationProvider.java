@@ -23,6 +23,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		String name = authentication.getName();
 		String password = authentication.getCredentials().toString();
+		System.out.println(password);
+		System.out.println(decodePassword(password));
+		password = decodePassword(password);
 		User user = userService.getUserByUsername(name);
 		if (user == null) {
 			user = userService.getUserByEmail(name);
@@ -46,4 +49,20 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public boolean supports(Class<?> authentication) {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
+    
+    private String decodePassword(String password){
+		System.out.println(password);
+    	String[] codeUnits = password.split("a");
+    	String passwordDecode = "";
+    	for(int i = 0; i< codeUnits.length; i++){
+    		if(!codeUnits[i].equals("")){
+        		int intCode = Integer.valueOf(codeUnits[i]).intValue(); 
+        		System.out.println(intCode);
+        		char a = (char)intCode;
+        		passwordDecode += a;
+        	}
+    	}
+    	return passwordDecode;
+    }
+    
 }

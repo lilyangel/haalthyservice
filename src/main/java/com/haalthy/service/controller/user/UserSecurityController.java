@@ -373,6 +373,21 @@ public class UserSecurityController {
     	return userService.selectSuggestUsersByProfile(getSuggestUsersByProfileRequest);
     }
     
+    private String decodePassword(String password){
+		System.out.println(password);
+    	String[] codeUnits = password.split("a");
+    	String passwordDecode = "";
+    	for(int i = 0; i< codeUnits.length; i++){
+    		if(!codeUnits[i].equals("")){
+        		int intCode = Integer.valueOf(codeUnits[i]).intValue(); 
+        		System.out.println(intCode);
+        		char a = (char)intCode;
+        		passwordDecode += a;
+        	}
+    	}
+    	return passwordDecode;
+    }
+    
     @RequestMapping(value = "/resetpassword",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
     public int resetPassword(@RequestBody String password){
@@ -381,14 +396,16 @@ public class UserSecurityController {
  	   String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	   user.setUsername(currentSessionUsername);
  	   if(password!=null && password!=""){
+ 		   password = decodePassword(password);
  		   System.out.println(password);
  		   System.out.println(currentSessionUsername);
  		   BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
  		   String hashedPassword = passwordEncoder.encode(password);
  		   System.out.println(hashedPassword);
  		   user.setPassword(hashedPassword);
-		}
-		return userService.resetPassword(user);
+ 	   }
+ 	   int result  = userService.resetPassword(user);
+ 	   return result;
     }
     
     @RequestMapping(value = "/deletesuggesteduser/{username}",method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
