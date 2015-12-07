@@ -6,6 +6,14 @@ import com.haalthy.service.domain.PatientStatus;
 public class AddPatientStatusRequest {
 	private PatientStatus patientStatus;
 	private ClinicReport clinicReport;
+	private String insertUsername;
+	
+	public String getInsertUsername() {
+		return insertUsername;
+	}
+	public void setInsertUsername(String insertUsername) {
+		this.insertUsername = insertUsername;
+	}
 	public PatientStatus getPatientStatus() {
 		return patientStatus;
 	}

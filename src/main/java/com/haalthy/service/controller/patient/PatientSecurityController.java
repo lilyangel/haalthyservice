@@ -23,7 +23,7 @@ import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.Treatment;
 import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.PostService;
-
+import com.haalthy.service.openservice.UserService;
 import com.haalthy.service.configuration.*;
 
 @Controller
@@ -38,6 +38,9 @@ public class PatientSecurityController {
 	
 	@Autowired
 	private transient PostService postService;
+	
+	@Autowired
+	private transient UserService userService;
 
 	@RequestMapping(value = "/treatment/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {
 			"application/json" })
@@ -48,11 +51,11 @@ public class PatientSecurityController {
 		int isPosted = 0;
 		String postBody = "";
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+//		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
 		Iterator<Treatment> treatmentItr = treatmentList.iterator();
 		while (treatmentItr.hasNext()) {
 			Treatment treatment = treatmentItr.next();
-			treatment.setUsername(currentSessionUsername);
+			treatment.setUsername(addTreatmentsRequest.getInsertUsername());
 			insertCount = patientService.insertTreatment(treatment);
 			isPosted = treatment.getIsPosted();
 			postBody += treatment.getTreatmentName()+"*"+treatment.getDosage()+"**";
@@ -67,7 +70,7 @@ public class PatientSecurityController {
 			post.setCountComments(0);
 			post.setCountViews(0);
 			post.setDateInserted(now);
-			post.setInsertUsername(currentSessionUsername);
+			post.setInsertUsername(addTreatmentsRequest.getInsertUsername());
 //			post.setType(postType.TREATMENT.getValue());
 			post.setType(1);
 			post.setIsBroadcast(0);
@@ -87,7 +90,7 @@ public class PatientSecurityController {
     @ResponseBody
     public int addPatientStatus(@RequestBody AddPatientStatusRequest addPatientStatusRequest){
  	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
         java.util.Date today = new java.util.Date();
     	Timestamp now = new java.sql.Timestamp(today.getTime());
     	
@@ -110,12 +113,12 @@ public class PatientSecurityController {
     			clinicReport.setCT(clinicItemNameAndValue[1]);
     		}
     	}
-    	clinicReport.setUsername(currentSessionUsername);
+    	clinicReport.setUsername(addPatientStatusRequest.getInsertUsername());
 		if (clinicReport.getClinicReport() != "") {
 			int insertClinicReportCount = patientService.insertClinicReport(clinicReport);
 		}
 //    	patientStatus.setInsertedDate(now);
- 	    patientStatus.setUsername(currentSessionUsername);
+ 	    patientStatus.setUsername(addPatientStatusRequest.getInsertUsername());
  	    patientStatus.setStatusDesc(patientStatus.getStatusDesc());
  	    patientStatus.setClinicReport(clinicReport.getClinicReport());
     	int insertCount = patientService.insertPatientStatus(patientStatus);
@@ -131,7 +134,7 @@ public class PatientSecurityController {
     		post.setCountComments(0);
     		post.setCountViews(0);
     		post.setDateInserted(now);
-    		post.setInsertUsername(currentSessionUsername);
+    		post.setInsertUsername(addPatientStatusRequest.getInsertUsername());
 //    		post.setType(postType.PATIENTSTATUS.getValue());
     		post.setType(2);
     		post.setIsBroadcast(0);
@@ -141,15 +144,15 @@ public class PatientSecurityController {
     	return insertCount;
     }
     
-    @RequestMapping(value = "/clinicreport/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
-    @ResponseBody
-    public int addClinicReport(@RequestBody ClinicReport clinicReport){
-		Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
- 	   	clinicReport.setUsername(currentSessionUsername);
- 	   	
- 	   	return 0;
-    }
+//    @RequestMapping(value = "/clinicreport/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+//    @ResponseBody
+//    public int addClinicReport(@RequestBody ClinicReport clinicReport){
+//		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+// 	   	clinicReport.setUsername(currentSessionUsername);
+// 	   	
+// 	   	return 0;
+//    }
     
     @RequestMapping(value = "/treatment/delete", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
@@ -157,9 +160,10 @@ public class PatientSecurityController {
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
  	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	   	int returnValue = 0;
- 	   	if(treatment.getUsername().equals(currentSessionUsername)) {
- 	   	returnValue = patientService.deleteTreatmentById(treatment.getTreatmentID());
- 	   	}
+		if ((treatment.getUsername().equals(currentSessionUsername))
+				|| (treatment.getUsername().equals(userService.getUserByEmail(currentSessionUsername).getUsername()))) {
+			returnValue = patientService.deleteTreatmentById(treatment.getTreatmentID());
+		}
  	   	return returnValue;
     }
 }

@@ -6,6 +6,13 @@ import com.haalthy.service.domain.Tag;
 
 public class AddPostRequest {
 
+	private String insertUsername;
+	public String getInsertUsername() {
+		return insertUsername;
+	}
+	public void setInsertUsername(String insertUsername) {
+		this.insertUsername = insertUsername;
+	}
 	private String body;
 	private int closed;
 	private int isBroadcast;

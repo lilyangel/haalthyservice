@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haalthy.service.controller.Interface.TagList;
+import com.haalthy.service.controller.Interface.UpdateUserTagsRequest;
 import com.haalthy.service.domain.ClinicReport;
 import com.haalthy.service.domain.Follow;
 import com.haalthy.service.domain.NewFollowerCount;
@@ -37,6 +38,7 @@ import com.haalthy.service.configuration.ImageService;
 
 import com.haalthy.service.controller.Interface.AddUpdateUserRequest;
 import com.haalthy.service.controller.Interface.AddUpdateUserResponse;
+import com.haalthy.service.controller.Interface.FollowUserRequest;
 import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
 import com.haalthy.service.controller.Interface.GetUserDetailResponse;
 @Controller
@@ -63,30 +65,31 @@ public class UserSecurityController {
 		return user;
 	}
 	
-	@RequestMapping(value = "/detail/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@RequestMapping(value = "/detail/{username}", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
-	public GetUserDetailResponse getUserDetail(@PathVariable String username) throws IOException {
+	public GetUserDetailResponse getUserDetail(@RequestBody String username) throws IOException {
 		ImageService imageService = new ImageService();
 		User user = userService.getUserByUsername(username);
+		
 		if(user!=null && user.getImage()!=null){
 			user.setImage(imageService.scale(user.getImage(), 88, 88));			
 		}
 		
  	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	   	
 		List<Treatment> treatments = null;
 		List<PatientStatus> patientStatus = null;
 		List<ClinicReport> clinicReport = null;
-		if (currentSessionUsername.equals(username)) {
+//		if (currentSessionUsername.equals(username)) {
 			treatments = patientService.getTreatmentsByUser(username);
 			patientStatus = patientService.getPatientStatusByUser(username);
 			clinicReport = patientService.getClinicReportByUser(username);
-		} else {
-			treatments = patientService.getPostedTreatmentsByUser(username);
-			patientStatus = patientService.getPostedPatientStatusByUser(username);
-			clinicReport = patientService.getPostedClinicReportByUser(username);
-		}
+//		} else {
+//			treatments = patientService.getPostedTreatmentsByUser(username);
+//			patientStatus = patientService.getPostedPatientStatusByUser(username);
+//			clinicReport = patientService.getPostedClinicReportByUser(username);
+//		}
 		GetUserDetailResponse getUserDetailResponse = new GetUserDetailResponse();
 		getUserDetailResponse.setUserProfile(user);
 		getUserDetailResponse.setTreatments(treatments);
@@ -146,7 +149,7 @@ public class UserSecurityController {
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
 		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest()
 				.getAuthorizationParameters().get("username");
-		if (currentSessionUsername.equals(username) == false)
+		if ((currentSessionUsername.equals(username) == false) || (username.equals(userService.getUserByEmail(currentSessionUsername).getUsername())))
 			updateUserResponse.setStatus("can't eidt this account");
 		User user = userService.getUserByUsername(username);
 		/*
@@ -232,15 +235,15 @@ public class UserSecurityController {
 		return followService.refreshNewFollowerCount(currentSessionUsername);
 	}
 	
-	@RequestMapping(value="/followings/", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
-	@ResponseBody
-	public List<Follow> getFollowingsByUsername(){
-		List<Follow> follows = new ArrayList<Follow>();
-		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-		follows = followService.getFollowingsByUsername(currentSessionUsername);
-		return follows;
-	}
+//	@RequestMapping(value="/followings/", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+//	@ResponseBody
+//	public List<Follow> getFollowingsByUsername(){
+//		List<Follow> follows = new ArrayList<Follow>();
+//		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+//		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+//		follows = followService.getFollowingsByUsername(currentSessionUsername);
+//		return follows;
+//	}
 	
 	@RequestMapping(value="/followingusers/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
@@ -262,12 +265,12 @@ public class UserSecurityController {
 	}
 	
 	
-    @RequestMapping(value = "/follow/add/{followingusername}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/follow/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public AddUpdateUserResponse addFollowing(@PathVariable String followingusername){
+    public AddUpdateUserResponse addFollowing(@RequestBody Follow follow){
     	AddUpdateUserResponse addUpdateUserResponse = new AddUpdateUserResponse();
-    	Follow follow = new Follow();
-    	follow.setFollowingUser(followingusername);
+//    	Follow follow = new Follow();
+//    	follow.setFollowingUser(followUserRequest.getFollowing());
     	follow.setIsActive(1);
     	
     	Date now = new Date();
@@ -277,25 +280,25 @@ public class UserSecurityController {
     	follow.setDateUpdated(currentDt);
     	
  	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	   	
- 	   follow.setUsername(currentSessionUsername);
+// 	   follow.setUsername(currentSessionUsername);
  	   List<Follow> follows = followService.getFollowingsByUsernameAndFollowingname(follow);
  	   if(follows.size()>0){
  		   addUpdateUserResponse.setStatus("following exist");
  	   }else if(followService.addFollowing(follow)>0){
- 	 	   userService.addUserFollowCount(followingusername);
+ 	 	   userService.addUserFollowCount(follow.getFollowingUser());
  		  addUpdateUserResponse.setStatus("add Following Successful!");
  	   }
  	   return addUpdateUserResponse;
     }
     
-    @RequestMapping(value = "/follow/inactive/{followingusername}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/follow/inactive", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public int inactiveFollowing(@PathVariable String followingusername){
-    	Follow follow = new Follow();
+    public int inactiveFollowing(@RequestBody Follow follow){
+//    	Follow follow = new Follow();
     	
-    	follow.setFollowingUser(followingusername);
+//    	follow.setFollowingUser(followingusername);
     	follow.setIsActive(0);
     	
     	Date now = new Date();
@@ -304,44 +307,44 @@ public class UserSecurityController {
     	follow.setDateUpdated(currentDt);
     	
  	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
- 	    follow.setUsername(currentSessionUsername);
- 	   userService.deleteUserFollowCount(followingusername);
+// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+// 	    follow.setUsername(currentSessionUsername);
+ 	    userService.deleteUserFollowCount(follow.getFollowingUser());
  	    return followService.inactiveFollowship(follow);
     }
     
-    @RequestMapping(value = "/follow/isfollowing/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/follow/isfollowing", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public int isFollowingUser(@PathVariable String username){
- 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
- 	   	Follow follow = new Follow();
- 	   	follow.setFollowingUser(username);
- 	   	follow.setUsername(currentSessionUsername);
+    public int isFollowingUser(@RequestBody Follow follow){
+// 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+// 	   	Follow follow = new Follow();
+// 	   	follow.setFollowingUser(username);
+// 	   	follow.setUsername(currentSessionUsername);
  	   	return followService.isFollowingUser(follow);
     }
     
     //input: [1,2]
     @RequestMapping(value = "/tag/update", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public int updateUserTags(@RequestBody TagList tags){
-    	if ((tags == null) || (tags.getTags() == null) || (tags.getTags().size() == 0)){
+    public int updateUserTags(@RequestBody UpdateUserTagsRequest updateUserTagsRequest){
+    	if ((updateUserTagsRequest == null) || (updateUserTagsRequest.getTags() == null) || (updateUserTagsRequest.getTags().size() == 0)){
     		return 0;
     	}
     	List<UserTag> userTagList = new ArrayList<UserTag>();
  	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
         java.util.Date today = new java.util.Date();
     	Timestamp now = new java.sql.Timestamp(today.getTime());
-    	Iterator<Tag> tagItr = tags.getTags().iterator();
+    	Iterator<Tag> tagItr = updateUserTagsRequest.getTags().iterator();
     	while(tagItr.hasNext()){
     		UserTag userTag = new UserTag();
     		userTag.setTagID(tagItr.next().getTagId());
-    		userTag.setUsername(currentSessionUsername);
+    		userTag.setUsername(updateUserTagsRequest.getUsername());
     		userTag.setDateInserted(now);
     		userTagList.add(userTag);
     	}
-    	userService.deleteUserTags(currentSessionUsername);
+    	userService.deleteUserTags(updateUserTagsRequest.getUsername());
     	return userService.addUserTags(userTagList);
     }
     
@@ -358,18 +361,19 @@ public class UserSecurityController {
 //    	return userService.deleteUserTag(userTag);
 //    }
     
-    @RequestMapping(value = "/tags", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/tags", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public List<Tag> getTagsByUsername(){
-    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
-    	return userService.getTagsByUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
+    public List<Tag> getTagsByUsername(@RequestBody String username){
+//    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+//    	return userService.getTagsByUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
+    	return userService.getTagsByUsername(username);
     }
     
     @RequestMapping(value = "/suggestedusers",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
     public List<User> getSuggestUsersByProfile(@RequestBody GetSuggestUsersByProfileRequest getSuggestUsersByProfileRequest) {
-    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
-    	getSuggestUsersByProfileRequest.setUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
+//    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+//    	getSuggestUsersByProfileRequest.setUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
     	return userService.selectSuggestUsersByProfile(getSuggestUsersByProfileRequest);
     }
     
@@ -394,6 +398,8 @@ public class UserSecurityController {
  	   User user = new User();
  	   Authentication a = SecurityContextHolder.getContext().getAuthentication();
  	   String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+ 	   if (userService.getUserByUsername(currentSessionUsername) == null)
+ 		  currentSessionUsername = userService.getUserByEmail(currentSessionUsername).getUsername();
  	   user.setUsername(currentSessionUsername);
  	   if(password!=null && password!=""){
  		   password = decodePassword(password);
@@ -410,13 +416,27 @@ public class UserSecurityController {
     
     @RequestMapping(value = "/deletesuggesteduser/{username}",method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
-    public int getSuggestUsersByProfile(@PathVariable String username) {
-    	SuggestedUserPair suggestedUserPair = new SuggestedUserPair();
-    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
-    	suggestedUserPair.setSuggestedUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
-    	suggestedUserPair.setUsername(username);
-    	System.out.println(suggestedUserPair.getSuggestedUsername());
-    	System.out.println(suggestedUserPair.getUsername());
+    public int getSuggestUsersByProfile(@RequestBody SuggestedUserPair suggestedUserPair) {
+//    	SuggestedUserPair suggestedUserPair = new SuggestedUserPair();
+//    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+//    	suggestedUserPair.setSuggestedUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
+//    	suggestedUserPair.setUsername(username);
+//    	System.out.println(suggestedUserPair.getSuggestedUsername());
+//    	System.out.println(suggestedUserPair.getUsername());
     	return userService.deleteFromSuggestUserByProfile(suggestedUserPair);
     }
+    
+    @RequestMapping(value = "/getusername",method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
+    @ResponseBody
+    public String getUsernameByEmail(){
+    	String responseMessage = "no user in database";
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+		User user = userService.getUserByEmail(currentSessionUsername);
+		if (user != null){
+			responseMessage = user.getUsername();
+		}
+		return responseMessage;
+    }
+
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haalthy.service.controller.Interface.AddCommentRequest;
 import com.haalthy.service.controller.Interface.AddUpdateCommentResponse;
+import com.haalthy.service.controller.Interface.UnreadCommentRequest;
 import com.haalthy.service.domain.Comment;
 import com.haalthy.service.openservice.CommentService;
 import com.haalthy.service.openservice.PostService;
@@ -37,9 +38,9 @@ public class CommentSecurityController {
     	Comment comment = new Comment();
     	comment.setBody(addCommentRequest.getBody());
     	
- 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-    	comment.setInsertUsername(currentSessionUsername);
+// 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+//    	comment.setInsertUsername(currentSessionUsername);
     	
     	Date now = new Date();
 //    	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -54,17 +55,17 @@ public class CommentSecurityController {
     	return addCommentResponse;
     }
     
-    @RequestMapping(value = "/inactive/{commentid}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/inactive/{commentid}", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public AddUpdateCommentResponse inactiveComment(@PathVariable int commentid){
+    public AddUpdateCommentResponse inactiveComment(@RequestBody Comment comment){
     	AddUpdateCommentResponse updateCommentResponse = new AddUpdateCommentResponse();
     	
- 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
- 	   	
- 	   	Comment comment = new Comment();
- 	   	comment.setCommentID(commentid);
- 	   	comment.setInsertUsername(currentSessionUsername);
+// 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+// 	   	
+// 	   	Comment comment = new Comment();
+// 	   	comment.setCommentID(commentid);
+// 	   	comment.setInsertUsername(currentSessionUsername);
     	if(commentService.inactiveComment(comment)!=0)
     		updateCommentResponse.setStatus("inactive successful!");
     	else 
@@ -72,27 +73,27 @@ public class CommentSecurityController {
     	return updateCommentResponse;
     }
     
-    @RequestMapping(value = "/unreadcommentscount", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/unreadcommentscount", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public int getUnreadCommentsCount(){
- 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-    	return commentService.getUnreadCommentsCount(currentSessionUsername);
+    public int getUnreadCommentsCount(@RequestBody UnreadCommentRequest unreadCommentReqest){
+// 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+    	return commentService.getUnreadCommentsCount(unreadCommentReqest.getUsername());
     }
     
-    @RequestMapping(value = "/list", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/list", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public List<Comment> getCommentsByUsername(){
- 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-    	return commentService.getCommentsByUsername(currentSessionUsername);
+    public List<Comment> getCommentsByUsername(@RequestBody UnreadCommentRequest unreadCommentReqest){
+// 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+    	return commentService.getCommentsByUsername(unreadCommentReqest.getUsername());
     }
     
-    @RequestMapping(value = "/readallcomments", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/readallcomments", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public int markCommentsAsReadByUsername(){
- 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-    	return commentService.markCommentsAsReadByUsername(currentSessionUsername);
+    public int markCommentsAsReadByUsername(@RequestBody UnreadCommentRequest unreadCommentReqest){
+// 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
+// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+    	return commentService.markCommentsAsReadByUsername(unreadCommentReqest.getUsername());
     }
 }

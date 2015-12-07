@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.haalthy.service.controller.Interface.AddPostRequest;
 import com.haalthy.service.controller.Interface.AddUpdatePostResponse;
 import com.haalthy.service.controller.Interface.GetFeedsRequest;
+import com.haalthy.service.controller.Interface.GetUnreadMentionedPostRequest;
 import com.haalthy.service.domain.Comment;
 import com.haalthy.service.domain.Mention;
 import com.haalthy.service.domain.Post;
@@ -87,11 +88,7 @@ public class PostSecurityController {
     	post.setDateInserted(now);
     	post.setDateUpdated(now);
     	
- 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
- 	   	
- 	   	
-    	post.setInsertUsername(currentSessionUsername);
+    	post.setInsertUsername(addPostRequest.getInsertUsername());
     	post.setIsBroadcast(addPostRequest.getIsBroadcast());
     	
     	if (addPostRequest.getImages() != null){
@@ -168,16 +165,10 @@ public class PostSecurityController {
     }
     //http://localhost:8080/haalthyservice/security/post/inactive/42?access_token=
     
-    @RequestMapping(value = "/inactive/{postid}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/inactive/{postid}", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public AddUpdatePostResponse inactivePost(@PathVariable int postid){
+    public AddUpdatePostResponse inactivePost(@RequestBody Post post){
     	AddUpdatePostResponse updatePostResponse = new AddUpdatePostResponse();
- 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
- 	   	 	   
- 	   	Post post = new Post();
- 	   	post.setPostID(postid);
- 	   	post.setInsertUsername(currentSessionUsername);
 
  	   if(postService.inactivePost(post)!=0)
     		updatePostResponse.setStatus("inactive successful!");
@@ -186,28 +177,28 @@ public class PostSecurityController {
     	return updatePostResponse;
     }
     
-    @RequestMapping(value = "/feeds", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
-    @ResponseBody
-    public List<Post> getFeeds(@RequestBody GetFeedsRequest getFeedsRequest) throws IOException{
- 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
- 	    getFeedsRequest.setUsername(currentSessionUsername);
- 	    List<Post> posts = postService.getFeeds(getFeedsRequest);
-    	Iterator<Post> postItr = posts.iterator();
-    	ImageService imageService = new ImageService();
-    	while(postItr.hasNext()){
-    		Post currentPost = postItr.next();
-    		if(currentPost.getImage()!=null){
-    			currentPost.setImage(imageService.scale(currentPost.getImage(), 32, 32));
-    		}
-    	}
- 	    return posts;
-    }
+//    @RequestMapping(value = "/feeds", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+//    @ResponseBody
+//    public List<Post> getFeeds(@RequestBody GetFeedsRequest getFeedsRequest) throws IOException{
+// 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
+// 	    getFeedsRequest.setUsername(currentSessionUsername);
+// 	    List<Post> posts = postService.getFeeds(getFeedsRequest);
+//    	Iterator<Post> postItr = posts.iterator();
+//    	ImageService imageService = new ImageService();
+//    	while(postItr.hasNext()){
+//    		Post currentPost = postItr.next();
+//    		if(currentPost.getImage()!=null){
+//    			currentPost.setImage(imageService.scale(currentPost.getImage(), 32, 32));
+//    		}
+//    	}
+// 	    return posts;
+//    }
     
     @RequestMapping(value = "/posts", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public List<Post> getPosts(@RequestBody GetFeedsRequest getFeedsRequest) throws IOException{
- 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
- 	    getFeedsRequest.setUsername(currentSessionUsername);
+// 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
+// 	    getFeedsRequest.setUsername(currentSessionUsername);
  	    if (getFeedsRequest.getCount() == 0){
  	    	getFeedsRequest.setCount(50);
  	    }
@@ -240,8 +231,6 @@ public class PostSecurityController {
     @RequestMapping(value = "/postcount", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
 	public int getUpdatedPostCount(@RequestBody GetFeedsRequest getFeedsRequest){
- 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
- 	    getFeedsRequest.setUsername(currentSessionUsername);
     	return postService.getUpdatedPostCount(getFeedsRequest);
     }
     
@@ -259,16 +248,15 @@ public class PostSecurityController {
     
     @RequestMapping(value = "/mentionedpost/unreadcount", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-	public int getUnreadMentionedPostCountByUsername(){
- 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
-		return postService.getUnreadMentionedPostCountByUsername(currentSessionUsername);
+	public int getUnreadMentionedPostCountByUsername(@RequestBody GetUnreadMentionedPostRequest getUnreadMentionedPostRequest){
+		return postService.getUnreadMentionedPostCountByUsername(getUnreadMentionedPostRequest.getUsername());
 	}
 	
     @RequestMapping(value = "/mentionedpost/list", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
 	public List<Post> getMentionedPostsByUsername(@RequestBody GetFeedsRequest request) throws IOException{
- 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
-		request.setUsername(currentSessionUsername);
+// 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
+//		request.setUsername(currentSessionUsername);
  	    List<Post> posts = postService.getMentionedPostsByUsername(request);
     	Iterator<Post> postItr = posts.iterator();
 		while (postItr.hasNext()) {
@@ -297,8 +285,8 @@ public class PostSecurityController {
     
     @RequestMapping(value = "/mentionedpost/markasread", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-	public int refreshUnreadMentionedPostsByUsername(){
- 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
- 	   	return postService.markMentionedPostAsRead(currentSessionUsername);
+	public int refreshUnreadMentionedPostsByUsername(@RequestBody GetUnreadMentionedPostRequest getUnreadMentionedPostRequest){
+// 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
+ 	   	return postService.markMentionedPostAsRead(getUnreadMentionedPostRequest.getUsername());
 	}
 }

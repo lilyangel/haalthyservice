@@ -22,25 +22,30 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		String name = authentication.getName();
+		System.out.println(name);
 		String password = authentication.getCredentials().toString();
-		System.out.println(password);
-		System.out.println(decodePassword(password));
 		password = decodePassword(password);
 		User user = userService.getUserByUsername(name);
 		if (user == null) {
+			System.out.println("user is null");
 			user = userService.getUserByEmail(name);
 			if (user == null) {
 				return null;
+			}else{
+				System.out.println(user.getUsername());
 			}
 		}
+//		User user = userService.getUserByEmail(name);
+		if (user == null) {
+			return null;
+    	}
     	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     	if(passwordEncoder.matches(password, user.getPassword()) == false){
     		return null;
-    	}
-    	else{
+    	}else{
             List<GrantedAuthority> grantedAuths = new ArrayList<GrantedAuthority>();
             grantedAuths.add(new SimpleGrantedAuthority("ROLE_USER"));
-            Authentication auth = new UsernamePasswordAuthenticationToken(name, password, grantedAuths);
+            Authentication auth = new UsernamePasswordAuthenticationToken(user.getUsername(), password, grantedAuths);
             return auth;
         }
     }
@@ -51,13 +56,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     }
     
     private String decodePassword(String password){
-		System.out.println(password);
     	String[] codeUnits = password.split("a");
     	String passwordDecode = "";
     	for(int i = 0; i< codeUnits.length; i++){
     		if(!codeUnits[i].equals("")){
         		int intCode = Integer.valueOf(codeUnits[i]).intValue(); 
-        		System.out.println(intCode);
         		char a = (char)intCode;
         		passwordDecode += a;
         	}

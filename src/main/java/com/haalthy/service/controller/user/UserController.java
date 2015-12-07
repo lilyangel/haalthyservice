@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.springframework.security.core.Authentication;
@@ -30,18 +31,6 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 @Controller
 @RequestMapping("/open/user")
 public class UserController {
-	 
-	@Autowired
-	private transient UserService userService;
-
-    @RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
-    @ResponseBody
-    public User getUser(@PathVariable String username) {
-    	User user = userService.getUserByUsername(username);
-    	user.setPassword(null);
-    	return user;
-    }
-    
     private String decodePassword(String password){
 		System.out.println(password);
     	String[] codeUnits = password.split("a");
@@ -56,15 +45,23 @@ public class UserController {
     	}
     	return passwordDecode;
     }
+	@Autowired
+	private transient UserService userService;
+
+//    @RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+//    @ResponseBody
+//    public User getUser(@PathVariable String username) {
+//    	User user = userService.getUserByUsername(username);
+//    	user.setPassword(null);
+//    	return user;
+//    }
     
     //{"gender":"M","password":"password","pathological":"adenocarcinoma","metastasis":"bone;其他","age":"61","isSmoking":1,"cancerType":"lung","email":"user3@qq.com","username":"user3","stage":1}
     @RequestMapping(value = "/add",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
     public AddUpdateUserResponse addUser(@RequestBody User user) {
-    	System.out.println("add User");
-    	System.out.println(user.getPassword());
     	user.setPassword(decodePassword(user.getPassword()));
-    	System.out.println(user.getPassword());
+    	user.setUsername(generateUsername(user));
     	//set encoded password
     	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     	String hashedPassword = passwordEncoder.encode(user.getPassword());
@@ -90,6 +87,20 @@ public class UserController {
 			addUserResponse.setStatus("insert db error");
 		return addUserResponse;
 	}
+    
+	public int getRandom() {
+		int max = 999;
+		int min = 100;
+		Random random = new Random();
+		int s = random.nextInt(max) % (max - min + 1) + min;
+		return s;
+	}
+    
+    private String generateUsername(User user){
+    	String timestamp = String.valueOf(System.currentTimeMillis());
+    	String randomInt = String.valueOf(getRandom());
+    	return user.getUserType()+timestamp+"."+randomInt;
+    }
     
     @RequestMapping(value = "/suggestedusers",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
