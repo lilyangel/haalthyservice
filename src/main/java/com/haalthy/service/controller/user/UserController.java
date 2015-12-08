@@ -81,8 +81,10 @@ public class UserController {
 			addUserResponse.setStatus("this email has been registed, please use another name");
 		else if (userService.getUserByUsername(user.getUsername()) != null)
 			addUserResponse.setStatus("this name has been registed, please login");
-		else if (userService.addUser(user) == 1)
-			addUserResponse.setStatus("create successful!");
+		else if (userService.addUser(user) == 1){
+			String username = userService.getUserByEmail(user.getEmail()).getUsername();
+			addUserResponse.setStatus(username);
+		}
 		else
 			addUserResponse.setStatus("insert db error");
 		return addUserResponse;
