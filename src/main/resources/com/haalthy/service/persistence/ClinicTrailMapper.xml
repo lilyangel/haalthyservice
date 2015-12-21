@@ -17,4 +17,16 @@
 		FROM clinictrail
 		WHERE  DrugType = #{drugType} AND SubGroup = #{subGroup}
 	</select>
+	
+	<select id = "getClinicTrailDrugTypes" resultType="String">
+		SELECT DISTINCT
+			DrugType
+		FROM clinictrail
+	</select>
+	
+	<select id = "getSubGroups" resultType="String">
+		SELECT DISTINCT
+			SubGroup
+		FROM clinictrail
+	</select>
 </mapper>

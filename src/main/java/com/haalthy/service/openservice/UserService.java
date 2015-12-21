@@ -70,5 +70,7 @@ public class UserService {
 	public int deleteFromSuggestUserByProfile(SuggestedUserPair suggestedUserPair){
 		return userMapper.deleteFromSuggestUserByProfile(suggestedUserPair);
 	}
-
+	public List<User> getUsersByDisplayname(String displayname){
+		return userMapper.getUsersByDisplayname(displayname);
+	}
 }

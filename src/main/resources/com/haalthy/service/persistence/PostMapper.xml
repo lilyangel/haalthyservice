@@ -79,7 +79,7 @@
 	      			<foreach item="tag" index="index" collection="tags" open="(" separator="," close=")">
         				#{tag.tagId}
   					</foreach>
-	    	)AND (post.InsertUserName = user.Username)) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
+	    	)AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)  OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))
 	    	ORDER BY DateInserted DESC
 	    LIMIT #{count}    	
 	</select>
@@ -97,7 +97,7 @@
         				#{tag.tagId}
   					</foreach>
 	    		
-	    	)AND (post.InsertUserName = user.Username)) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
+	    	)AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))
 	    	ORDER BY DateInserted DESC
 	</select>
 	
@@ -170,7 +170,7 @@
 	    		postTag.TagID IN
 	      			(SELECT TagID FROM userTag WHERE Username = #{username})
 	    	)))
-	    	AND (post.InsertUserName = user.Username) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username)))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)
+	    	AND (post.InsertUserName = user.Username))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))
 	    	ORDER BY DateInserted DESC
 	    	LIMIT #{count}
 	</select>
@@ -195,7 +195,7 @@
 	    		postTag.TagID IN
 	      			(SELECT TagID FROM userTag WHERE Username = #{username})
 	    	)))
-	    	AND (post.InsertUserName = user.Username) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username)))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)
+	    	AND (post.InsertUserName = user.Username))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))
 	    	ORDER BY DateInserted DESC
 	</select>
 	

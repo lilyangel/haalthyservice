@@ -24,4 +24,16 @@ public class ClinictrailController {
     public List<ClinicTrailInfo> getClinicTrailInfo(@RequestBody ClinicTrailInfo clinicTrailInfo){
     	return clinicTrailService.getClinicTrailInfo(clinicTrailInfo);
     }
+    
+    @RequestMapping(value = "/drugtype", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public List<String> getClinicTrailDrugTypes(){
+    	return clinicTrailService.getClinicTrailDrugTypes();
+    }
+    
+    @RequestMapping(value = "/subgroup", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public List<String> getClinicTrailSubGroup(){
+    	return clinicTrailService.getClinicTrailSubGroups();
+    }
 }

@@ -15,4 +15,12 @@ public class ClinicTrailService {
 	public List<ClinicTrailInfo> getClinicTrailInfo(ClinicTrailInfo clinicTrailInfo){
 		return clinicTrailMapper.getClinicTrailInfo(clinicTrailInfo);
 	}
+	
+	public List<String> getClinicTrailDrugTypes(){
+		return clinicTrailMapper.getClinicTrailDrugTypes();
+	}
+	
+	public List<String> getClinicTrailSubGroups(){
+		return clinicTrailMapper.getSubGroups();
+	}
 }

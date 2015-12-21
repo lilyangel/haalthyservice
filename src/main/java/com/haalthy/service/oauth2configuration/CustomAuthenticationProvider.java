@@ -22,20 +22,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		String name = authentication.getName();
-		System.out.println(name);
 		String password = authentication.getCredentials().toString();
 		password = decodePassword(password);
 		User user = userService.getUserByUsername(name);
 		if (user == null) {
-			System.out.println("user is null");
 			user = userService.getUserByEmail(name);
 			if (user == null) {
 				return null;
-			}else{
-				System.out.println(user.getUsername());
 			}
 		}
-//		User user = userService.getUserByEmail(name);
 		if (user == null) {
 			return null;
     	}

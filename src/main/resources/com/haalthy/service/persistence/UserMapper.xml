@@ -99,7 +99,7 @@
 	</select>
 	
 	<update id = "addUserFollowCount" parameterType = "String">
-	Update User SET
+	Update user SET
 		FollowCount = FollowCount+1
 	WHERE Username = #{username}
 	</update>
@@ -187,4 +187,12 @@
   <delete id="deleteFromSuggestUserByProfile" parameterType = "SuggestedUserPair">
   	DELETE FROM SuggestUserByProfile where SuggestedUsername = #{suggestedUsername} AND username = #{username}
   </delete>
+  
+  <select id = "getUsersByDisplayname" parameterType="String" resultType="User">
+  	SELECT
+  		UserID,
+  		Displayname,
+		Username
+	FROM user WHERE (user.Displayname=#{displayname})
+  </select>
 </mapper>

@@ -12,7 +12,35 @@ public class ClinicReport  implements Serializable{
 	private String clinicReport;
 	private float CEA;
 	private String CT;
-
+	private float SCC;
+	private float CYFRA21;
+	private float NSE;
+	private float ProGRP;
+	
+	public float getSCC() {
+		return SCC;
+	}
+	public void setSCC(float sCC) {
+		SCC = sCC;
+	}
+	public float getCYFRA21() {
+		return CYFRA21;
+	}
+	public void setCYFRA21(float cYFRA21) {
+		CYFRA21 = cYFRA21;
+	}
+	public float getNSE() {
+		return NSE;
+	}
+	public void setNSE(float nSE) {
+		NSE = nSE;
+	}
+	public float getProGRP() {
+		return ProGRP;
+	}
+	public void setProGRP(float proGRP) {
+		ProGRP = proGRP;
+	}
 	public float getCEA() {
 		return CEA;
 	}

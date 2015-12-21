@@ -23,7 +23,9 @@
    <select id="getClinicReportFormat" resultType="ClinicReportFormat">
      	SELECT 
    			reportFormatID,
-   			clinicItem
+   			clinicItem,
+   			CancerType,
+   			Pathological
 		FROM clinicReportFormat
    </select>
    
@@ -142,9 +144,13 @@
   			clinicReport,
 			cea,
 			ct,
+			SCC,
+			CYFRA21,
+			NSE,
+			ProGRP,
 			DateInserted,
 			IsPosted) VALUES(
-  		#{username},#{clinicReport}, #{CEAValue}, #{CTDesc}, #{dateInserted}, #{isPosted}
+  		#{username}, #{clinicReport}, #{CEA}, #{CT}, #{SCC}, #{CYFRA21}, #{NSE}, #{ProGRP}, #{dateInserted}, #{isPosted}
   	)
   </insert>
   

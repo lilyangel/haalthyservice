@@ -33,7 +33,14 @@ public class Post implements Serializable{
 	private int hasImage;
 	private List<byte[]> postImageList;
 	private String displayname;
+	private String highlightTitle;
 
+	public String getHighlightTitle() {
+		return highlightTitle;
+	}
+	public void setHighlightTitle(String highlightTitle) {
+		this.highlightTitle = highlightTitle;
+	}
 	public String getDisplayname() {
 		return displayname;
 	}

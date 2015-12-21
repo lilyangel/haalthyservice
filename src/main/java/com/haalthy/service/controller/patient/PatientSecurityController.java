@@ -96,21 +96,27 @@ public class PatientSecurityController {
     	
     	PatientStatus patientStatus = addPatientStatusRequest.getPatientStatus();
     	ClinicReport clinicReport = addPatientStatusRequest.getClinicReport();
-    	System.out.println(clinicReport.getClinicReport());
-    	System.out.println(patientStatus.getStatusDesc());
     	String[] cliniReprotItem= clinicReport.getClinicReport().split("\\*\\*",-1);
     	for(int i = 0; i<cliniReprotItem.length; i++){
-    		System.out.println(cliniReprotItem[i]);
     		String[] clinicItemNameAndValue = cliniReprotItem[i].split("\\*", -1);
-    		System.out.println(clinicItemNameAndValue[0]);
 
     		if(clinicItemNameAndValue[0].equals("CEA")){
-        		System.out.println(clinicItemNameAndValue[1]);
     			clinicReport.setCEA(Integer.valueOf(clinicItemNameAndValue[1]).floatValue());
     		}
     		if(clinicItemNameAndValue[0].equals("CT/MRI")){
-        		System.out.println(clinicItemNameAndValue[1]);
     			clinicReport.setCT(clinicItemNameAndValue[1]);
+    		}
+    		if(clinicItemNameAndValue[0].equals("SCC")){
+    			clinicReport.setSCC(Float.valueOf(clinicItemNameAndValue[1]));
+    		}
+    		if(clinicItemNameAndValue[0].equals("CYFRA21-1")){
+    			clinicReport.setCYFRA21(Float.valueOf(clinicItemNameAndValue[1]));
+    		}
+    		if(clinicItemNameAndValue[0].equals("NSE")){
+    			clinicReport.setNSE(Float.valueOf(clinicItemNameAndValue[1]));
+    		}
+    		if(clinicItemNameAndValue[0].equals("ProGRP")){
+    			clinicReport.setProGRP(Float.valueOf(clinicItemNameAndValue[1]));
     		}
     	}
     	clinicReport.setUsername(addPatientStatusRequest.getInsertUsername());
@@ -124,8 +130,8 @@ public class PatientSecurityController {
     	int insertCount = patientService.insertPatientStatus(patientStatus);
     	
     	if(patientStatus.getIsPosted()==1){
-//    		String postBodyStr = clinicReport.getClinicReport() + " " + patientStatus.getStatusDesc();
-    		String postBodyStr = patientStatus.getStatusDesc();  
+    		String postBodyStr = patientStatus.getStatusDesc()  + "##" + clinicReport.getClinicReport();
+//    		String postBodyStr = patientStatus.getStatusDesc() ＋ " " + clinicReport.getClinicReport();
     		Post post = new Post();
     		post.setClosed(0);
     		post.setBody(postBodyStr);

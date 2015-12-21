@@ -30,6 +30,7 @@ import com.haalthy.service.controller.Interface.AddPostRequest;
 import com.haalthy.service.controller.Interface.AddUpdatePostResponse;
 import com.haalthy.service.controller.Interface.GetFeedsRequest;
 import com.haalthy.service.controller.Interface.GetUnreadMentionedPostRequest;
+import com.haalthy.service.controller.Interface.InputUsernameRequest;
 import com.haalthy.service.domain.Comment;
 import com.haalthy.service.domain.Mention;
 import com.haalthy.service.domain.Post;
@@ -206,6 +207,40 @@ public class PostSecurityController {
     	Iterator<Post> postItr = posts.iterator();
 		while (postItr.hasNext()) {
 			Post post = postItr.next();
+    		if (post.getType() == 1){
+    			String postTitle = "";
+    			String[] treatmentList = post.getBody().split("\\*\\*",-1);
+    			for(int i=0;i <treatmentList.length; i++){
+    				while((treatmentList[i].length()>1)&&(treatmentList[i].charAt(0) == '*')){
+    					treatmentList[i] = treatmentList[i].substring(1);
+    				}
+    				String[] treatmentNameAndInfo = treatmentList[i].split("\\*", -1);
+    				if(treatmentNameAndInfo.length>0){
+    					
+    					postTitle = postTitle.concat(treatmentNameAndInfo[0]+"*");
+    				}
+    			}
+    			post.setHighlightTitle(postTitle);
+    		}
+    		if (post.getType() == 2){
+    			String postTitle = "";
+    			String patientStatusStr = "";
+    			if (post.getBody().contains("##")){
+    				String[] patientStatusAndClinicReport = post.getBody().split("##",-1);
+    				if(patientStatusAndClinicReport.length > 1){
+    					patientStatusStr = patientStatusAndClinicReport[0];
+    				}
+    			}else{
+    				patientStatusStr = post.getBody();
+    			}
+    			String[] patientStatusArr = patientStatusStr.split("\\*\\*", -1);
+    			if(patientStatusArr.length > 0){
+    				post.setHighlightTitle(patientStatusArr[0]);
+    			}
+    		}
+    		if(post.getType() != 0){
+    			post.setBody(post.getBody().replace('*', ' '));
+    		}
 			if (post.getHasImage() != 0) {
 				List<byte[]> postImageList = new ArrayList();
 				int index = 1;
@@ -240,16 +275,16 @@ public class PostSecurityController {
     	return postService.getPostsByUsername(username);
     }
     
-    @RequestMapping(value = "/comments/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/comments", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public List<Comment> getCommentsByUsername(@PathVariable String username){
-    	return postService.getCommentsByUsername(username);
+    public List<Comment> getCommentsByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
+    	return postService.getCommentsByUsername(inputUsernameRequest.getUsername());
     }
     
-    @RequestMapping(value = "/mentionedpost/unreadcount", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/mentionedpost/unreadcount", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-	public int getUnreadMentionedPostCountByUsername(@RequestBody GetUnreadMentionedPostRequest getUnreadMentionedPostRequest){
-		return postService.getUnreadMentionedPostCountByUsername(getUnreadMentionedPostRequest.getUsername());
+	public int getUnreadMentionedPostCountByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
+		return postService.getUnreadMentionedPostCountByUsername(inputUsernameRequest.getUsername());
 	}
 	
     @RequestMapping(value = "/mentionedpost/list", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
@@ -283,10 +318,10 @@ public class PostSecurityController {
  	   	return posts;
 	}
     
-    @RequestMapping(value = "/mentionedpost/markasread", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/mentionedpost/markasread", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-	public int refreshUnreadMentionedPostsByUsername(@RequestBody GetUnreadMentionedPostRequest getUnreadMentionedPostRequest){
+	public int refreshUnreadMentionedPostsByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
 // 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
- 	   	return postService.markMentionedPostAsRead(getUnreadMentionedPostRequest.getUsername());
+ 	   	return postService.markMentionedPostAsRead(inputUsernameRequest.getUsername());
 	}
 }
