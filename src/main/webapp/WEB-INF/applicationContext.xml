@@ -66,4 +66,6 @@
     </bean>
     <bean id="clinicTrailService" class="com.haalthy.service.openservice.ClinicTrailService">
     </bean>
+    <bean id="redisCache" class="com.haalthy.service.cache.RedisCache" abstract="true">
+    </bean>
 </beans>
