@@ -1,6 +1,7 @@
 package com.haalthy.service.controller.patient;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.PostService;
 import com.haalthy.service.openservice.UserService;
 import com.haalthy.service.configuration.*;
+import com.haalthy.service.domain.ClinicData;
 
 @Controller
 @RequestMapping("/security/patient")
@@ -50,6 +52,7 @@ public class PatientSecurityController {
 		int insertCount = 0;
 		int isPosted = 0;
 		String postBody = "";
+		String highlight = "";
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
 //		String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
 		Iterator<Treatment> treatmentItr = treatmentList.iterator();
@@ -58,13 +61,19 @@ public class PatientSecurityController {
 			treatment.setUsername(addTreatmentsRequest.getInsertUsername());
 			insertCount = patientService.insertTreatment(treatment);
 			isPosted = treatment.getIsPosted();
-			postBody += treatment.getTreatmentName()+"*"+treatment.getDosage()+"**";
+			highlight += treatment.getTreatmentName() + " ";
+			if(treatmentList.size() > 1){
+				postBody += treatment.getTreatmentName()+":"+treatment.getDosage()+" ";
+			}else{
+				postBody += treatment.getDosage();
+			}
 		}
 		if (isPosted > 0 ) {
 			java.util.Date today = new java.util.Date();
 			Timestamp now = new java.sql.Timestamp(today.getTime());
 			Post post = new Post();
 			post.setClosed(0);
+			post.setHighlight(highlight);
 			post.setBody(postBody);
 			post.setCountBookmarks(0);
 			post.setCountComments(0);
@@ -95,46 +104,88 @@ public class PatientSecurityController {
     	Timestamp now = new java.sql.Timestamp(today.getTime());
     	
     	PatientStatus patientStatus = addPatientStatusRequest.getPatientStatus();
-    	ClinicReport clinicReport = addPatientStatusRequest.getClinicReport();
-    	String[] cliniReprotItem= clinicReport.getClinicReport().split("\\*\\*",-1);
-    	for(int i = 0; i<cliniReprotItem.length; i++){
-    		String[] clinicItemNameAndValue = cliniReprotItem[i].split("\\*", -1);
-
-    		if(clinicItemNameAndValue[0].equals("CEA")){
-    			clinicReport.setCEA(Integer.valueOf(clinicItemNameAndValue[1]).floatValue());
-    		}
-    		if(clinicItemNameAndValue[0].equals("CT/MRI")){
-    			clinicReport.setCT(clinicItemNameAndValue[1]);
-    		}
-    		if(clinicItemNameAndValue[0].equals("SCC")){
-    			clinicReport.setSCC(Float.valueOf(clinicItemNameAndValue[1]));
-    		}
-    		if(clinicItemNameAndValue[0].equals("CYFRA21-1")){
-    			clinicReport.setCYFRA21(Float.valueOf(clinicItemNameAndValue[1]));
-    		}
-    		if(clinicItemNameAndValue[0].equals("NSE")){
-    			clinicReport.setNSE(Float.valueOf(clinicItemNameAndValue[1]));
-    		}
-    		if(clinicItemNameAndValue[0].equals("ProGRP")){
-    			clinicReport.setProGRP(Float.valueOf(clinicItemNameAndValue[1]));
-    		}
-    	}
-    	clinicReport.setUsername(addPatientStatusRequest.getInsertUsername());
-		if (clinicReport.getClinicReport() != "") {
-			int insertClinicReportCount = patientService.insertClinicReport(clinicReport);
-		}
-//    	patientStatus.setInsertedDate(now);
+    	
  	    patientStatus.setUsername(addPatientStatusRequest.getInsertUsername());
  	    patientStatus.setStatusDesc(patientStatus.getStatusDesc());
- 	    patientStatus.setClinicReport(clinicReport.getClinicReport());
+// 	    patientStatus.setClinicReport(clinicReport.getClinicReport());
     	int insertCount = patientService.insertPatientStatus(patientStatus);
     	
+    	ClinicReport clinicReport = addPatientStatusRequest.getClinicReport();
+    	String[] cliniReprotItem= clinicReport.getClinicReport().split("\\]",-1);
+		List<ClinicData> clinicDataList = new ArrayList();
+
+		for (int i = 0; i < cliniReprotItem.length; i++) {
+			if (cliniReprotItem[i].length() > 0) {
+				if (cliniReprotItem[i].charAt(0) == '[') {
+					cliniReprotItem[i] = cliniReprotItem[i].substring(1);
+				}
+				ClinicData clinicData = new ClinicData();
+				String[] clinicItemNameAndValue = cliniReprotItem[i].split("\\:", -1);
+				if (clinicItemNameAndValue.length > 1){
+					clinicData.setClinicItemName(clinicItemNameAndValue[0]);
+					clinicData.setClinicItemValue(Float.valueOf(clinicItemNameAndValue[1]));
+					clinicData.setStatusID(patientStatus.getStatusID());
+					clinicData.setInsertUsername(addPatientStatusRequest.getInsertUsername());
+					clinicData.setInsertDate(addPatientStatusRequest.getPatientStatus().getInsertedDate());
+				}
+				clinicDataList.add(clinicData);
+//				if (clinicItemNameAndValue[0].equals("CEA") && (clinicItemNameAndValue.length > 1)) {
+//					System.out.println(clinicItemNameAndValue[1]);
+//					clinicReport.setCEA(Float.valueOf(clinicItemNameAndValue[1]));
+//				}else{
+//					clinicReport.setCEA(-1);
+//				}
+//				if (clinicItemNameAndValue[0].equals("CT/MRI") && (clinicItemNameAndValue.length > 1)) {
+//					System.out.println(clinicItemNameAndValue.length);
+//					clinicReport.setCT(clinicItemNameAndValue[1]);
+//				}
+//				if (clinicItemNameAndValue[0].equals("SCC") && (clinicItemNameAndValue.length > 1)) {
+//					clinicReport.setSCC(Float.valueOf(clinicItemNameAndValue[1]));
+//				}else{
+//					clinicReport.setSCC(-1);
+//				}
+//				if (clinicItemNameAndValue[0].equals("CYFRA21-1") && (clinicItemNameAndValue.length > 1)) {
+//					clinicReport.setCYFRA21(Float.valueOf(clinicItemNameAndValue[1]));
+//				}else{
+//					clinicReport.setCYFRA21(-1);
+//				}
+//				if (clinicItemNameAndValue[0].equals("NSE") && (clinicItemNameAndValue.length > 1)) {
+//					clinicReport.setNSE(Float.valueOf(clinicItemNameAndValue[1]));
+//				}else{
+//					clinicReport.setNSE(-1);
+//				}
+//				if (clinicItemNameAndValue[0].equals("ProGRP") && (clinicItemNameAndValue.length > 1)) {
+//					clinicReport.setProGRP(Float.valueOf(clinicItemNameAndValue[1]));
+//				}else{
+//					clinicReport.setProGRP(-1);
+//				}
+				
+			}
+		}
+		if (clinicDataList.size() > 0){
+			patientService.insertClinicData(clinicDataList);
+		}
+//    	clinicReport.setUsername(addPatientStatusRequest.getInsertUsername());
+//		if (clinicReport.getClinicReport() != "") {
+//			int insertClinicReportCount = patientService.insertClinicReport(clinicReport);
+//		}
+//    	patientStatus.setInsertedDate(now);
+    	
     	if(patientStatus.getIsPosted()==1){
-    		String postBodyStr = patientStatus.getStatusDesc()  + "##" + clinicReport.getClinicReport();
+    		String[] postHightlightAndBody = patientStatus.getStatusDesc().split("\\:\\:");
 //    		String postBodyStr = patientStatus.getStatusDesc() ＋ " " + clinicReport.getClinicReport();
     		Post post = new Post();
+    		String postStr = "";
+    		post.setHighlight(postHightlightAndBody[0]);
+    		post.setClinicReport(patientStatus.getClinicReport());
     		post.setClosed(0);
-    		post.setBody(postBodyStr);
+    		if (postHightlightAndBody.length > 1){
+    			postStr = postHightlightAndBody[1];
+    		}
+    		if((patientStatus.getScanData() != null) && (patientStatus.getScanData() != "")){
+    			postStr += "/n" + patientStatus.getScanData();
+    		}
+    		post.setBody(postStr);
     		post.setPatientStatusID(patientStatus.getStatusID());
     		post.setCountBookmarks(0);
     		post.setCountComments(0);

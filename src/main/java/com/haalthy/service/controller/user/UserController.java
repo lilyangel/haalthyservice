@@ -8,6 +8,7 @@ import com.haalthy.service.controller.Interface.AddUpdateUserRequest;
 import com.haalthy.service.controller.Interface.AddUpdateUserResponse;
 import com.haalthy.service.controller.Interface.GetSuggestUsersByTagsRequest;
 import com.haalthy.service.controller.Interface.GetUsersResponse;
+import com.haalthy.service.controller.Interface.InputUsernameRequest;
 import com.haalthy.service.domain.ClinicTrailInfo;
 import com.haalthy.service.domain.Follow;
 import com.haalthy.service.domain.SelectUserByTagRange;
@@ -129,8 +130,10 @@ public class UserController {
     
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
-    public List<User> searchUsers(@RequestBody String keywords){
-    	String[] keyword = keywords.split(keywords);
+    public List<User> searchUsers(@RequestBody InputUsernameRequest inputUsernameRequest){
+//    	String[] keyword = inputUsernameRequest.getUsername().split(" ");
+//    	List<String> keywordList = java.util.Arrays.asList(keyword);
+    	String keyword = "%" + inputUsernameRequest.getUsername() + "%";
     	return userService.searchUsers(keyword);
     }
 

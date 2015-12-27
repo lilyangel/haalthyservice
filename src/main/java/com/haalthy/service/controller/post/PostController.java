@@ -93,40 +93,40 @@ public class PostController {
     	ImageService imageService = new ImageService();
     	while(postItr.hasNext()){
     		Post post = postItr.next();
-    		if (post.getType() == 1){
-    			String postTitle = "";
-    			String[] treatmentList = post.getBody().split("\\*\\*",-1);
-    			for(int i=0;i <treatmentList.length; i++){
-    				while((treatmentList[i].length()>1)&&(treatmentList[i].charAt(0) == '*')){
-    					treatmentList[i] = treatmentList[i].substring(1);
-    				}
-    				String[] treatmentNameAndInfo = treatmentList[i].split("\\*", -1);
-    				if(treatmentNameAndInfo.length>0){
-    					
-    					postTitle = postTitle.concat(treatmentNameAndInfo[0]+"*");
-    				}
-    			}
-    			post.setHighlightTitle(postTitle);
-    		}
-    		if (post.getType() == 2){
-    			String postTitle = "";
-    			String patientStatusStr = "";
-    			if (post.getBody().contains("##")){
-    				String[] patientStatusAndClinicReport = post.getBody().split("##",-1);
-    				if(patientStatusAndClinicReport.length > 1){
-    					patientStatusStr = patientStatusAndClinicReport[0];
-    				}
-    			}else{
-    				patientStatusStr = post.getBody();
-    			}
-    			String[] patientStatusArr = patientStatusStr.split("\\*\\*", -1);
-    			if(patientStatusArr.length > 0){
-    				post.setHighlightTitle(patientStatusArr[0]);
-    			}
-    		}
-    		if(post.getType() != 0){
-    			post.setBody(post.getBody().replace('*', ' '));
-    		}
+//    		if (post.getType() == 1){
+//    			String postTitle = "";
+//    			String[] treatmentList = post.getBody().split("\\*\\*",-1);
+//    			for(int i=0;i <treatmentList.length; i++){
+//    				while((treatmentList[i].length()>1)&&(treatmentList[i].charAt(0) == '*')){
+//    					treatmentList[i] = treatmentList[i].substring(1);
+//    				}
+//    				String[] treatmentNameAndInfo = treatmentList[i].split("\\*", -1);
+//    				if(treatmentNameAndInfo.length>0){
+//    					
+//    					postTitle = postTitle.concat(treatmentNameAndInfo[0]+"*");
+//    				}
+//    			}
+//    			post.setHighlightTitle(postTitle);
+//    		}
+//    		if (post.getType() == 2){
+//    			String postTitle = "";
+//    			String patientStatusStr = "";
+//    			if (post.getBody().contains("##")){
+//    				String[] patientStatusAndClinicReport = post.getBody().split("##",-1);
+//    				if(patientStatusAndClinicReport.length > 1){
+//    					patientStatusStr = patientStatusAndClinicReport[0];
+//    				}
+//    			}else{
+//    				patientStatusStr = post.getBody();
+//    			}
+//    			String[] patientStatusArr = patientStatusStr.split("\\*\\*", -1);
+//    			if(patientStatusArr.length > 0){
+//    				post.setHighlightTitle(patientStatusArr[0]);
+//    			}
+//    		}
+//    		if(post.getType() != 0){
+//    			post.setBody(post.getBody().replace('*', ' '));
+//    		}
     		if(post.getImage()!=null){
     			post.setImage(imageService.scale(post.getImage(), 32, 32));
     		}

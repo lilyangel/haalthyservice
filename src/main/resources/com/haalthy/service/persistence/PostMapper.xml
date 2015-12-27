@@ -20,15 +20,17 @@
 			DateUpdated,
 			isActive,
 			image,
-			displayname
+			displayname,
+			highlight,
+			clinicReport
 	    FROM post, user
 	    WHERE POSTID = #{PostID} AND post.InsertUserName = user.username
 	  </select>
 	  
 	<insert id="addPost" useGeneratedKeys="true"
     	keyProperty="postID" keyColumn = "PostID">
-  		INSERT into post (InsertUserName, body, Tags, CountComments, CountBookmarks, CountViews, Closed, IsBroadcast, DateInserted,DateUpdated, isActive, Type, HasImage)
- 			 VALUES (#{insertUsername},#{body},#{tags}, #{countComments}, #{countBookmarks}, #{countViews}, #{closed},#{isBroadcast}, #{dateInserted}, #{dateUpdated}, #{isActive}, #{type}, #{hasImage})
+  		INSERT into post (InsertUserName, body, Tags, CountComments, CountBookmarks, CountViews, Closed, IsBroadcast, DateInserted,DateUpdated, isActive, Type, HasImage, highlight, clinicReport)
+ 			 VALUES (#{insertUsername},#{body},#{tags}, #{countComments}, #{countBookmarks}, #{countViews}, #{closed},#{isBroadcast}, #{dateInserted}, #{dateUpdated}, #{isActive}, #{type}, #{hasImage}, #{highlight}, #{clinicReport})
 	</insert>
 	
 	<insert id="addMention" parameterType="java.util.List">
@@ -69,7 +71,9 @@
 			DateUpdated,
 			isActive,
 			image,
-			displayname
+			displayname,
+			highlight,
+			clinicReport
 	    FROM post, user
 	    WHERE ((PostID IN(
 	    	SELECT PostID 
@@ -79,7 +83,7 @@
 	      			<foreach item="tag" index="index" collection="tags" open="(" separator="," close=")">
         				#{tag.tagId}
   					</foreach>
-	    	)AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)  OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))
+	    	)AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)  OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) )
 	    	ORDER BY DateInserted DESC
 	    LIMIT #{count}    	
 	</select>
@@ -97,7 +101,7 @@
         				#{tag.tagId}
   					</foreach>
 	    		
-	    	)AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))
+	    	)AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) )
 	    	ORDER BY DateInserted DESC
 	</select>
 	
@@ -117,7 +121,9 @@
 			DateUpdated,
 			isActive,
 			user.image,
-			displayname
+			displayname,
+			highlight,
+			clinicReport
 	    FROM post, user
 	    WHERE post.InsertUserName IN(
 	    	SELECT FollowingUser 
@@ -152,7 +158,9 @@
 			Metastasis,
 			Stage,
 			HasImage,
-			displayname
+			displayname,
+			highlight,
+			clinicReport
 	FROM post, user
 	    WHERE (((post.InsertUserName IN(
 	    	SELECT FollowingUser 
@@ -170,7 +178,7 @@
 	    		postTag.TagID IN
 	      			(SELECT TagID FROM userTag WHERE Username = #{username})
 	    	)))
-	    	AND (post.InsertUserName = user.Username))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))
+	    	AND (post.InsertUserName = user.Username))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) )
 	    	ORDER BY DateInserted DESC
 	    	LIMIT #{count}
 	</select>
@@ -195,7 +203,7 @@
 	    		postTag.TagID IN
 	      			(SELECT TagID FROM userTag WHERE Username = #{username})
 	    	)))
-	    	AND (post.InsertUserName = user.Username))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))
+	    	AND (post.InsertUserName = user.Username))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) )
 	    	ORDER BY DateInserted DESC
 	</select>
 	
@@ -217,7 +225,9 @@
 			IsBroadcast,
 			DateInserted,
 			DateUpdated,
-			isActive
+			isActive,
+			highlight,
+			clinicReport
 		FROM post
 		WHERE insertUserName = #{username} AND type = 0
 	</select>
@@ -251,7 +261,9 @@
 			DateUpdated,
 			isActive,
 			image,
-			displayname
+			displayname,
+			highlight,
+			clinicReport
 	    FROM post, user
 	    WHERE 
 	    (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)

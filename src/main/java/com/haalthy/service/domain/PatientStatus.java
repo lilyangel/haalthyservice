@@ -10,9 +10,16 @@ public class PatientStatus implements Serializable{
 	private String username;
 	private String clinicReport;
 	private String statusDesc;
+	private String scanData;
 	private Timestamp insertedDate;
 	private int isPosted;
 	
+	public String getScanData() {
+		return scanData;
+	}
+	public void setScanData(String scanData) {
+		this.scanData = scanData;
+	}
 	public String getStatusDesc() {
 		return statusDesc;
 	}

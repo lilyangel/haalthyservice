@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haalthy.service.controller.Interface.TagList;
 import com.haalthy.service.controller.Interface.UpdateUserTagsRequest;
+import com.haalthy.service.domain.ClinicData;
 import com.haalthy.service.domain.ClinicReport;
 import com.haalthy.service.domain.Follow;
 import com.haalthy.service.domain.NewFollowerCount;
@@ -38,6 +39,7 @@ import com.haalthy.service.configuration.ImageService;
 
 import com.haalthy.service.controller.Interface.AddUpdateUserRequest;
 import com.haalthy.service.controller.Interface.AddUpdateUserResponse;
+import com.haalthy.service.controller.Interface.ClinicDataType;
 import com.haalthy.service.controller.Interface.FollowUserRequest;
 import com.haalthy.service.controller.Interface.GetMentionedUsernameRequest;
 import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
@@ -82,24 +84,43 @@ public class UserSecurityController {
  	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
 // 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
  	   	
-		List<Treatment> treatments = null;
-		List<PatientStatus> patientStatus = null;
-		List<ClinicReport> clinicReport = null;
-//		if (currentSessionUsername.equals(username)) {
-			treatments = patientService.getTreatmentsByUser(username);
-			patientStatus = patientService.getPatientStatusByUser(username);
-			clinicReport = patientService.getClinicReportByUser(username);
-//		} else {
-//			treatments = patientService.getPostedTreatmentsByUser(username);
-//			patientStatus = patientService.getPostedPatientStatusByUser(username);
-//			clinicReport = patientService.getPostedClinicReportByUser(username);
-//		}
-		GetUserDetailResponse getUserDetailResponse = new GetUserDetailResponse();
-		getUserDetailResponse.setUserProfile(user);
-		getUserDetailResponse.setTreatments(treatments);
-		getUserDetailResponse.setPatientStatus(patientStatus);
-		getUserDetailResponse.setClinicReport(clinicReport);
-		return getUserDetailResponse;
+ 	   	List<Treatment> treatments = null;
+ 	   	List<PatientStatus> patientStatus = null;
+ 	   	List<ClinicDataType> clinicReport = new ArrayList();
+ 	   	treatments = patientService.getTreatmentsByUser(username);
+ 	   	patientStatus = patientService.getPatientStatusByUser(username);
+ 	   	//			clinicReport = patientService.getClinicReportByUser(username);
+ 	   	List<ClinicData> clinicDataList = patientService.getClinicDataByUsername(username);
+ 	   	Iterator<ClinicData> clinicDataItr = clinicDataList.iterator();
+ 	   	while(clinicDataItr.hasNext()){
+ 	   		ClinicData clinicData = clinicDataItr.next();
+ 	   		Iterator<ClinicDataType> clinicDataTypeItr = clinicReport.iterator();
+ 	   		Boolean hasClinicItemName = false;
+ 	   		while(clinicDataTypeItr.hasNext()){
+ 	   			ClinicDataType clinicDataType = clinicDataTypeItr.next();
+ 	   			if(clinicDataType.getClinicItemName().equals(clinicData.getClinicItemName())){
+ 	   				clinicDataType.getClinicDataList().add(clinicData);
+ 	   				hasClinicItemName = true;
+ 	   				break;
+ 	   			}
+ 	   		}
+ 	   		if(hasClinicItemName == false){
+ 	   			ClinicDataType clinicDataType = new ClinicDataType();
+ 	   			clinicDataType.setClinicItemName(clinicData.getClinicItemName());
+// 	   			clinicDataType.getClinicDataList().add(clinicData);
+ 	   			List<ClinicData> clinicDataListInType = new ArrayList();
+ 	   			clinicDataListInType.add(clinicData);
+ 	   			clinicDataType.setClinicDataList(clinicDataListInType);
+ 	   			clinicReport.add(clinicDataType);
+ 	   		}
+ 	   	}
+
+ 	   	GetUserDetailResponse getUserDetailResponse = new GetUserDetailResponse();
+ 	   	getUserDetailResponse.setUserProfile(user);
+ 	   	getUserDetailResponse.setTreatments(treatments);
+ 	   	getUserDetailResponse.setPatientStatus(patientStatus);
+ 	   	getUserDetailResponse.setClinicReport(clinicReport);
+ 	   	return getUserDetailResponse;
 	}
    
 //   @RequestMapping(value = "/update",method = RequestMethod.PUT, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
@@ -295,8 +316,8 @@ public class UserSecurityController {
  	   
  	   //delete user from suggested user table
  	   SuggestedUserPair suggestedUserPair = new SuggestedUserPair();
- 	   suggestedUserPair.setSuggestedUsername(follow.getFollowingUser());
- 	   suggestedUserPair.setUsername(follow.getUsername());
+ 	   suggestedUserPair.setSuggestedUsername(follow.getUsername());
+ 	   suggestedUserPair.setUsername(follow.getFollowingUser());
  	   userService.deleteFromSuggestUserByProfile(suggestedUserPair);
  	   
  	   //increase 

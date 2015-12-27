@@ -131,7 +131,7 @@
     WHERE (TagID = #{tagID}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>
 	
-	<select id = "searchUsers" parameterType = "java.util.List" resultType = "User">
+	<select id = "searchUsers" resultType = "User">
 	SELECT
 		UserID,
 		Email,
@@ -152,10 +152,9 @@
 		geneticMutation
     FROM user
     WHERE   	
-    <foreach collection="keyword" item="String" index="index" separator=" OR ">
-  		Username LIKE "%#{keyword}%" OR Pathological LIKE "%#{keyword}%" OR CancerType LIKE "%#{keyword}%" OR  metastasis LIKE "%#{keyword}%"
-  	</foreach>
-	</select>
+		Displayname LIKE #{keyword}
+ 	</select>
+ 	
 	<!-- parameterType = "GetSuggestUsersByProfileRequest" --> 
 	<select id = "selectSuggestUsersByProfile"  resultType = "User">
 	SELECT

@@ -60,7 +60,8 @@
 			ClinicReport,
 			StatusDesc,
 			InsertedDate,
-			IsPosted
+			IsPosted,
+			scanData
 		FROM patientstatus
 			WHERE username = #{username}
 		ORDER BY InsertedDate DESC
@@ -71,6 +72,10 @@
    			username,
    			CEA,
    			CT,
+   			SCC,
+   			CYFRA21,
+   			NSE,
+   			ProGRP,
 			clinicReport,
 			dateInserted,
 			isPosted
@@ -101,7 +106,8 @@
 			ClinicReport,
 			StatusDesc,
 			InsertedDate,
-			IsPosted
+			IsPosted,
+			scanData
 		FROM patientstatus
 			WHERE username = #{username}  AND IsPosted = 1
 		ORDER BY InsertedDate DESC
@@ -133,8 +139,9 @@
 			ClinicReport,
 			statusDesc,
 			InsertedDate,
-			IsPosted) VALUES(
-  		#{username}, #{clinicReport}, #{statusDesc}, #{insertedDate}, #{isPosted}
+			IsPosted,
+			scanData) VALUES(
+  		#{username}, #{clinicReport}, #{statusDesc}, #{insertedDate}, #{isPosted}, #{scanData}
   	)
   </insert>
   
@@ -154,7 +161,26 @@
   	)
   </insert>
   
-  <delete id = "deleteTreatmentById" parameterType="int">
+  <insert id = "insertClinicData"  parameterType="java.util.List">
+    	INSERT INTO ClinicData(clinicItemName, clinicItemValue, statusID, insertUsername, insertDate) values
+  		<foreach collection="list" item="ClinicData" index="index" separator=",">
+  			(#{ClinicData.clinicItemName}, #{ClinicData.clinicItemValue}, #{ClinicData.statusID}, #{ClinicData.insertUsername},  #{ClinicData.insertDate})
+  		</foreach>
+  </insert>
+  
+  <select id = "getClinicDataByUsername" parameterType="String"  resultType="ClinicData">
+  	  SELECT 
+  	  	clinicDataID,
+  	  	statusID,
+  	  	clinicItemName,
+  	  	clinicItemValue,
+  	  	insertUsername,
+  	  	insertDate
+  	  FROM
+  	    ClinicData WHERE insertUsername=#{insertUsername}
+  </select>
+  
+  <delete id = "deleteTreatmentById" parameterType="int" >
   	DELETE FROM treatment
   	Where TreatmentID = #{treatmentId}
   </delete>
