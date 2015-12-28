@@ -9,7 +9,6 @@
             /WEB-INF/rest-dispatcher-servlet.xml
             /WEB-INF/rest-dispatcher-servlet-security.xml
             /WEB-INF/applicationContext.xml
-            /WEB-INF/applicationContext_redis.xml
         </param-value>
     </context-param>
 
