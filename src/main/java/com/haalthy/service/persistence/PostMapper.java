@@ -2,8 +2,8 @@ package com.haalthy.service.persistence;
 
 import java.util.List;
 
-import com.haalthy.service.controller.Interface.GetFeedsRequest;
-import com.haalthy.service.controller.Interface.GetPostsByTagsRequest;
+import com.haalthy.service.controller.Interface.post.GetFeedsRequest;
+import com.haalthy.service.controller.Interface.post.GetPostsByTagsRequest;
 import com.haalthy.service.domain.Comment;
 import com.haalthy.service.domain.Mention;
 import com.haalthy.service.domain.Post;

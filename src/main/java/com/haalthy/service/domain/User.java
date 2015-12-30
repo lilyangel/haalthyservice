@@ -23,7 +23,14 @@ public class User implements Serializable {
 	private String metastasis;
 	private String userType;
 	private String geneticMutation;
+	private String deviceToken;
 	
+	public String getDeviceToken() {
+		return deviceToken;
+	}
+	public void setDeviceToken(String deviceToken) {
+		this.deviceToken = deviceToken;
+	}
 	public String getGeneticMutation() {
 		return geneticMutation;
 	}

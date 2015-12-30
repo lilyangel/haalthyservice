@@ -24,7 +24,8 @@
 		metastasis,
 		Age,
 		Password,
-		geneticMutation
+		geneticMutation,
+		deviceToken
     FROM user
     WHERE user.Username = #{username}
   </select>
@@ -47,7 +48,8 @@
 		CancerType,
 		metastasis,
 		Age,
-		geneticMutation
+		geneticMutation,
+		deviceToken
     FROM user
     WHERE user.Email = #{email}
   </select>
@@ -55,8 +57,8 @@
   
 	<insert id="addUser" useGeneratedKeys="true"
     	keyProperty="UserID" keyColumn="UserID">
-  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age, Image, userType, geneticMutation)
- 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age}, #{image}, #{userType}, #{geneticMutation})
+  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age, Image, userType, geneticMutation, deviceToken)
+ 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age}, #{image}, #{userType}, #{geneticMutation}, #{deviceToken})
 	</insert>
 	
 	<update id="updateUser" parameterType="User">
@@ -126,7 +128,8 @@
 		Age,
 		FollowCount,
 		CancerType,
-		geneticMutation
+		geneticMutation,
+		deviceToken
     FROM suggestUserByTags
     WHERE (TagID = #{tagID}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>
@@ -149,7 +152,8 @@
 		metastasis,
 		Age,
 		Password,
-		geneticMutation
+		geneticMutation,
+		deviceToken
     FROM user
     WHERE   	
 		Displayname LIKE #{keyword}
@@ -172,7 +176,8 @@
 		Age,
 		FollowCount,
 		CancerType,
-		geneticMutation
+		geneticMutation,
+		deviceToken
     FROM SuggestUserByProfile
     WHERE (SuggestedUsername = #{username}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>
@@ -180,6 +185,12 @@
 	<update id="resetPassword" parameterType="User">
     UPDATE user SET
 	  PASSWORD = #{password}
+    WHERE username = #{username}
+  </update>
+  
+  <update id="resetDeviceToken" parameterType="User">
+    UPDATE user SET
+	  deviceToken = #{deviceToken}
     WHERE username = #{username}
   </update>
   

@@ -1,11 +1,14 @@
-package com.haalthy.service.controller.Interface;
+package com.haalthy.service.controller.Interface.post;
 
 import java.sql.Timestamp;
+import java.util.List;
 
-public class GetFeedsRequest {
+import com.haalthy.service.domain.Tag;
+
+public class GetPostsByTagsRequest {
+	private List<Tag> tags;
 	private Timestamp begin;
 	private Timestamp end;
-	private String username;
 	private int count;
 	
 	public int getCount() {
@@ -14,11 +17,11 @@ public class GetFeedsRequest {
 	public void setCount(int count) {
 		this.count = count;
 	}
-	public String getUsername() {
-		return username;
+	public List<Tag> getTags() {
+		return tags;
 	}
-	public void setUsername(String username) {
-		this.username = username;
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
 	}
 	public Timestamp getBegin() {
 		return begin;
@@ -32,5 +35,4 @@ public class GetFeedsRequest {
 	public void setEnd(Timestamp end) {
 		this.end = end;
 	}
-	
 }

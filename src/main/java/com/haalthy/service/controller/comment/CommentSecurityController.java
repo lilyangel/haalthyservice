@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.haalthy.service.controller.Interface.AddCommentRequest;
-import com.haalthy.service.controller.Interface.AddUpdateCommentResponse;
 import com.haalthy.service.controller.Interface.UnreadCommentRequest;
+import com.haalthy.service.controller.Interface.comment.AddCommentRequest;
+import com.haalthy.service.controller.Interface.comment.AddUpdateCommentResponse;
+import com.haalthy.service.controller.Interface.comment.GetCommentsResponse;
+import com.haalthy.service.controller.Interface.comment.GetUnreadCommentCountResponse;
+import com.haalthy.service.controller.Interface.comment.MarkCommentsAsReadByUsernameResponse;
 import com.haalthy.service.domain.Comment;
 import com.haalthy.service.openservice.CommentService;
 import com.haalthy.service.openservice.PostService;
@@ -37,63 +40,86 @@ public class CommentSecurityController {
     	AddUpdateCommentResponse addCommentResponse = new AddUpdateCommentResponse();
     	Comment comment = new Comment();
     	comment.setBody(addCommentRequest.getBody());
-    	
-// 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
-// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-//    	comment.setInsertUsername(currentSessionUsername);
     	comment.setInsertUsername(addCommentRequest.getInsertUsername());
     	Date now = new Date();
-//    	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//    	String currentDt = sdf.format(now);
     	Timestamp ts_now = new Timestamp(now.getTime());
     	comment.setDateInserted(ts_now);
     	comment.setIsActive(1);
     	comment.setPostID(addCommentRequest.getPostID());
-    	postService.increasePostCountComment(addCommentRequest.getPostID());
-    	if(commentService.addComment(comment)>0)
-    		addCommentResponse.setStatus("create comment sucessful!");
+		try {
+			postService.increasePostCountComment(addCommentRequest.getPostID());
+			if (commentService.addComment(comment) > 0){
+				addCommentResponse.setResult(1);
+				addCommentResponse.setResultDesp("返回成功");
+			}
+		} catch (Exception e) {
+			addCommentResponse.setResult(-1);
+			addCommentResponse.setResultDesp("数据库连接错误");
+		}
     	return addCommentResponse;
     }
     
     @RequestMapping(value = "/inactive/{commentid}", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public AddUpdateCommentResponse inactiveComment(@RequestBody Comment comment){
-    	AddUpdateCommentResponse updateCommentResponse = new AddUpdateCommentResponse();
-    	
-// 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
-// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-// 	   	
-// 	   	Comment comment = new Comment();
-// 	   	comment.setCommentID(commentid);
-// 	   	comment.setInsertUsername(currentSessionUsername);
-    	if(commentService.inactiveComment(comment)!=0)
-    		updateCommentResponse.setStatus("inactive successful!");
-    	else 
-    		updateCommentResponse.setStatus("inactive unsuccessful");
-    	return updateCommentResponse;
-    }
+	public AddUpdateCommentResponse inactiveComment(@RequestBody Comment comment) {
+		AddUpdateCommentResponse updateCommentResponse = new AddUpdateCommentResponse();
+		try {
+			if (commentService.inactiveComment(comment) != 0) {
+				updateCommentResponse.setResult(1);
+				updateCommentResponse.setResultDesp("返回成功");
+			} else {
+				updateCommentResponse.setResult(-2);
+				updateCommentResponse.setResultDesp("删除失败");
+			}
+		} catch (Exception e) {
+			updateCommentResponse.setResult(-2);
+			updateCommentResponse.setResultDesp("数据库连接错误");
+		}
+		return updateCommentResponse;
+	}
     
     @RequestMapping(value = "/unreadcommentscount", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public int getUnreadCommentsCount(@RequestBody UnreadCommentRequest unreadCommentReqest){
-// 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
-// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-    	return commentService.getUnreadCommentsCount(unreadCommentReqest.getUsername());
+    public GetUnreadCommentCountResponse getUnreadCommentsCount(@RequestBody UnreadCommentRequest unreadCommentReqest){
+    	GetUnreadCommentCountResponse getUnreadCommentCountResponse = new GetUnreadCommentCountResponse();
+    	try{
+    		getUnreadCommentCountResponse.setResult(1);
+    		getUnreadCommentCountResponse.setResultDesp("返回成功");
+    		getUnreadCommentCountResponse.setUnreadCommentCount(commentService.getUnreadCommentsCount(unreadCommentReqest.getUsername()));
+    	}catch(Exception e){
+    		getUnreadCommentCountResponse.setResult(-1);
+    		getUnreadCommentCountResponse.setResultDesp("数据库连接错误");
+    	}
+    	return getUnreadCommentCountResponse;
     }
     
     @RequestMapping(value = "/list", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public List<Comment> getCommentsByUsername(@RequestBody UnreadCommentRequest unreadCommentReqest){
-// 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
-// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-    	return commentService.getCommentsByUsername(unreadCommentReqest.getUsername());
+    public GetCommentsResponse getCommentsByUsername(@RequestBody UnreadCommentRequest unreadCommentReqest){
+    	GetCommentsResponse getCommentsByUsernameResponse = new GetCommentsResponse();
+    	try{
+    		getCommentsByUsernameResponse.setResult(1);
+    		getCommentsByUsernameResponse.setResultDesp("返回成功");
+    		getCommentsByUsernameResponse.setComments(commentService.getCommentsByUsername(unreadCommentReqest.getUsername()));
+    	}catch(Exception e){
+    		getCommentsByUsernameResponse.setResult(-1);
+    		getCommentsByUsernameResponse.setResultDesp("数据库连接错误");
+    	}
+    	return getCommentsByUsernameResponse;
     }
     
     @RequestMapping(value = "/readallcomments", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public int markCommentsAsReadByUsername(@RequestBody UnreadCommentRequest unreadCommentReqest){
-// 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
-// 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-    	return commentService.markCommentsAsReadByUsername(unreadCommentReqest.getUsername());
+    public MarkCommentsAsReadByUsernameResponse markCommentsAsReadByUsername(@RequestBody UnreadCommentRequest unreadCommentReqest){
+    	MarkCommentsAsReadByUsernameResponse markCommentsAsReadByUsernameResponse = new MarkCommentsAsReadByUsernameResponse();
+    	try{
+    		commentService.markCommentsAsReadByUsername(unreadCommentReqest.getUsername());
+    		markCommentsAsReadByUsernameResponse.setResult(1);
+    		markCommentsAsReadByUsernameResponse.setResultDesp("返回成功");
+    	}catch(Exception e){
+    		markCommentsAsReadByUsernameResponse.setResult(-1);
+    		markCommentsAsReadByUsernameResponse.setResultDesp("数据库连接错误");
+    	}
+    	return markCommentsAsReadByUsernameResponse;
     }
 }

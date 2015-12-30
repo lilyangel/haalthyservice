@@ -1,4 +1,4 @@
-package com.haalthy.service.controller.Interface;
+package com.haalthy.service.controller.Interface.patient;
 
 import com.haalthy.service.domain.ClinicReport;
 import com.haalthy.service.domain.PatientStatus;

@@ -40,4 +40,6 @@ public interface UserMapper {
 	  int deleteFromSuggestUserByProfile(SuggestedUserPair suggestedUserPair);
 	  
 	  List<User> getUsersByDisplayname(String displayname);
+	  
+	  int resetDeviceToken(User user);
 }

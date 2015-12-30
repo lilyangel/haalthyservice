@@ -73,4 +73,7 @@ public class UserService {
 	public List<User> getUsersByDisplayname(String displayname){
 		return userMapper.getUsersByDisplayname(displayname);
 	}
+	public int resetDeviceToken(User user){
+		return userMapper.resetDeviceToken(user);
+	}
 }

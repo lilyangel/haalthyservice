@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.haalthy.service.controller.Interface.GetClinicTrailInfoRequest;
+import com.haalthy.service.controller.Interface.ClinicTrail.GetClinicTrailInfoRequest;
 import com.haalthy.service.domain.ClinicTrailInfo;
 import com.haalthy.service.persistence.ClinicTrailMapper;
 

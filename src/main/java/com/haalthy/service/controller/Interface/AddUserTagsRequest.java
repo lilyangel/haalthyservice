@@ -1,8 +1,5 @@
 package com.haalthy.service.controller.Interface;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class AddUserTagsRequest {
 	private int[] tags;
 

@@ -1,41 +1,28 @@
 package com.haalthy.service.controller.Interface;
 
-import java.util.List;
-
-import com.haalthy.service.domain.ClinicData;
-import com.haalthy.service.domain.ClinicReport;
-import com.haalthy.service.domain.PatientStatus;
-import com.haalthy.service.domain.Treatment;
-import com.haalthy.service.domain.User;
+import com.haalthy.service.controller.Interface.user.UserDetail;
 
 public class GetUserDetailResponse {
-	private User userProfile;
-	private List<Treatment> treatments;
-	private List<PatientStatus> patientStatus;
-	private List<ClinicDataType> clinicReport;
-	
-	public List<ClinicDataType> getClinicReport() {
-		return clinicReport;
+	private String resultDesp;
+	private int result;
+	private UserDetail userDetail;
+
+	public UserDetail getUserDetail() {
+		return userDetail;
 	}
-	public void setClinicReport(List<ClinicDataType> clinicReport) {
-		this.clinicReport = clinicReport;
+	public void setUserDetail(UserDetail userDetail) {
+		this.userDetail = userDetail;
 	}
-	public User getUserProfile() {
-		return userProfile;
+	public String getResultDesp() {
+		return resultDesp;
 	}
-	public void setUserProfile(User userProfile) {
-		this.userProfile = userProfile;
+	public void setResultDesp(String resultDesp) {
+		this.resultDesp = resultDesp;
 	}
-	public List<Treatment> getTreatments() {
-		return treatments;
+	public int getResult() {
+		return result;
 	}
-	public void setTreatments(List<Treatment> treatments) {
-		this.treatments = treatments;
-	}
-	public List<PatientStatus> getPatientStatus() {
-		return patientStatus;
-	}
-	public void setPatientStatus(List<PatientStatus> patientStatus) {
-		this.patientStatus = patientStatus;
+	public void setResult(int result) {
+		this.result = result;
 	}
 }

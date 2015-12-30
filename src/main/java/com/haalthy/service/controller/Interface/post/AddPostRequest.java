@@ -1,4 +1,4 @@
-package com.haalthy.service.controller.Interface;
+package com.haalthy.service.controller.Interface.post;
 
 import java.util.List;
 
@@ -7,12 +7,6 @@ import com.haalthy.service.domain.Tag;
 public class AddPostRequest {
 
 	private String insertUsername;
-	public String getInsertUsername() {
-		return insertUsername;
-	}
-	public void setInsertUsername(String insertUsername) {
-		this.insertUsername = insertUsername;
-	}
 	private String body;
 	private int closed;
 	private int isBroadcast;
@@ -21,6 +15,12 @@ public class AddPostRequest {
 	private List<String> mentionUsers;
 	private List<byte[]> images;
 	
+	public String getInsertUsername() {
+		return insertUsername;
+	}
+	public void setInsertUsername(String insertUsername) {
+		this.insertUsername = insertUsername;
+	}
 	public List<String> getMentionUsers() {
 		return mentionUsers;
 	}
