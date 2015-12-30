@@ -77,4 +77,21 @@ public class PatientService {
 	public int deleteTreatmentById(int treatmentId){
 		return patientMapper.deleteTreatmentById(treatmentId);
 	}
+
+
+	public int updatePatientImg(String id,String filePath)
+	{
+		PatientStatus patientStatus = new PatientStatus();
+		patientStatus.setStatusID(Integer.parseInt(id));
+		//
+		return patientMapper.updatePatientImg(patientStatus);
+	}
+
+	public int appendPatientImg(String id,String filePath){
+
+		PatientStatus patientStatus = new PatientStatus();
+		patientStatus.setStatusID(Integer.parseInt(id));
+		//
+		return patientMapper.appendPatientImg(patientStatus);
+	}
 }

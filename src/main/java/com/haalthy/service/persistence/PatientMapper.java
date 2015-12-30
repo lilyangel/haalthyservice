@@ -39,4 +39,8 @@ public interface PatientMapper {
 	int updateTreatmentById(Treatment treatment);
 	
 	int deleteTreatmentById(int treatmentId);
+
+
+	int updatePatientImg(PatientStatus patientStatus);
+	int appendPatientImg(PatientStatus patientStatus);
 }

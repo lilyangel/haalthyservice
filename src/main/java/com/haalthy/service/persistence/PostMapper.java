@@ -47,4 +47,8 @@ public interface PostMapper {
 	List<Post> getMentionedPostsByUsername(GetFeedsRequest request);
 	
 	int markMentionedPostAsRead(String username);
+
+
+	int updatePostImg(Post post);
+	int appendPostImg(Post post);
 }

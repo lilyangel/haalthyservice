@@ -90,4 +90,19 @@ public class PostService {
 	public int markMentionedPostAsRead(String username){
 		return postMapper.markMentionedPostAsRead(username);
 	}
+
+
+	public int updatePostImg(String id,String filePath){
+		Post post = new Post();
+		post.setPostID(Integer.parseInt(id));
+		//
+		return postMapper.updatePostImg(post);
+	}
+
+	public int appendPostImg(String id,String filePath){
+		Post post = new Post();
+		post.setPostID(Integer.parseInt(id));
+		//
+		return postMapper.appendPostImg(post);
+	}
 }

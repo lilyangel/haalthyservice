@@ -70,7 +70,20 @@ public class UserService {
 	public int deleteFromSuggestUserByProfile(SuggestedUserPair suggestedUserPair){
 		return userMapper.deleteFromSuggestUserByProfile(suggestedUserPair);
 	}
-	public List<User> getUsersByDisplayname(String displayname){
-		return userMapper.getUsersByDisplayname(displayname);
+
+	public int updateUserPhoto(String id,String photoPath)
+	{
+		User user = new User();
+		user.setUsername(id);
+		//
+		return userMapper.updateUserPhoto(user);
 	}
+	public int appendUserPhoto(String id,String photoPath)
+	{
+		User user = new User();
+		user.setUsername(id);
+		//
+		return userMapper.appendUserPhoto(user);
+	}
+
 }

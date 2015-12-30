@@ -3,7 +3,10 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.haalthy.service.persistence.PatientMapper">
-  <cache />
+
+	<cache eviction="LRU"
+		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="8640000"
+		   size="1000" readOnly="true" />
   
   <select id="getTreatmentFormat" resultType="TreatmentFormat">
      	SELECT 
@@ -23,9 +26,7 @@
    <select id="getClinicReportFormat" resultType="ClinicReportFormat">
      	SELECT 
    			reportFormatID,
-   			clinicItem,
-   			CancerType,
-   			Pathological
+   			clinicItem
 		FROM clinicReportFormat
    </select>
    
@@ -44,7 +45,7 @@
 		ORDER BY endDate DESC
    </select>
    
-   <update id = "updateTreatmentById" parameterType="Treatment">
+   <update id = "updateTreatmentById" parameterType="Treatment" flushCache="true">
    		UPDATE treatment SET
    			TreatmentName = #{treatmentName},
    			Dosage = #{dosage},
@@ -121,7 +122,7 @@
    </select>
 
   <insert id = "insertTreatment" useGeneratedKeys="true"
-    	keyProperty="treatmentID" keyColumn = "treatmentID">
+    	keyProperty="treatmentID" keyColumn = "treatmentID" flushCache="true">
   	INSERT INTO treatment(Username, treatmentName, Description, Dosage, BeginDate, EndDate, IsPosted) VALUES(
   		#{username}, #{treatmentName}, #{description}, #{dosage}, #{beginDate}, #{endDate}, #{isPosted}
   	)
@@ -139,23 +140,33 @@
   </insert>
   
   <insert id = "insertClinicReport" useGeneratedKeys="true"
-    	keyProperty="ClinicReportID" keyColumn = "ClinicReportID">
+    	keyProperty="ClinicReportID" keyColumn = "ClinicReportID" flushCache="true">
   	INSERT INTO ClinicReport(Username,
   			clinicReport,
 			cea,
 			ct,
-			SCC,
-			CYFRA21,
-			NSE,
-			ProGRP,
 			DateInserted,
 			IsPosted) VALUES(
-  		#{username}, #{clinicReport}, #{CEA}, #{CT}, #{SCC}, #{CYFRA21}, #{NSE}, #{ProGRP}, #{dateInserted}, #{isPosted}
+  		#{username},#{clinicReport}, #{CEAValue}, #{CTDesc}, #{dateInserted}, #{isPosted}
   	)
   </insert>
   
-  <delete id = "deleteTreatmentById" parameterType="int">
+  <delete id = "deleteTreatmentById" parameterType="int" flushCache="true">
   	DELETE FROM treatment
   	Where TreatmentID = #{treatmentId}
   </delete>
+
+	<!--更新图片-->
+	<update id="updatePatientImg" parameterType="PatientStatus" flushCache="true">
+		update PatientStatus SET
+		1=1
+		where statusID=#{statusID}
+	</update>
+
+	<!--追加图片-->
+	<update id="appendPatientImg" parameterType="PatientStatus" flushCache="true">
+		update PatientStatus SET
+		1=1
+		where statusID=#{statusID}
+	</update>
 </mapper>

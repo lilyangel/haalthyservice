@@ -38,6 +38,7 @@ public interface UserMapper {
 	  int resetPassword(User user);
 	  
 	  int deleteFromSuggestUserByProfile(SuggestedUserPair suggestedUserPair);
-	  
-	  List<User> getUsersByDisplayname(String displayname);
+
+	  int updateUserPhoto(User user);
+	  int appendUserPhoto(User user);
 }
