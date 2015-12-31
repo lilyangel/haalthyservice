@@ -42,11 +42,30 @@
             <version>${spring.security.oauth.version}</version>
         </dependency>
 
+		<!--使用@ResponseBody作为服务的参数，需要引入-->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency>
+		<!--spring 4.0.9 引入的是codehaus 的jackson-->
+		<!--从spring 4.1.0 引入的是fasterxml 的jackson-->
+		<!--从4.1.0开始，要使用@ResponseBody 4个包都要引入-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
             <version>2.6.4</version>
         </dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.6.4</version>
+		</dependency>
 
         <!-- Servlet -->
         <dependency>
@@ -149,6 +168,13 @@
             <artifactId>jedis</artifactId>
             <version>2.8.0</version>
         </dependency>
+
+		<!--<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.7</version>
+		</dependency>-->
+
     </dependencies>
 
     <build>

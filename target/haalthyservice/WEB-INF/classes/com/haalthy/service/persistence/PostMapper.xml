@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.haalthy.service.persistence.PostMapper">
+
+	<cache eviction="LRU"
+		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="8640000"
+		   size="1000" readOnly="true" />
+  	  <select id="getPostById" parameterType="int" resultType="Post">
+	    SELECT
+			PostID,
+			Type,
+			InsertUserName,
+			body,
+			Tags,
+			CountComments,
+			CountBookmarks,
+			CountViews,
+			Closed,
+			IsBroadcast,
+			DateInserted,
+			DateUpdated,
+			isActive,
+			image,
+			displayname
+	    FROM post, user
+	    WHERE POSTID = #{PostID} AND post.InsertUserName = user.username
+	  </select>
+	  
+	<insert id="addPost" useGeneratedKeys="true"
+    	keyProperty="postID" keyColumn = "PostID" flushCache="true">
+  		INSERT into post (InsertUserName, body, Tags, CountComments, CountBookmarks, CountViews, Closed, IsBroadcast, DateInserted,DateUpdated, isActive, Type, HasImage)
+ 			 VALUES (#{insertUsername},#{body},#{tags}, #{countComments}, #{countBookmarks}, #{countViews}, #{closed},#{isBroadcast}, #{dateInserted}, #{dateUpdated}, #{isActive}, #{type}, #{hasImage})
+	</insert>
+	
+	<insert id="addMention" parameterType="java.util.List" flushCache="true">
+		INSERT INTO UserBeMentionedByPost (Username, PostID, IsUnRead) VALUES
+			<foreach collection="list" item="Mention" index="index" separator=",">
+			(#{Mention.username}, #{Mention.postID}, #{Mention.isUnRead})
+			</foreach>
+	</insert>
+	
+	<insert id="addPostTag" parameterType="java.util.List" flushCache="true">
+		INSERT 
+		into postTag(PostID, TagID, CreateTime)
+			VALUES
+			<foreach collection="list" item="postTag" index="index" separator=",">
+       			(#{postTag.postID}, #{postTag.tagId}, #{postTag.createTime})
+       		</foreach>
+	</insert>
+	
+	<update id = "inactivePost" parameterType = "Post" flushCache="true">
+		UPDATE post SET
+			isActive = "0"
+		WHERE POSTID = #{postID} AND InsertUserName = #{insertUsername}
+	</update>
+	
+	<select id = "getPostsByTags" resultType = "Post">
+		SELECT DISTINCT
+			PostID,
+			Type,
+			InsertUserName,
+			body,
+			Tags,
+			CountComments,
+			CountBookmarks,
+			CountViews,
+			Closed,
+			IsBroadcast,
+			DateInserted,
+			DateUpdated,
+			isActive,
+			image,
+			displayname
+	    FROM post, user
+	    WHERE ((PostID IN(
+	    	SELECT PostID 
+	    	FROM postTag
+	    	WHERE 
+	    		postTag.TagID IN
+	      			<foreach item="tag" index="index" collection="tags" open="(" separator="," close=")">
+        				#{tag.tagId}
+  					</foreach>
+	    	)AND (post.InsertUserName = user.Username)) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
+	    	ORDER BY DateInserted DESC
+	    LIMIT #{count}    	
+	</select>
+	
+	<select id = "getPostsByTagsCount" resultType="int">
+		SELECT DISTINCT
+			count(*)
+	    FROM post, user
+	    WHERE ((PostID IN(
+	    	SELECT PostID 
+	    	FROM postTag
+	    	WHERE 
+	    		postTag.TagID IN
+	      			<foreach item="tag" index="index" collection="tags" open="(" separator="," close=")">
+        				#{tag.tagId}
+  					</foreach>
+	    		
+	    	)AND (post.InsertUserName = user.Username)) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
+	    	ORDER BY DateInserted DESC
+	</select>
+	
+	<select id = "getFeeds" resultType = "Post">
+		SELECT DISTINCT
+			PostID,
+			Type,
+			InsertUserName,
+			body,
+			Tags,
+			CountComments,
+			CountBookmarks,
+			CountViews,
+			Closed,
+			IsBroadcast,
+			DateInserted,
+			DateUpdated,
+			isActive,
+			user.image,
+			displayname
+	    FROM post, user
+	    WHERE post.InsertUserName IN(
+	    	SELECT FollowingUser 
+	    	FROM Follow
+	    	WHERE 
+	    		Username = #{username}
+	    	)AND (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)
+	    	ORDER BY DateInserted DESC
+	</select>
+	
+	<select id = "getPosts" resultType = "Post">
+		SELECT DISTINCT
+			PostID,
+			Type,
+			InsertUserName,
+			body,
+			Tags,
+			CountComments,
+			CountBookmarks,
+			CountViews,
+			Closed,
+			IsBroadcast,
+			DateInserted,
+			DateUpdated,
+			isActive,
+			user.image,
+			Gender,
+			IsSmoking,
+			Pathological,
+			Age,
+			CancerType,
+			Metastasis,
+			Stage,
+			HasImage,
+			displayname
+	FROM post, user
+	    WHERE (((post.InsertUserName IN(
+	    	SELECT FollowingUser 
+	    	FROM Follow
+	    	WHERE 
+	    		Username = #{username}
+	    	))OR(
+	    	post.InsertUserName = #{username}
+	    	)
+	    	OR(
+	    	PostID IN(
+	    	SELECT PostID 
+	    	FROM postTag
+	    	WHERE 
+	    		postTag.TagID IN
+	      			(SELECT TagID FROM userTag WHERE Username = #{username})
+	    	)))
+	    	AND (post.InsertUserName = user.Username) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username)))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)
+	    	ORDER BY DateInserted DESC
+	    	LIMIT #{count}
+	</select>
+	
+	<select id = "getUpdatedPostCount" resultType = "int">
+		SELECT DISTINCT
+			count(*)
+		FROM post, user
+	    WHERE (((post.InsertUserName IN(
+	    	SELECT FollowingUser 
+	    	FROM Follow
+	    	WHERE 
+	    		Username = #{username}
+	    	))OR(
+	    	post.InsertUserName = #{username}
+	    	)
+	    	OR(
+	    	PostID IN(
+	    	SELECT PostID 
+	    	FROM postTag
+	    	WHERE 
+	    		postTag.TagID IN
+	      			(SELECT TagID FROM userTag WHERE Username = #{username})
+	    	)))
+	    	AND (post.InsertUserName = user.Username) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username)))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)
+	    	ORDER BY DateInserted DESC
+	</select>
+	
+	<update id = "increasePostCountComment" parameterType="int" flushCache="true">
+		UPDATE post SET CountComments = CountComments+1 WHERE PostID = #{postID}
+	</update>
+	
+	<select id = "getPostsByUsername" resultType = "Post">
+		SELECT DISTINCT
+			PostID,
+			Type,
+			InsertUserName,
+			body,
+			Tags,
+			CountComments,
+			CountBookmarks,
+			CountViews,
+			Closed,
+			IsBroadcast,
+			DateInserted,
+			DateUpdated,
+			isActive
+		FROM post
+		WHERE insertUserName = #{username} AND type = 0
+	</select>
+	
+	<select id = "getCommentsByUsername" resultType = "COMMENT">
+		SELECT 	
+			CommentID,
+			PostID,
+			InsertUsername,
+			Body,
+			CountBookmarks,
+			DateInserted
+		FROM Comment
+		WHERE InsertUsername = #{username} AND IsActive = 1
+		ORDER BY DateInserted DESC    
+	</select>
+	
+	<select id = "getAllBroadcast" resultType="POST">
+		SELECT DISTINCT
+			PostID,
+			Type,
+			InsertUserName,
+			body,
+			Tags,
+			CountComments,
+			CountBookmarks,
+			CountViews,
+			Closed,
+			IsBroadcast,
+			DateInserted,
+			DateUpdated,
+			isActive,
+			image,
+			displayname
+	    FROM post, user
+	    WHERE 
+	    (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
+	    	ORDER BY DateInserted DESC
+	    LIMIT #{count}
+	</select>
+	
+	<select id = "getAllBroadcastCount" resultType="int">
+		SELECT DISTINCT
+			count(*)
+	    FROM post, user
+	    WHERE 
+	     (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
+	    	ORDER BY DateInserted DESC 
+	</select>
+	
+	<select id="getUnreadMentionedPostCountByUsername" parameterType="String" resultType="int">
+		SELECT Count(*) FROM UserBeMentionedByPost
+		WHERE Username = #{username} AND IsUnRead = 1
+	</select>
+	
+	<select id="getMentionedPostsByUsername" resultType="POST">
+		SELECT DISTINCT
+			post.PostID,
+			Type,
+			InsertUserName,
+			body,
+			Tags,
+			CountComments,
+			CountBookmarks,
+			CountViews,
+			Closed,
+			IsBroadcast,
+			DateInserted,
+			DateUpdated,
+			isActive,
+			image,
+			displayname
+	    FROM post, user, UserBeMentionedByPost
+	    WHERE (post.PostID = UserBeMentionedByPost.PostID)
+	    	AND (post.InsertUserName = user.Username)
+	    	AND (UserBeMentionedByPost.Username = #{username})
+	    	AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) 
+	    	ORDER BY DateInserted DESC
+	    	LIMIT #{count}
+	</select>
+	  
+	<update id="markMentionedPostAsRead" parameterType="String" flushCache="true">
+	  	UPDATE UserBeMentionedByPost SET IsUnRead = 0
+	  	WHERE Username = #{username}
+	</update>
+
+	<!--更新图片-->
+	<update id="updatePostImg" parameterType="Post" flushCache="true">
+		update POST SET
+		1=1
+		where PostID=#{postID}
+	</update>
+
+	<!--追加图片-->
+	<update id="appendPostImg" parameterType="Post" flushCache="true">
+		update POST SET
+		1=1
+		where PostID=#{postID}
+	</update>
+</mapper>

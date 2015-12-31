@@ -41,7 +41,7 @@ public class CommentSecurityController {
 // 	   	Authentication a = SecurityContextHolder.getContext().getAuthentication();
 // 	   	String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
 //    	comment.setInsertUsername(currentSessionUsername);
-    	comment.setInsertUsername(addCommentRequest.getInsertUsername());
+    	
     	Date now = new Date();
 //    	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //    	String currentDt = sdf.format(now);

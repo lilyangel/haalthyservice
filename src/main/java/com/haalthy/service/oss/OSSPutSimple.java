@@ -21,4 +21,17 @@ public class OSSPutSimple {
             return 0;
         }
     }
+
+    public int delSimpleObject(OSSClient client,String bucket,String domain,String fileName)
+    {
+        try {
+            client.deleteObject(bucket,fileName.replace(domain,""));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 1;
+        }
+        finally {
+            return 0;
+        }
+}
 }

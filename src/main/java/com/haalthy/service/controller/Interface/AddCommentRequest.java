@@ -3,14 +3,7 @@ package com.haalthy.service.controller.Interface;
 public class AddCommentRequest {
 	private String body;
 	private int postID;
-	private String insertUsername;
 	
-	public String getInsertUsername() {
-		return insertUsername;
-	}
-	public void setInsertUsername(String insertUsername) {
-		this.insertUsername = insertUsername;
-	}
 	public int getPostID() {
 		return postID;
 	}
