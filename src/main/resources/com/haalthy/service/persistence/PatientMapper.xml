@@ -157,14 +157,14 @@
   </delete>
 
 	<!--更新图片-->
-	<update id="updatePatientImg" parameterType="PatientStatus" flushCache="true">
+	<update id="updatePatientImg"  flushCache="true">
 		update PatientStatus SET
 		1=1
 		where statusID=#{statusID}
 	</update>
 
 	<!--追加图片-->
-	<update id="appendPatientImg" parameterType="PatientStatus" flushCache="true">
+	<update id="appendPatientImg"   flushCache="true">
 		update PatientStatus SET
 		1=1
 		where statusID=#{statusID}

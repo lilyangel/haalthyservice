@@ -308,14 +308,14 @@
 	</update>
 
 	<!--更新图片-->
-	<update id="updatePostImg" parameterType="Post" flushCache="true">
+	<update id="updatePostImg"  flushCache="true">
 		update POST SET
 		1=1
 		where PostID=#{postID}
 	</update>
 
 	<!--追加图片-->
-	<update id="appendPostImg" parameterType="Post" flushCache="true">
+	<update id="appendPostImg" flushCache="true">
 		update POST SET
 		1=1
 		where PostID=#{postID}
