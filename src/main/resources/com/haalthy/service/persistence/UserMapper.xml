@@ -7,6 +7,7 @@
 	<cache eviction="LRU"
 		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="8640000"
 		   size="1000" readOnly="true" />
+
   <select id="getUserByUsername" parameterType="string" resultType="User">
     SELECT
 		UserID,
@@ -189,7 +190,7 @@
   	DELETE FROM SuggestUserByProfile where SuggestedUsername = #{suggestedUsername} AND username = #{username}
   </delete>
 	<!--更新用户头像-->
-	<update id="updateUserPhoto" parameterType="User" flushCache="true">
+	<update id="updateUserPhoto"  flushCache="true">
 		update user SET
 		1=1
 		where username=#{username}

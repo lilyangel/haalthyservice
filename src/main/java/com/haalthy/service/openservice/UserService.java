@@ -73,11 +73,9 @@ public class UserService {
 
 	public int updateUserPhoto(String id,String photoPath)
 	{
-		User user = new User();
-		user.setUsername(id);
-		//
-		return userMapper.updateUserPhoto(user);
+		return userMapper.updateUserPhoto(id,photoPath);
 	}
+
 	public int appendUserPhoto(String id,String photoPath)
 	{
 		User user = new User();

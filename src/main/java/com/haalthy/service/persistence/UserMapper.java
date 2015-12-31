@@ -8,6 +8,7 @@ import com.haalthy.service.domain.SuggestedUserPair;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.domain.User;
 import com.haalthy.service.domain.UserTag;
+import org.apache.ibatis.annotations.Param;
 
 
 public interface UserMapper {
@@ -39,6 +40,6 @@ public interface UserMapper {
 	  
 	  int deleteFromSuggestUserByProfile(SuggestedUserPair suggestedUserPair);
 
-	  int updateUserPhoto(User user);
+	  int updateUserPhoto(@Param(value = "username") String userName,@Param(value = "filename") String fileName);
 	  int appendUserPhoto(User user);
 }

@@ -7,6 +7,7 @@ import com.haalthy.service.oss.OSSFileOperate;
 import com.haalthy.service.oss.OSSSetting;
 import com.haalthy.service.oss.RefreshImgPath;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,8 @@ import java.util.List;
 public class OssController {
 
     //private OssFile file;
+    @Autowired
+    private transient RefreshImgPath refreshImgPath;
     private OSSSetting setting ;
     protected Logger logger = Logger.getLogger(this.getClass());
 
@@ -52,7 +55,6 @@ public class OssController {
         in.close();
         client.shutdown();
 
-        RefreshImgPath refreshImgPath = new RefreshImgPath();
         return refreshImgPath.refreshImg(oss.getFunctionType(),oss.getModifyType(),oss.getId(),
                 setting.getUrl(oss.getFunctionType(),fileName));
     }
@@ -60,7 +62,7 @@ public class OssController {
     @RequestMapping(value = "/uploadimgs", method = RequestMethod.POST, headers = "Accept=application/json",
             produces = {"application/json"})
     @ResponseBody
-    public int ossUploadFileList(@RequestBody List<OSSFile> ossList) throws Exception
+    public String ossUploadFileList(@RequestBody List<OSSFile> ossList) throws Exception
     {
         //get file type
         setting = new OSSSetting();
@@ -92,8 +94,13 @@ public class OssController {
 
         client.shutdown();
 
-        RefreshImgPath refreshImgPath = new RefreshImgPath();
-        return refreshImgPath.refreshImg(functionType,"update",id,result.toString());
+        try {
+            refreshImgPath.refreshImg(functionType,"update",id,result.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return e.getMessage()+"functionType:"+functionType+";id:"+id+";filePath:"+result.toString();
+        }
+        return "functionType:"+functionType+";id:"+id+";filePath:"+result.toString();
     }
 
     @RequestMapping(value = "/uploadtestsimple", method = RequestMethod.POST, headers = "Accept=application/json",
