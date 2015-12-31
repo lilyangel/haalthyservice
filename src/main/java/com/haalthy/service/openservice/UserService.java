@@ -78,10 +78,7 @@ public class UserService {
 
 	public int appendUserPhoto(String id,String photoPath)
 	{
-		User user = new User();
-		user.setUsername(id);
-		//
-		return userMapper.appendUserPhoto(user);
+		return userMapper.appendUserPhoto(id,photoPath);
 	}
 
 }

@@ -93,16 +93,12 @@ public class PostService {
 
 
 	public int updatePostImg(String id,String filePath){
-		Post post = new Post();
-		post.setPostID(Integer.parseInt(id));
 		//
-		return postMapper.updatePostImg(post);
+		return postMapper.updatePostImg(Integer.parseInt(id),filePath);
 	}
 
 	public int appendPostImg(String id,String filePath){
-		Post post = new Post();
-		post.setPostID(Integer.parseInt(id));
 		//
-		return postMapper.appendPostImg(post);
+		return postMapper.appendPostImg(Integer.parseInt(id),filePath);
 	}
 }

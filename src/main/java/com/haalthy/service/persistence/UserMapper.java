@@ -41,5 +41,5 @@ public interface UserMapper {
 	  int deleteFromSuggestUserByProfile(SuggestedUserPair suggestedUserPair);
 
 	  int updateUserPhoto(@Param(value = "username") String userName,@Param(value = "filename") String fileName);
-	  int appendUserPhoto(User user);
+	  int appendUserPhoto(@Param(value = "username") String userName,@Param(value = "filename") String fileName);
 }

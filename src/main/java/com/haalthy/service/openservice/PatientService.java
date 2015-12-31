@@ -81,17 +81,10 @@ public class PatientService {
 
 	public int updatePatientImg(String id,String filePath)
 	{
-		PatientStatus patientStatus = new PatientStatus();
-		patientStatus.setStatusID(Integer.parseInt(id));
-		//
-		return patientMapper.updatePatientImg(patientStatus);
+		return patientMapper.updatePatientImg(Integer.parseInt(id),filePath);
 	}
 
 	public int appendPatientImg(String id,String filePath){
-
-		PatientStatus patientStatus = new PatientStatus();
-		patientStatus.setStatusID(Integer.parseInt(id));
-		//
-		return patientMapper.appendPatientImg(patientStatus);
+		return patientMapper.appendPatientImg(Integer.parseInt(id),filePath);
 	}
 }
