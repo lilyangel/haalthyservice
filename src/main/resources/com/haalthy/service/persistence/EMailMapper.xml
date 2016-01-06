@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.haalthy.service.persistence.EMailMapper">
+
+	<insert id="insertEmail" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO sys_email(subject, content, priority, to_email, create_time) VALUES
+		(#{subject}, #{content}, #{priority}, #{toEmail}, #{createTime})
+	</insert>
+	<select id="getEmails"  resultType="Email">
+		SELECT * FROM sys_email where flag=0 order by priority
+	</select>
+
+	<update id="updateMail" parameterType="Email" flushCache="true" >
+		update  sys_email set flag=1 ,send_time=#{sendTime} where id=#{id}
+	</update>
+</mapper>

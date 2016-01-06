@@ -1,4 +1,4 @@
-package com.haalthy.service.cache;
+package com.haalthy.service.common;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -6,9 +6,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * Created by Ken on 2015/12/18.
+ * Created by Ken on 2016-01-05.
  */
-public class RedisSerialize {
+public class SerializeUtil {
     public static byte[] serialize(Object object) {
 
         ObjectOutputStream oos = null;
