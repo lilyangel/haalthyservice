@@ -52,39 +52,7 @@ public class Constants {
 		public static final int TYPE4 = 4;  // 企业部门经理
 		public static final int TYPE5 = 5;  // 企业员工
 	} 
-	
-	public static class ConstantsType{
-		public static final String EVENT_TYPE 		= "event_type";  // 活动类型
-		public static final String TASK_COST_TYPE 	= "task_cost_type";  // 活动类型
-	} 
-	
-	public static class EventConstants{
-		public static final String EVENT_REGISTERED_YES = "1";  // 活动需要报名
-		public static final String EVENT_REGISTERED_NO = "0";   // 活动不需要报名
-		
-		public static final String YIDAO = "已到";
-		public static final String WEIDAO = "未到";
-		
-		public static final String USERNAME = "姓名";
-		public static final String MOBILE = "手机";
-		public static final String ISARRIVE = "已到/未到";
-		public static final String EVENT_SIGNIN_TIME = "开始签到时间";
-		public static final String EVENT_SIGNIN_END_TIME = "结束签到时间";
-		public static final String EVENT_SIGNIN_ADDRESS = "签到地址";
-		public static final String TIME_COUNT = "时长(小时)";
-		public static final String DESCRIPTION = "描述";
-		
-		public static final String CONTENT_EMPTY="没有数据";
-		
-		public static final String[] title = { 
-			EventConstants.USERNAME, EventConstants.MOBILE,
-			EventConstants.EVENT_SIGNIN_TIME, EventConstants.EVENT_SIGNIN_END_TIME,
-			EventConstants.EVENT_SIGNIN_ADDRESS, EventConstants.TIME_COUNT,
-			EventConstants.DESCRIPTION};
-		
-		public static final String EXPORT_EXCEL_PATH = "export_excel_path"; //导出的excel的路径和文件名
-		
-	} 
+
 	
 	public static class OrderConstants{
 		public static final String NEW_ORDER = "0";			//新订单
@@ -159,13 +127,7 @@ public class Constants {
 		public static final String OFFSET = "offset";
 		public static final String ROWS = "rows";
 	}
-	
-	public static class UrlConstants{
-		public static final String LOGIN_URL = "http://115.29.169.236:8780/ezoutdoor/admin/login.html";
-		public static final String EMAIL_URL = "http://osstest.ezoutwork.com/email";
-		public static final String MERCHANT_AUDIT_TXT = "/merchant_audit.txt";
-		public static final String MERCHANT_AUDIT_CSS = "/merchant_audit.css";
-	}
+
 	
 	public static class EamilConstants{
 		public static final String MERCHANT_SUBJECT = "商家信息审核";
