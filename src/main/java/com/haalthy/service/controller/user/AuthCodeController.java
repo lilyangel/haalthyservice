@@ -30,12 +30,12 @@ public class AuthCodeController {
             authCodeService.addEmailAuthCode(emailAuthCodeRequest.geteMail());
             postResponse.setResult(1);
             postResponse.setResultDesp("返回成功");
-            postResponse.setContent("{\"1\":\"验证成功\"}");
+            postResponse.setContent("1:发送验证码成功");
         } catch (Exception e) {
             e.printStackTrace();
             postResponse.setResult(1);
             postResponse.setResultDesp("返回成功");
-            postResponse.setContent("{\"-999\":\"异常错误\"}");
+            postResponse.setContent("-999:异常错误");
         }
         return postResponse;
     }
@@ -50,19 +50,19 @@ public class AuthCodeController {
             {
                 postResponse.setResult(1);
                 postResponse.setResultDesp("返回成功");
-                postResponse.setContent("{\"1\":\"验证成功\"}");
+                postResponse.setContent("1:验证成功");
             }
             else
             {
                 postResponse.setResult(1);
                 postResponse.setResultDesp("返回成功");
-                postResponse.setContent("{\"-1\":\"验证失败\"}");
+                postResponse.setContent("-1:验证失败");
             }
         } catch (Exception e) {
             e.printStackTrace();
             postResponse.setResult(1);
             postResponse.setResultDesp("返回成功");
-            postResponse.setContent("{\"-999\":\"异常错误\"}");
+            postResponse.setContent("-999:异常错误");
         }
         return postResponse;
     }
