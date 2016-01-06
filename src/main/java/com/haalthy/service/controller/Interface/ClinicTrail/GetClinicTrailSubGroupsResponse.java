@@ -3,14 +3,15 @@ package com.haalthy.service.controller.Interface.ClinicTrail;
 import java.util.List;
 
 public class GetClinicTrailSubGroupsResponse {
-	private List<String> subGroups;
+	private List<String> content;
 	private String resultDesp;
 	private int result;
-	public List<String> getSubGroups() {
-		return subGroups;
+
+	public List<String> getContent() {
+		return content;
 	}
-	public void setSubGroups(List<String> subGroups) {
-		this.subGroups = subGroups;
+	public void setContent(List<String> content) {
+		this.content = content;
 	}
 	public String getResultDesp() {
 		return resultDesp;

@@ -2,6 +2,8 @@ package com.haalthy.service.domain;
 
 import java.io.Serializable;
 
+import com.haalthy.service.controller.Interface.ImageInfo;
+
 public class User implements Serializable {
 	private static final long serialVersionUID = 8751282105532159742L;
 
@@ -12,7 +14,8 @@ public class User implements Serializable {
 	private String password;
 	private String createDate;
 	private String updateDate;
-	private byte[] image;
+	private String image;
+	private ImageInfo imageInfo;
 	private String gender;
 	private int isSmoking;
 	private String pathological;
@@ -24,7 +27,27 @@ public class User implements Serializable {
 	private String userType;
 	private String geneticMutation;
 	private String deviceToken;
+	private String imageURL;
 	
+
+	public String getImageURL() {
+		return imageURL;
+	}
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
+	}
+	public ImageInfo getImageInfo() {
+		return imageInfo;
+	}
+	public void setImageInfo(ImageInfo imageInfo) {
+		this.imageInfo = imageInfo;
+	}
 	public String getDeviceToken() {
 		return deviceToken;
 	}
@@ -127,17 +150,11 @@ public class User implements Serializable {
 	public void setPathological(String pathological) {
 		this.pathological = pathological;
 	}
-	public byte[] getImage() {
-		return image;
-	}
-	public void setImage(byte[] image) {
-		this.image = image;
-	}
 	public int getUserID() {
 		return UserID;
 	}
 	public void setUserID(int userID) {
 		UserID = userID;
 	}
-
+	
 }

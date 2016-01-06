@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haalthy.service.controller.Interface.ImageInfo;
+import com.haalthy.service.controller.Interface.OSSFile;
 import com.haalthy.service.controller.Interface.patient.AddPatientStatusRequest;
 import com.haalthy.service.controller.Interface.patient.AddPatientStatusResponse;
 import com.haalthy.service.controller.Interface.patient.AddTreatmentResponse;
@@ -26,6 +28,7 @@ import com.haalthy.service.domain.ClinicReport;
 import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.Treatment;
+import com.haalthy.service.openservice.OssService;
 import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.PostService;
 import com.haalthy.service.openservice.UserService;
@@ -46,6 +49,9 @@ public class PatientSecurityController {
 	
 	@Autowired
 	private transient UserService userService;
+	
+	@Autowired
+	private transient OssService ossService;
 
 	@RequestMapping(value = "/treatment/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {
 			"application/json" })
@@ -88,7 +94,7 @@ public class PatientSecurityController {
 				post.setType(1);
 				post.setIsBroadcast(0);
 				post.setIsActive(1);
-				postService.addPost(post);
+				addTreatmentResponse.setContent(postService.addPost(post));
 			}
 			addTreatmentResponse.setResult(1);
 			addTreatmentResponse.setResultDesp("返回成功");
@@ -104,7 +110,7 @@ public class PatientSecurityController {
 	public UpdateTreatmentResponse updateTreatment(@RequestBody Treatment treatment) {
 		UpdateTreatmentResponse updateTreatmentResponse = new UpdateTreatmentResponse();
 		try{
-			patientService.updateTreatmentById(treatment);
+			updateTreatmentResponse.setContent(patientService.updateTreatmentById(treatment));
 			updateTreatmentResponse.setResult(1);
 			updateTreatmentResponse.setResultDesp("返回成功");
 		}catch(Exception e){
@@ -179,9 +185,21 @@ public class PatientSecurityController {
 				post.setIsActive(1);
 				postService.addPost(post);
 			}
+			List<OSSFile> ossFileList = new ArrayList();
+			for(ImageInfo imageInfo: addPatientStatusRequest.getImageInfos()){
+				OSSFile ossFile = new OSSFile();
+				ossFile.setFileType(imageInfo.getType());
+				ossFile.setFunctionType("patient");
+				ossFile.setId(String.valueOf(patientStatus.getStatusID()));
+				ossFile.setImg(imageInfo.getData());
+				ossFile.setModifyType("append");
+				ossFileList.add(ossFile);
+			}
+			ossService.ossUploadFile(ossFileList);
+			
 			addPatientStatusResponse.setResult(1);
 			addPatientStatusResponse.setResultDesp("返回成功");
-			addPatientStatusResponse.setPatientStatusId(patientStatus.getStatusID());
+			addPatientStatusResponse.setContent(patientStatus.getStatusID());
 		} catch (Exception e) {
 			addPatientStatusResponse.setResult(-1);
 			addPatientStatusResponse.setResultDesp("数据库连接错误");

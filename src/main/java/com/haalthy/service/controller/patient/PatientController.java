@@ -45,7 +45,7 @@ public class PatientController {
     	try{
     		getTreatmentsByUserResponse.setResult(1);
     		getTreatmentsByUserResponse.setResultDesp("返回成功");
-    		getTreatmentsByUserResponse.setTreatments(patientService.getTreatmentsByUser(username.getUsername()));
+    		getTreatmentsByUserResponse.setContent(patientService.getTreatmentsByUser(username.getUsername()));
     	}catch(Exception e){
     		getTreatmentsByUserResponse.setResult(-1);
     		getTreatmentsByUserResponse.setResultDesp("数据库连接错误");
@@ -60,7 +60,7 @@ public class PatientController {
     	try{
     		getTreatmentFormatResponse.setResult(1);
     		getTreatmentFormatResponse.setResultDesp("返回成功");
-    		getTreatmentFormatResponse.setTreatmentFormats(patientService.getTreatmentFormat());
+    		getTreatmentFormatResponse.setContent((patientService.getTreatmentFormat()));
     	}catch(Exception e){
     		getTreatmentFormatResponse.setResult(-1);
     		getTreatmentFormatResponse.setResultDesp("数据库连接错误");
@@ -100,7 +100,7 @@ public class PatientController {
 				}
 				getClinicReportFormatResponse.setResult(1);
 				getClinicReportFormatResponse.setResultDesp("返回成功");
-				getClinicReportFormatResponse.setClinicReportFormats(newClinicReprotFormatList);
+				getClinicReportFormatResponse.setContent(newClinicReprotFormatList);
 			}
 		} catch (Exception e) {
 			getClinicReportFormatResponse.setResult(-1);
@@ -114,7 +114,7 @@ public class PatientController {
     public GetPatientstatusFormatResponse getPatientStatusFormat(){
     	GetPatientstatusFormatResponse getPatientstatusFormatResponse = new GetPatientstatusFormatResponse();
     	try{
-    		getPatientstatusFormatResponse.setPatientstatusformat(patientService.getPatientStatusFormat());
+    		getPatientstatusFormatResponse.setContent(patientService.getPatientStatusFormat());
     		getPatientstatusFormatResponse.setResult(1);
     		getPatientstatusFormatResponse.setResultDesp("返回成功");
     	}catch(Exception e){

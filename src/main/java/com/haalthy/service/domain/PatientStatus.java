@@ -13,7 +13,14 @@ public class PatientStatus implements Serializable{
 	private String scanData;
 	private Timestamp insertedDate;
 	private int isPosted;
+	private String imageURL;
 	
+	public String getImageURL() {
+		return imageURL;
+	}
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
 	public String getScanData() {
 		return scanData;
 	}

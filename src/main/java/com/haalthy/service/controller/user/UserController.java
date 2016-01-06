@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.haalthy.service.controller.Interface.GetSuggestUsersByTagsRequest;
 import com.haalthy.service.controller.Interface.InputUsernameRequest;
+import com.haalthy.service.controller.Interface.OSSFile;
 import com.haalthy.service.controller.Interface.user.AddUpdateUserRequest;
 import com.haalthy.service.controller.Interface.user.AddUpdateUserResponse;
 import com.haalthy.service.controller.Interface.user.GetUsersResponse;
@@ -14,6 +15,7 @@ import com.haalthy.service.domain.Follow;
 import com.haalthy.service.domain.SelectUserByTagRange;
 import com.haalthy.service.domain.User;
 import com.haalthy.service.openservice.ClinicTrailService;
+import com.haalthy.service.openservice.OssService;
 import com.haalthy.service.openservice.UserService;
 
 import java.util.ArrayList;
@@ -46,10 +48,13 @@ public class UserController {
     }
 	@Autowired
 	private transient UserService userService;
+	
+	@Autowired
+	private transient OssService ossService;
 
     @RequestMapping(value = "/add",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
-    public AddUpdateUserResponse addUser(@RequestBody User user) {
+    public AddUpdateUserResponse addUser(@RequestBody User user) throws Exception {
 		AddUpdateUserResponse addUserResponse = new AddUpdateUserResponse();
 		try {
 			user.setPassword(decodePassword(user.getPassword()));
@@ -66,7 +71,6 @@ public class UserController {
 			user.setCreateDate(currentDt);
 			user.setUpdateDate(currentDt);
 			user.setFollowCount(0);
-
 			if (userService.getUserByEmail(user.getEmail()) != null){
 				addUserResponse.setResultDesp("该邮箱/手机已被注册");
 				addUserResponse.setResult(-2);
@@ -75,13 +79,24 @@ public class UserController {
 				String username = userService.getUserByEmail(user.getEmail()).getUsername();
 				addUserResponse.setResult(1);
 				addUserResponse.setResultDesp("返回成功");
-				addUserResponse.setUsername(username);
-			} else{
+				addUserResponse.setContent(username);
+				//upload image
+				List<OSSFile> ossFileList = new ArrayList();
+				OSSFile ossFile = new OSSFile();
+				ossFile.setFileType(user.getImageInfo().getType());
+				ossFile.setFunctionType("user");
+				ossFile.setImg(user.getImageInfo().getData());
+				ossFile.setModifyType("append");
+				ossFile.setId(username);
+				ossFileList.add(ossFile);
+				ossService.ossUploadFile(ossFileList);
+			} else {
 				addUserResponse.setResult(-3);
 				addUserResponse.setResultDesp("数据库插入错误");
 			}
 		} catch (Exception e) {
 			addUserResponse.setResult(-1);
+			System.out.println(e.getMessage());
 			addUserResponse.setResultDesp("数据库连接错误");
 		}
 		return addUserResponse;
@@ -127,7 +142,7 @@ public class UserController {
 			}
 			getUsersResponse.setResult(1);
 			getUsersResponse.setResultDesp("返回成功");
-			getUsersResponse.setUsers(users);
+			getUsersResponse.setContent(users);
 		} catch (Exception e) {
 			getUsersResponse.setResult(-1);
 			getUsersResponse.setResultDesp("数据库连接错误");
@@ -143,7 +158,7 @@ public class UserController {
 			String keyword = "%" + inputUsernameRequest.getUsername() + "%";
 			getUsersResponse.setResult(1);
 			getUsersResponse.setResultDesp("返回成功");
-			getUsersResponse.setUsers(userService.searchUsers(keyword));
+			getUsersResponse.setContent(userService.searchUsers(keyword));
 		} catch (Exception e) {
 			getUsersResponse.setResult(-1);
 			getUsersResponse.setResultDesp("数据库连接错误");

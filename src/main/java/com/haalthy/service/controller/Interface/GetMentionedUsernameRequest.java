@@ -15,5 +15,4 @@ public class GetMentionedUsernameRequest {
 	public void setMentionedDisplayname(String mentionedDisplayname) {
 		this.mentionedDisplayname = mentionedDisplayname;
 	}
-	
 }

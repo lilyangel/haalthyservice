@@ -3,13 +3,13 @@ package com.haalthy.service.controller.Interface.comment;
 public class GetUnreadCommentCountResponse {
 	private int result;
 	private String resultDesp;
-	private int unreadCommentCount;
+	private int content;
 	
-	public int getUnreadCommentCount() {
-		return unreadCommentCount;
+	public int getContent() {
+		return content;
 	}
-	public void setUnreadCommentCount(int unreadCommentCount) {
-		this.unreadCommentCount = unreadCommentCount;
+	public void setContent(int content) {
+		this.content = content;
 	}
 	public int getResult() {
 		return result;

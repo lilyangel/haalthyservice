@@ -7,7 +7,7 @@ import com.haalthy.service.domain.TagType;
 public class GetTagTypesResponse {
 	private int result;
 	private String resultDesp;
-	private List<TagType> tagType;
+	private List<TagType> content;
 	public int getResult() {
 		return result;
 	}
@@ -20,11 +20,10 @@ public class GetTagTypesResponse {
 	public void setResultDesp(String resultDesp) {
 		this.resultDesp = resultDesp;
 	}
-	public List<TagType> getTagType() {
-		return tagType;
+	public List<TagType> getContent() {
+		return content;
 	}
-	public void setTagType(List<TagType> tagType) {
-		this.tagType = tagType;
+	public void setContent(List<TagType> content) {
+		this.content = content;
 	}
-	
 }

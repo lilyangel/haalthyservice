@@ -7,7 +7,7 @@ import com.haalthy.service.domain.Comment;
 public class GetCommentsByPostIdResponse {
 	private int result;
 	private String resultDesp;
-	private List<Comment> comments;
+	private List<Comment> content;
 	public int getResult() {
 		return result;
 	}
@@ -20,11 +20,11 @@ public class GetCommentsByPostIdResponse {
 	public void setResultDesp(String resultDesp) {
 		this.resultDesp = resultDesp;
 	}
-	public List<Comment> getComments() {
-		return comments;
+	public List<Comment> getContent() {
+		return content;
 	}
-	public void setComments(List<Comment> comments) {
-		this.comments = comments;
+	public void setContent(List<Comment> content) {
+		this.content = content;
 	}
 	
 }

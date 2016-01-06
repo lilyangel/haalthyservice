@@ -3,13 +3,13 @@ package com.haalthy.service.controller.Interface.patient;
 public class AddPatientStatusResponse {
 	private int result;
 	private String resultDesp;
-	private int patientStatusId;
+	private int content;
 	
-	public int getPatientStatusId() {
-		return patientStatusId;
+	public int getContent() {
+		return content;
 	}
-	public void setPatientStatusId(int patientStatusId) {
-		this.patientStatusId = patientStatusId;
+	public void setContent(int content) {
+		this.content = content;
 	}
 	public int getResult() {
 		return result;

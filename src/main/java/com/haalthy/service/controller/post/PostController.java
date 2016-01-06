@@ -48,9 +48,9 @@ public class PostController {
 		try {
 			ImageService imageService = new ImageService();
 			Post post = postService.getPostById(postid);
-			if (post.getImage() != null) {
-				post.setImage(imageService.scale(post.getImage(), 32, 32));
-			}
+//			if (post.getImage() != null) {
+//				post.setImage(imageService.scale(post.getImage(), 32, 32));
+//			}
 //			if (post.getHasImage() != 0) {
 //				List<byte[]> postImageList = new ArrayList();
 //				int index = 1;
@@ -69,13 +69,19 @@ public class PostController {
 //				}
 //				post.setPostImageList(postImageList);
 //			}
-			getPostResponse.setPost(post);
+			getPostResponse.setContent(post);
 			getPostResponse.setResult(1);
 			getPostResponse.setResultDesp("返回成功");
-		} catch (Exception e) {
+		} catch(NullPointerException nullPE){
+			getPostResponse.setResult(-2);
+			System.out.println(nullPE);
+			getPostResponse.setResultDesp("系统异常");
+		} 
+		catch (Exception e) {
 			getPostResponse.setResult(-1);
+			System.out.println(e);
 			getPostResponse.setResultDesp("数据库连接错误");
-		}
+		} 
     	return getPostResponse;
     }
 
@@ -107,9 +113,9 @@ public class PostController {
 			ImageService imageService = new ImageService();
 			while (postItr.hasNext()) {
 				Post post = postItr.next();
-				if (post.getImage() != null) {
-					post.setImage(imageService.scale(post.getImage(), 32, 32));
-				}
+//				if (post.getImage() != null) {
+//					post.setImage(imageService.scale(post.getImage(), 32, 32));
+//				}
 //				if (post.getHasImage() != 0) {
 //					List<byte[]> postImageList = new ArrayList();
 //					int index = 1;
@@ -132,7 +138,7 @@ public class PostController {
 			}
 			getPostsResponse.setResult(1);
 			getPostsResponse.setResultDesp("返回成功");
-			getPostsResponse.setPosts(posts);
+			getPostsResponse.setContent(posts);
 		} catch (Exception e) {
 			getPostsResponse.setResult(-1);
 			getPostsResponse.setResultDesp("数据库连接错误");
@@ -156,7 +162,7 @@ public class PostController {
 			}
 			getPostsByTagsCountRequest.setResult(1);
 			getPostsByTagsCountRequest.setResultDesp("返回成功");
-			getPostsByTagsCountRequest.setPostCount(postCount);
+			getPostsByTagsCountRequest.setContent(postCount);
 		} catch (Exception e) {
 			getPostsByTagsCountRequest.setResult(-1);
 			getPostsByTagsCountRequest.setResultDesp("数据库连接错误");

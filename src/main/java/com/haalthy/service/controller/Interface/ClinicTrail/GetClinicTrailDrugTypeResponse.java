@@ -5,7 +5,7 @@ import java.util.List;
 public class GetClinicTrailDrugTypeResponse {
 	private String resultDesp;
 	private int result;
-	private List<String> clinicTrailDrugTypeList;
+	private List<String> content;
 	public String getResultDesp() {
 		return resultDesp;
 	}
@@ -18,11 +18,10 @@ public class GetClinicTrailDrugTypeResponse {
 	public void setResult(int result) {
 		this.result = result;
 	}
-	public List<String> getClinicTrailDrugTypeList() {
-		return clinicTrailDrugTypeList;
+	public List<String> getContent() {
+		return content;
 	}
-	public void setClinicTrailDrugTypeList(List<String> clinicTrailDrugTypeList) {
-		this.clinicTrailDrugTypeList = clinicTrailDrugTypeList;
+	public void setContent(List<String> content) {
+		this.content = content;
 	}
-
 }

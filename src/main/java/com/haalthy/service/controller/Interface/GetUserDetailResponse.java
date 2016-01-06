@@ -5,13 +5,13 @@ import com.haalthy.service.controller.Interface.user.UserDetail;
 public class GetUserDetailResponse {
 	private String resultDesp;
 	private int result;
-	private UserDetail userDetail;
+	private UserDetail content;
 
-	public UserDetail getUserDetail() {
-		return userDetail;
+	public UserDetail getContent() {
+		return content;
 	}
-	public void setUserDetail(UserDetail userDetail) {
-		this.userDetail = userDetail;
+	public void setContent(UserDetail content) {
+		this.content = content;
 	}
 	public String getResultDesp() {
 		return resultDesp;

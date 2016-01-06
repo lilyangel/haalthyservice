@@ -7,7 +7,7 @@ import com.haalthy.service.domain.ClinicReportFormat;
 public class GetClinicReportFormatResponse {
 	private int result;
 	private String resultDesp;
-	private List<ClinicReportFormat> clinicReportFormats;
+	private List<ClinicReportFormat> content;
 	public int getResult() {
 		return result;
 	}
@@ -20,11 +20,10 @@ public class GetClinicReportFormatResponse {
 	public void setResultDesp(String resultDesp) {
 		this.resultDesp = resultDesp;
 	}
-	public List<ClinicReportFormat> getClinicReportFormats() {
-		return clinicReportFormats;
+	public List<ClinicReportFormat> getContent() {
+		return content;
 	}
-	public void setClinicReportFormats(List<ClinicReportFormat> clinicReportFormats) {
-		this.clinicReportFormats = clinicReportFormats;
+	public void setContent(List<ClinicReportFormat> content) {
+		this.content = content;
 	}
-	
 }

@@ -3,6 +3,14 @@ package com.haalthy.service.controller.Interface.patient;
 public class AddTreatmentResponse {
 	private int result;
 	private String resultDesp;
+	private int content;
+	
+	public int getContent() {
+		return content;
+	}
+	public void setContent(int content) {
+		this.content = content;
+	}
 	public int getResult() {
 		return result;
 	}

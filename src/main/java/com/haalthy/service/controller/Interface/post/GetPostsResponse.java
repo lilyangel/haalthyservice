@@ -7,7 +7,7 @@ import com.haalthy.service.domain.Post;
 public class GetPostsResponse {
 	private int result;
 	private String resultDesp;
-	private List<Post> posts;
+	private List<Post> content;
 	public int getResult() {
 		return result;
 	}
@@ -20,10 +20,10 @@ public class GetPostsResponse {
 	public void setResultDesp(String resultDesp) {
 		this.resultDesp = resultDesp;
 	}
-	public List<Post> getPosts() {
-		return posts;
+	public List<Post> getContent() {
+		return content;
 	}
-	public void setPosts(List<Post> posts) {
-		this.posts = posts;
+	public void setContent(List<Post> content) {
+		this.content = content;
 	}
 }

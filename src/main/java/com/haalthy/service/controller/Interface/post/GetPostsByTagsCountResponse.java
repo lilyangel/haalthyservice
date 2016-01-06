@@ -4,7 +4,7 @@ package com.haalthy.service.controller.Interface.post;
 public class GetPostsByTagsCountResponse {
 	private int result;
 	private String resultDesp;
-	private int postCount;
+	private int content;
 	public int getResult() {
 		return result;
 	}
@@ -17,10 +17,10 @@ public class GetPostsByTagsCountResponse {
 	public void setResultDesp(String resultDesp) {
 		this.resultDesp = resultDesp;
 	}
-	public int getPostCount() {
-		return postCount;
+	public int getContent() {
+		return content;
 	}
-	public void setPostCount(int postCount) {
-		this.postCount = postCount;
+	public void setContent(int content) {
+		this.content = content;
 	}
 }

@@ -86,4 +86,22 @@ public class PatientService {
 	public List<ClinicData> getClinicDataByUsername(String insertUsername){
 		return patientMapper.getClinicDataByUsername(insertUsername);
 	}
+
+	public int updatePatientImg(String id,String filePath)
+	{
+		PatientStatus patientStatus = new PatientStatus();
+		patientStatus.setStatusID(Integer.parseInt(id));
+		//
+		patientStatus.setImageURL(filePath);
+		return patientMapper.updatePatientImg(patientStatus);
+	}
+
+	public int appendPatientImg(String id,String filePath){
+
+		PatientStatus patientStatus = new PatientStatus();
+		patientStatus.setStatusID(Integer.parseInt(id));
+		//
+		patientStatus.setImageURL(filePath);
+		return patientMapper.appendPatientImg(patientStatus);
+	}
 }

@@ -4,8 +4,9 @@
 
 <mapper namespace="com.haalthy.service.persistence.UserMapper">
 
-  <cache />
-
+	<cache eviction="LRU"
+		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="8640000"
+		   size="1000" readOnly="true" />
   <select id="getUserByUsername" parameterType="string" resultType="User">
     SELECT
 		UserID,
@@ -14,7 +15,7 @@
 		UpdateDate,
 		Displayname,
 		Username,
-		Image,
+		imageURL,
 		Gender,
 		IsSmoking,
 		Pathological,
@@ -39,7 +40,7 @@
 		UpdateDate,
 		Displayname,
 		Username,
-		Image,
+		ImageURL,
 		Gender,
 		IsSmoking,
 		Pathological,
@@ -56,17 +57,16 @@
   
   
 	<insert id="addUser" useGeneratedKeys="true"
-    	keyProperty="UserID" keyColumn="UserID">
-  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age, Image, userType, geneticMutation, deviceToken)
- 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age}, #{image}, #{userType}, #{geneticMutation}, #{deviceToken})
+    	keyProperty="UserID" keyColumn="UserID" flushCache="true">
+  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age, userType, geneticMutation)
+ 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age}, #{userType}, #{geneticMutation})
 	</insert>
 	
-	<update id="updateUser" parameterType="User">
+	<update id="updateUser" parameterType="User" flushCache="true">
     UPDATE user SET
       	EMAIL = #{email},
       	DISPLAYNAME = #{displayname},
 		UpdateDate = #{updateDate},
-		Image = #{image},
 		Gender = #{gender},
 		IsSmoking = #{isSmoking},
 		Pathological = #{pathological},
@@ -78,14 +78,14 @@
     WHERE username = #{username}
   </update>
   
-  <insert id = "addUserTags" parameterType="java.util.List">
+  <insert id = "addUserTags" parameterType="java.util.List" flushCache="true">
   	INSERT INTO userTag(Username, TagID, DateInserted)
   	VALUES
   	<foreach collection="list" item="userTag" index="index" separator=",">
   		(#{userTag.username}, #{userTag.tagID}, #{userTag.dateInserted})
   	</foreach>
   	</insert>
-  	<delete id = "deleteUserTags" parameterType = "String">
+  	<delete id = "deleteUserTags" parameterType = "String" flushCache="true">
 		DELETE FROM userTag 
 		WHERE  Username= #{username}
 	</delete>
@@ -100,13 +100,13 @@
 	WHERE tag.TagID = userTag.TagID AND userTag.username = #{username}
 	</select>
 	
-	<update id = "addUserFollowCount" parameterType = "String">
-	Update user SET
+	<update id = "addUserFollowCount" parameterType = "String" flushCache="true">
+	Update User SET
 		FollowCount = FollowCount+1
 	WHERE Username = #{username}
 	</update>
 	
-	<update id="deleteUserFollowCount" parameterType = "String">
+	<update id="deleteUserFollowCount" parameterType = "String" flushCache="true">
 	Update user SET
 		FollowCount = FollowCount-1
 	WHERE Username = #{username}
@@ -120,7 +120,6 @@
 		UpdateDate,
 		Displayname,
 		Username,
-		Image,
 		Gender,
 		IsSmoking,
 		Pathological,
@@ -129,7 +128,8 @@
 		FollowCount,
 		CancerType,
 		geneticMutation,
-		deviceToken
+		deviceToken,
+		imageURL
     FROM suggestUserByTags
     WHERE (TagID = #{tagID}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>
@@ -142,7 +142,7 @@
 		UpdateDate,
 		Displayname,
 		Username,
-		Image,
+		ImageURL,
 		Gender,
 		IsSmoking,
 		Pathological,
@@ -168,7 +168,7 @@
 		UpdateDate,
 		Displayname,
 		Username,
-		Image,
+		ImageURL,
 		Gender,
 		IsSmoking,
 		Pathological,
@@ -182,7 +182,7 @@
     WHERE (SuggestedUsername = #{username}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>
 	
-	<update id="resetPassword" parameterType="User">
+	<update id="resetPassword" parameterType="User" flushCache="true">
     UPDATE user SET
 	  PASSWORD = #{password}
     WHERE username = #{username}
@@ -194,15 +194,28 @@
     WHERE username = #{username}
   </update>
   
-  <delete id="deleteFromSuggestUserByProfile" parameterType = "SuggestedUserPair">
+  <delete id="deleteFromSuggestUserByProfile" parameterType = "SuggestedUserPair" flushCache="true">
   	DELETE FROM SuggestUserByProfile where SuggestedUsername = #{suggestedUsername} AND username = #{username}
   </delete>
-  
-  <select id = "getUsersByDisplayname" parameterType="String" resultType="User">
+	<!--更新用户头像-->
+	<update id="updateUserPhoto" parameterType="User" flushCache="true">
+		update user SET
+		imageURL = #{imageURL}
+		where username=#{username}
+	</update>
+
+	<!--追加用户头像-->
+	<update id="appendUserPhoto" parameterType="User" flushCache="true">
+		update user SET
+		1=1
+		where username=#{username}
+	</update>
+	
+	<select id = "getUsersByDisplayname" parameterType="String" resultType="User">
   	SELECT
-  		UserID,
-  		Displayname,
+ 		UserID,
+ 		Displayname,
 		Username
 	FROM user WHERE (user.Displayname=#{displayname})
-  </select>
+ 	</select>
 </mapper>

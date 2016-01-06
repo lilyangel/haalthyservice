@@ -2,6 +2,7 @@ package com.haalthy.service.controller.Interface.post;
 
 import java.util.List;
 
+import com.haalthy.service.controller.Interface.ImageInfo;
 import com.haalthy.service.domain.Tag;
 
 public class AddPostRequest {
@@ -13,7 +14,7 @@ public class AddPostRequest {
 	private String type;
 	private List<Tag> tags;
 	private List<String> mentionUsers;
-	private List<byte[]> images;
+	private List<ImageInfo> imageInfos;
 	
 	public String getInsertUsername() {
 		return insertUsername;
@@ -27,11 +28,11 @@ public class AddPostRequest {
 	public void setMentionUsers(List<String> mentionUsers) {
 		this.mentionUsers = mentionUsers;
 	}
-	public List<byte[]> getImages() {
-		return images;
+	public List<ImageInfo> getImageInfos() {
+		return imageInfos;
 	}
-	public void setImages(List<byte[]> images) {
-		this.images = images;
+	public void setImageInfos(List<ImageInfo> imageInfos) {
+		this.imageInfos = imageInfos;
 	}
 	public String getType() {
 		return type;

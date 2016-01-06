@@ -27,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haalthy.service.controller.Interface.GetUnreadMentionedPostRequest;
+import com.haalthy.service.controller.Interface.ImageInfo;
 import com.haalthy.service.controller.Interface.InputUsernameRequest;
+import com.haalthy.service.controller.Interface.OSSFile;
 import com.haalthy.service.controller.Interface.comment.GetCommentsResponse;
 import com.haalthy.service.controller.Interface.post.AddPostRequest;
 import com.haalthy.service.controller.Interface.post.AddUpdatePostResponse;
@@ -42,6 +44,7 @@ import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostAndUser;
 import com.haalthy.service.domain.PostTag;
 import com.haalthy.service.domain.Tag;
+import com.haalthy.service.openservice.OssService;
 import com.haalthy.service.openservice.PostService;
 
 import com.haalthy.service.configuration.*;
@@ -51,6 +54,9 @@ import com.haalthy.service.configuration.*;
 public class PostSecurityController {
 	@Autowired
 	private transient PostService postService;
+	
+	@Autowired
+	private transient OssService ossService;
 	
 	private static final String imageLocation = "/Users/lily/haalthyServer/post/";
 	
@@ -82,8 +88,8 @@ public class PostSecurityController {
 			post.setInsertUsername(addPostRequest.getInsertUsername());
 			post.setIsBroadcast(addPostRequest.getIsBroadcast());
 
-			if (addPostRequest.getImages() != null) {
-				post.setHasImage(addPostRequest.getImages().size());
+			if (addPostRequest.getImageInfos() != null) {
+				post.setHasImage(addPostRequest.getImageInfos().size());
 			} else {
 				post.setHasImage(0);
 			}
@@ -127,32 +133,22 @@ public class PostSecurityController {
 				}
 				postService.addMention(mentionList);
 			}
-						
-//			if (addPostRequest.getImages() != null) {
-//				Iterator<byte[]> imageItr = addPostRequest.getImages().iterator();
-//				int index = 1;
-//				while (imageItr.hasNext()) {
-//					ImageService imageService = new ImageService();
-//					byte[] imageInByte = imageItr.next();
-//					byte[] smallImageInByte = imageService.scale(imageInByte, 128, 128);
-//
-//					// convert byte array back to BufferedImage
-//					InputStream in = new ByteArrayInputStream(imageInByte);
-//					BufferedImage bImageFromConvert = ImageIO.read(in);
-//					String path = imageLocation + Integer.toString(post.getPostID()) + "." + index + ".jpg";
-//					ImageIO.write(bImageFromConvert, "jpg", new File(path));
-//
-//					in = new ByteArrayInputStream(smallImageInByte);
-//					bImageFromConvert = ImageIO.read(in);
-//					path = imageLocation + Integer.toString(post.getPostID()) + "." + index + ".small" + ".jpg";
-//					ImageIO.write(bImageFromConvert, "jpg", new File(path));
-//
-//					index++;
-//					in.close();
-//				}
-//			}
+			List<OSSFile> ossFileList = new ArrayList();
+			if (addPostRequest.getImageInfos() != null) {
+				Iterator<ImageInfo> imageItr = addPostRequest.getImageInfos().iterator();
+				while (imageItr.hasNext()) {
+					ImageInfo image = imageItr.next();
+					OSSFile ossFile = new OSSFile();
+					ossFile.setFileType(image.getType());
+					ossFile.setFunctionType("post");
+					ossFile.setId(String.valueOf(post.getPostID()));
+					ossFile.setImg(image.getData());
+					ossFile.setModifyType("append");
+					ossFileList.add(ossFile);
+				}
+				ossService.ossUploadFile(ossFileList);
+			}
 			if (insertPostRow != 0){
-//				addPostResponse.setStatus("insert post successful");
 				addPostResponse.setResult(1);
 				addPostResponse.setResultDesp("返回成功");
 				addPostResponse.setPostId(post.getPostID());
@@ -160,6 +156,7 @@ public class PostSecurityController {
 		} catch (Exception e) {
 			addPostResponse.setResult(-1);
 			addPostResponse.setResultDesp("数据库连接错误");
+			System.out.println(e.getMessage());
 		}
         return addPostResponse;
     }
@@ -191,7 +188,7 @@ public class PostSecurityController {
     @ResponseBody
 	public GetPostsResponse getPosts(@RequestBody GetFeedsRequest getFeedsRequest){
 		GetPostsResponse getPostsResponse = new GetPostsResponse();
-		try {
+//		try {
 			if (getFeedsRequest.getCount() == 0) {
 				getFeedsRequest.setCount(50);
 			}
@@ -220,13 +217,13 @@ public class PostSecurityController {
 					// post.setPostImageList(postImageList);
 				}
 			}
-			getPostsResponse.setPosts(posts);
+			getPostsResponse.setContent(posts);
 			getPostsResponse.setResult(1);
 			getPostsResponse.setResultDesp("返回成功");
-		} catch (Exception e) {
-			getPostsResponse.setResult(-1);
-			getPostsResponse.setResultDesp("数据库连接错误");
-		}
+//		} catch (Exception e) {
+//			getPostsResponse.setResult(-1);
+//			getPostsResponse.setResultDesp("数据库连接错误");
+//		}
  	    return getPostsResponse;
     }
     
@@ -250,7 +247,7 @@ public class PostSecurityController {
     public GetPostsResponse getPostsByUsername(@PathVariable String username){
     	GetPostsResponse getPostsResponse = new GetPostsResponse();
     	try{
-    		getPostsResponse.setPosts(postService.getPostsByUsername(username));
+    		getPostsResponse.setContent(postService.getPostsByUsername(username));
     		getPostsResponse.setResult(1);
     		getPostsResponse.setResultDesp("返回成功");
     	}catch(Exception e){
@@ -265,7 +262,7 @@ public class PostSecurityController {
     public GetCommentsResponse getCommentsByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
     	GetCommentsResponse getCommentsResponse = new GetCommentsResponse();
     	try{
-    		getCommentsResponse.setComments(postService.getCommentsByUsername(inputUsernameRequest.getUsername()));
+    		getCommentsResponse.setContent(postService.getCommentsByUsername(inputUsernameRequest.getUsername()));
     		getCommentsResponse.setResult(1);
     		getCommentsResponse.setResultDesp("返回成功");
     	}catch(Exception e){
@@ -311,7 +308,7 @@ public class PostSecurityController {
 			// post.setPostImageList(postImageList);
 			// }
 			// }
-			getPostsResponse.setPosts(posts);
+			getPostsResponse.setContent(posts);
 			getPostsResponse.setResult(1);
 			getPostsResponse.setResultDesp("返回成功");
 		} catch (Exception e) {

@@ -1,10 +1,6 @@
 package com.haalthy.service.controller.clinictrail;
 
-import java.sql.SQLException;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +25,7 @@ public class ClinictrailController {
     public GetCilnicTrailInfoResponse getClinicTrailInfo(@RequestBody ClinicTrailInfo clinicTrailInfo)  {
     	GetCilnicTrailInfoResponse getCilnicTrailInfoResponse = new GetCilnicTrailInfoResponse();
     	try{
-    		getCilnicTrailInfoResponse.setClinicTrailInfoList(clinicTrailService.getClinicTrailInfo(clinicTrailInfo));
+    		getCilnicTrailInfoResponse.setContent(clinicTrailService.getClinicTrailInfo(clinicTrailInfo));
     		getCilnicTrailInfoResponse.setResult(1);
     		getCilnicTrailInfoResponse.setResultDesp("返回成功");
     	} catch (Exception e) {
@@ -44,7 +40,7 @@ public class ClinictrailController {
     public GetClinicTrailDrugTypeResponse getClinicTrailDrugTypes(){
     	GetClinicTrailDrugTypeResponse getCilnicTrailDrugTypeResponse = new GetClinicTrailDrugTypeResponse();
     	try{
-        	getCilnicTrailDrugTypeResponse.setClinicTrailDrugTypeList(clinicTrailService.getClinicTrailDrugTypes());
+        	getCilnicTrailDrugTypeResponse.setContent(clinicTrailService.getClinicTrailDrugTypes());
         	getCilnicTrailDrugTypeResponse.setResult(1);
         	getCilnicTrailDrugTypeResponse.setResultDesp("返回成功");
     	} catch (Exception e) {
@@ -59,7 +55,7 @@ public class ClinictrailController {
     public GetClinicTrailSubGroupsResponse getClinicTrailSubGroup(){
     	GetClinicTrailSubGroupsResponse getClinicTrailSubGroupsResponse = new GetClinicTrailSubGroupsResponse();
     	try{
-    		getClinicTrailSubGroupsResponse.setSubGroups(clinicTrailService.getClinicTrailSubGroups());
+    		getClinicTrailSubGroupsResponse.setContent(clinicTrailService.getClinicTrailSubGroups());
     		getClinicTrailSubGroupsResponse.setResult(1);
     		getClinicTrailSubGroupsResponse.setResultDesp("返回成功");
     	} catch (Exception e) {

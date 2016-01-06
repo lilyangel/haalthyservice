@@ -5,14 +5,15 @@ import java.util.List;
 import com.haalthy.service.domain.Tag;
 
 public class GetTagsResponse {
-	private List<Tag> tags;
+	private List<Tag> content;
 	private int result;
 	private String resultDesp;
-	public List<Tag> getTags() {
-		return tags;
+
+	public List<Tag> getContent() {
+		return content;
 	}
-	public void setTags(List<Tag> tags) {
-		this.tags = tags;
+	public void setContent(List<Tag> content) {
+		this.content = content;
 	}
 	public int getResult() {
 		return result;

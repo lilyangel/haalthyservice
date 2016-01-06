@@ -44,4 +44,7 @@ public interface PatientMapper {
 	int insertClinicData(List<ClinicData> clinicData);
 	
 	List<ClinicData> getClinicDataByUsername(String insertUsername);
+
+	int updatePatientImg(PatientStatus patientStatus);
+	int appendPatientImg(PatientStatus patientStatus);
 }

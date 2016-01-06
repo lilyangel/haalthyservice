@@ -7,7 +7,7 @@ import com.haalthy.service.domain.Treatment;
 public class GetTreatmentsByUserResponse {
 	private String resultDesp;
 	private int result;
-	private List<Treatment> treatments;
+	private List<Treatment> content;
 	public String getResultDesp() {
 		return resultDesp;
 	}
@@ -20,10 +20,10 @@ public class GetTreatmentsByUserResponse {
 	public void setResult(int result) {
 		this.result = result;
 	}
-	public List<Treatment> getTreatments() {
-		return treatments;
+	public List<Treatment> getContent() {
+		return content;
 	}
-	public void setTreatments(List<Treatment> treatments) {
-		this.treatments = treatments;
+	public void setContent(List<Treatment> content) {
+		this.content = content;
 	}
 }

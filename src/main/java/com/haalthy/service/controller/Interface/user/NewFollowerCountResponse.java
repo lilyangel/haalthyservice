@@ -1,11 +1,9 @@
 package com.haalthy.service.controller.Interface.user;
 
-import com.haalthy.service.domain.NewFollowerCount;
-
 public class NewFollowerCountResponse {
 	private int result;
 	private String resultDesp;
-	private NewFollowerCount newFollowerCount;
+	private int content;
 	public int getResult() {
 		return result;
 	}
@@ -18,11 +16,10 @@ public class NewFollowerCountResponse {
 	public void setResultDesp(String resultDesp) {
 		this.resultDesp = resultDesp;
 	}
-	public NewFollowerCount getNewFollowerCount() {
-		return newFollowerCount;
+	public int getContent() {
+		return content;
 	}
-	public void setNewFollowerCount(NewFollowerCount newFollowerCount) {
-		this.newFollowerCount = newFollowerCount;
+	public void setContent(int content) {
+		this.content = content;
 	}
-	
 }

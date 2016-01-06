@@ -41,6 +41,7 @@ import com.haalthy.service.domain.Treatment;
 import com.haalthy.service.domain.User;
 import com.haalthy.service.domain.UserTag;
 import com.haalthy.service.openservice.FollowService;
+import com.haalthy.service.openservice.OssService;
 import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.UserService;
 
@@ -50,6 +51,7 @@ import com.haalthy.service.controller.Interface.GetMentionedUsernameRequest;
 import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
 import com.haalthy.service.controller.Interface.GetUserDetailResponse;
 import com.haalthy.service.controller.Interface.InputUsernameRequest;
+import com.haalthy.service.controller.Interface.OSSFile;
 import com.haalthy.service.controller.Interface.ResetPasswordRequest;
 @Controller
 @RequestMapping("/security/user")
@@ -63,6 +65,9 @@ public class UserSecurityController {
 	
 	@Autowired
 	private transient PatientService patientService;
+	
+	@Autowired
+	private transient OssService ossService;
 	
 //	@RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
 //	@ResponseBody
@@ -84,9 +89,9 @@ public class UserSecurityController {
 			String username = inputUsernameRequest.getUsername();
 			User user = userService.getUserByUsername(username);
 
-			if (user != null && user.getImage() != null) {
-				user.setImage(imageService.scale(user.getImage(), 88, 88));
-			}
+//			if (user != null && user.getImage() != null) {
+//				user.setImage(imageService.scale(user.getImage(), 88, 88));
+//			}
 
 			List<Treatment> treatments = null;
 			List<PatientStatus> patientStatus = null;
@@ -125,7 +130,7 @@ public class UserSecurityController {
 			userDetail.setClinicReport(clinicReport);
 			getUserDetailResponse.setResult(1);
 			getUserDetailResponse.setResultDesp("返回成功");
-			getUserDetailResponse.setUserDetail(userDetail);
+			getUserDetailResponse.setContent(userDetail);
 		} catch (Exception e) {
 			getUserDetailResponse.setResult(-1);
 			getUserDetailResponse.setResultDesp("数据库连接错误");
@@ -160,7 +165,17 @@ public class UserSecurityController {
 				user.setDisplayname(updateUser.getDisplayname());
 			}
 			if (updateUser.getImage() != null) {
-				user.setImage(updateUser.getImage());
+//				user.setImage(updateUser.getImage());
+//				userService.updateUserPhoto("user", photoPath)
+				List<OSSFile> ossFileList = new ArrayList();
+				OSSFile ossFile = new OSSFile();
+				ossFile.setFileType(user.getImageInfo().getType());
+				ossFile.setFunctionType("user");
+				ossFile.setImg(user.getImageInfo().getData());
+				ossFile.setModifyType("update");
+				ossFile.setId(username);
+				ossFileList.add(ossFile);
+				ossService.ossUploadFile(ossFileList);
 			}
 			if (updateUser.getGender() != null && updateUser.getGender() != "") {
 				user.setGender(updateUser.getGender());
@@ -184,11 +199,11 @@ public class UserSecurityController {
 			}
 			user.setAge(updateUser.getAge());
 			if (userService.updateUser(user) == 1) {
-//				updateUserResponse.setStatus("update successful!");
 				updateUserResponse.setResult(1);
 				updateUserResponse.setResultDesp("返回成功");
+				updateUserResponse.setContent(user.getUsername());
+
 			} else {
-//				updateUserResponse.setStatus("update db error");
 				updateUserResponse.setResult(-4);
 				updateUserResponse.setResultDesp("更新失败");
 			}
@@ -204,7 +219,7 @@ public class UserSecurityController {
 	public NewFollowerCountResponse selectNewFollowerCount(@RequestBody InputUsernameRequest inputUsernameRequest){
 		NewFollowerCountResponse newFollowerCountResponse = new NewFollowerCountResponse();
 		try{
-			newFollowerCountResponse.setNewFollowerCount(followService.selectNewFollowerCount(inputUsernameRequest.getUsername()));
+			newFollowerCountResponse.setContent(followService.selectNewFollowerCount(inputUsernameRequest.getUsername()).getCount());
 			newFollowerCountResponse.setResult(1);
 			newFollowerCountResponse.setResultDesp("返回成功");
 		}catch(Exception e){
@@ -252,7 +267,7 @@ public class UserSecurityController {
 	public GetUsersResponse getFollowingusersByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
 		GetUsersResponse getUsersResponse = new GetUsersResponse();
 		try {
-			getUsersResponse.setUsers(followService.getFollowingUsersByUsername(inputUsernameRequest.getUsername()));
+			getUsersResponse.setContent(followService.getFollowingUsersByUsername(inputUsernameRequest.getUsername()));
 			getUsersResponse.setResult(1);
 			getUsersResponse.setResultDesp("返回成功");
 		} catch (Exception e) {
@@ -268,7 +283,7 @@ public class UserSecurityController {
 	public GetUsersResponse getFollowersByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
 		GetUsersResponse getUsersResponse = new GetUsersResponse();
 		try {
-			getUsersResponse.setUsers(followService.getFollowerUsersByUsername(inputUsernameRequest.getUsername()));
+			getUsersResponse.setContent(followService.getFollowerUsersByUsername(inputUsernameRequest.getUsername()));
 			getUsersResponse.setResult(1);
 			getUsersResponse.setResultDesp("返回成功");
 		} catch (Exception e) {
@@ -346,7 +361,7 @@ public class UserSecurityController {
     public IsFollowingUserResponse isFollowingUser(@RequestBody Follow follow){
     	IsFollowingUserResponse isFollowingUserResponse = new IsFollowingUserResponse();
     	try{
-    		isFollowingUserResponse.setIsFollowing(followService.isFollowingUser(follow));
+    		isFollowingUserResponse.setContent(followService.isFollowingUser(follow));
     		isFollowingUserResponse.setResult(1);
     		isFollowingUserResponse.setResultDesp("返回成功");
     	}catch(Exception e){
@@ -396,7 +411,7 @@ public class UserSecurityController {
     public GetTagsResponse getTagsByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
     	GetTagsResponse getTagsResponse = new GetTagsResponse();
     	try{
-    		getTagsResponse.setTags(userService.getTagsByUsername(inputUsernameRequest.getUsername()));
+    		getTagsResponse.setContent(userService.getTagsByUsername(inputUsernameRequest.getUsername()));
     		getTagsResponse.setResult(1);
     		getTagsResponse.setResultDesp("返回成功");
     	}catch(Exception e){
@@ -411,7 +426,7 @@ public class UserSecurityController {
     public GetUsersResponse getSuggestUsersByProfile(@RequestBody GetSuggestUsersByProfileRequest getSuggestUsersByProfileRequest) {
     	GetUsersResponse getUsersResponse = new GetUsersResponse();
     	try{
-    		getUsersResponse.setUsers(userService.selectSuggestUsersByProfile(getSuggestUsersByProfileRequest));
+    		getUsersResponse.setContent(userService.selectSuggestUsersByProfile(getSuggestUsersByProfileRequest));
     		getUsersResponse.setResult(1);
     		getUsersResponse.setResultDesp("返回成功");
     	}catch(Exception e){
@@ -498,7 +513,7 @@ public class UserSecurityController {
 			if (user != null) {
 				addUpdateUserResponse.setResult(1);
 				addUpdateUserResponse.setResultDesp("返回成功");
-				addUpdateUserResponse.setUsername(user.getUsername());
+				addUpdateUserResponse.setContent(user.getUsername());
 			}else{
 				addUpdateUserResponse.setResult(-2);
 				addUpdateUserResponse.setResultDesp("找不到该用户");	
@@ -534,7 +549,7 @@ public class UserSecurityController {
 			}
 			getUsersResponse.setResult(1);
 			getUsersResponse.setResultDesp("返回成功");
-			getUsersResponse.setUsers(users);
+			getUsersResponse.setContent(users);
 		} catch (Exception e) {
 			getUsersResponse.setResult(-1);
 			getUsersResponse.setResultDesp("数据库连接错误");

@@ -3,7 +3,7 @@ package com.haalthy.service.controller.Interface.user;
 public class IsFollowingUserResponse {
 	private int result;
 	private String resultDesp;
-	private int isFollowing;
+	private int content;
 	
 	public int getResult() {
 		return result;
@@ -17,11 +17,11 @@ public class IsFollowingUserResponse {
 	public void setResultDesp(String resultDesp) {
 		this.resultDesp = resultDesp;
 	}
-	public int getIsFollowing() {
-		return isFollowing;
+	public int getContent() {
+		return content;
 	}
-	public void setIsFollowing(int isFollowing) {
-		this.isFollowing = isFollowing;
+	public void setContent(int content) {
+		this.content = content;
 	}
 	
 }

@@ -24,7 +24,7 @@ public class Post implements Serializable{
 	private Timestamp dateInserted;
 	private Timestamp dateUpdated;
 	private int isActive;
-	private byte[] image;
+//	private byte[] image;
 	private int type;
 	private int treatmentID;
 	private int patientStatusID;
@@ -39,7 +39,21 @@ public class Post implements Serializable{
 	private String displayname;
 	private String highlight;
 	private String clinicReport;
+	private String imageURL;
+	private String portraitURL;
 	
+	public String getPortraitURL() {
+		return portraitURL;
+	}
+	public void setPortraitURL(String portraitURL) {
+		this.portraitURL = portraitURL;
+	}
+	public String getImageURL() {
+		return imageURL;
+	}
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
 	public String getClinicReport() {
 		return clinicReport;
 	}
@@ -142,12 +156,12 @@ public class Post implements Serializable{
 	public void setDateInserted(Timestamp dateInserted) {
 		this.dateInserted = dateInserted;
 	}
-	public byte[] getImage() {
-		return image;
-	}
-	public void setImage(byte[] image) {
-		this.image = image;
-	}
+//	public byte[] getImage() {
+//		return image;
+//	}
+//	public void setImage(byte[] image) {
+//		this.image = image;
+//	}
 	public int getIsActive() {
 		return isActive;
 	}

@@ -3,13 +3,13 @@ package com.haalthy.service.controller.Interface.user;
 public class AddUpdateUserResponse {
 	private int result;
 	private String resultDesp;
-	private String username;
+	private String content;
 	
-	public String getUsername() {
-		return username;
+	public String getContent() {
+		return content;
 	}
-	public void setUsername(String username) {
-		this.username = username;
+	public void setContent(String content) {
+		this.content = content;
 	}
 	public int getResult() {
 		return result;

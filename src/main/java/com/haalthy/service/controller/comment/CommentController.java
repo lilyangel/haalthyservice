@@ -29,7 +29,7 @@ public class CommentController {
     	try{
     		getCommentsByPostIdResponse.setResult(1);
     		getCommentsByPostIdResponse.setResultDesp("返回成功");
-    		getCommentsByPostIdResponse.setComments(commentService.getCommentsByPostId(postid));
+    		getCommentsByPostIdResponse.setContent(commentService.getCommentsByPostId(postid));
     	}catch(Exception e){
     		getCommentsByPostIdResponse.setResult(-1);
     		getCommentsByPostIdResponse.setResultDesp("数据库连接错误");

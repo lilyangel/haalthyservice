@@ -9,7 +9,7 @@
 	<version>1.0.0-BUILD-SNAPSHOT</version>
     <properties>
         <jdk.version>1.7</jdk.version>
-        <spring.version>4.0.9.RELEASE</spring.version>
+        <spring.version>3.1.2.RELEASE</spring.version>
         <spring.security.oauth.version>1.0.5.RELEASE</spring.security.oauth.version>
     </properties>
 
@@ -71,6 +71,7 @@
       		<groupId>org.slf4j</groupId>
       		<artifactId>slf4j-api</artifactId>
       		<version>1.7.0</version>
+      		<scope>runtime</scope>
    		</dependency>
    		<dependency>
       		<groupId>org.slf4j</groupId>
@@ -82,17 +83,18 @@
       		<groupId>log4j</groupId>
       		<artifactId>log4j</artifactId>
       		<version>1.2.14</version>
+      		<scope>runtime</scope>
    		</dependency>
 
         <dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
-			<version>3.3.0</version>
+			<version>3.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis-spring</artifactId>
-			<version>1.2.3</version>
+			<version>1.1.1</version>
 		</dependency>
 
 		<!-- @Inject -->
@@ -135,7 +137,11 @@
 			<artifactId>spring-aop</artifactId>
 			<version>4.0.9.RELEASE</version>
 		</dependency>
-
+		 <dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+			<version>1.5.2.RELEASE</version>
+		</dependency>
         <!-- oss sdk-->
         <dependency>
             <groupId>com.aliyun.oss</groupId>
@@ -164,5 +170,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

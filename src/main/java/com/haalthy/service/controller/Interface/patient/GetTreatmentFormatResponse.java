@@ -7,7 +7,7 @@ import com.haalthy.service.domain.TreatmentFormat;
 public class GetTreatmentFormatResponse {
 	private int result;
 	private String resultDesp;
-	private List<TreatmentFormat> treatmentFormats;
+	private List<TreatmentFormat> content;
 	public int getResult() {
 		return result;
 	}
@@ -20,10 +20,10 @@ public class GetTreatmentFormatResponse {
 	public void setResultDesp(String resultDesp) {
 		this.resultDesp = resultDesp;
 	}
-	public List<TreatmentFormat> getTreatmentFormats() {
-		return treatmentFormats;
+	public List<TreatmentFormat> getContent() {
+		return content;
 	}
-	public void setTreatmentFormats(List<TreatmentFormat> treatmentFormats) {
-		this.treatmentFormats = treatmentFormats;
+	public void setContent(List<TreatmentFormat> content) {
+		this.content = content;
 	}
 }

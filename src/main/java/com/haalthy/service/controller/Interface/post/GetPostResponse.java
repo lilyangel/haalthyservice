@@ -5,13 +5,13 @@ import com.haalthy.service.domain.Post;
 public class GetPostResponse {
 	private int result;
 	private String resultDesp;
-	private Post post;
+	private Post content;
 	
-	public Post getPost() {
-		return post;
+	public Post getContent() {
+		return content;
 	}
-	public void setPost(Post post) {
-		this.post = post;
+	public void setContent(Post content) {
+		this.content = content;
 	}
 	public int getResult() {
 		return result;

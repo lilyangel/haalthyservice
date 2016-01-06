@@ -47,7 +47,7 @@ public class CommentSecurityController {
     	comment.setIsActive(1);
     	comment.setPostID(addCommentRequest.getPostID());
 		try {
-			postService.increasePostCountComment(addCommentRequest.getPostID());
+			addCommentResponse.setContent(postService.increasePostCountComment(addCommentRequest.getPostID()));
 			if (commentService.addComment(comment) > 0){
 				addCommentResponse.setResult(1);
 				addCommentResponse.setResultDesp("返回成功");
@@ -64,7 +64,9 @@ public class CommentSecurityController {
 	public AddUpdateCommentResponse inactiveComment(@RequestBody Comment comment) {
 		AddUpdateCommentResponse updateCommentResponse = new AddUpdateCommentResponse();
 		try {
-			if (commentService.inactiveComment(comment) != 0) {
+			int inactiveCommentCount = commentService.inactiveComment(comment);
+			updateCommentResponse.setContent(inactiveCommentCount);
+			if ( inactiveCommentCount != 0) {
 				updateCommentResponse.setResult(1);
 				updateCommentResponse.setResultDesp("返回成功");
 			} else {
@@ -85,7 +87,7 @@ public class CommentSecurityController {
     	try{
     		getUnreadCommentCountResponse.setResult(1);
     		getUnreadCommentCountResponse.setResultDesp("返回成功");
-    		getUnreadCommentCountResponse.setUnreadCommentCount(commentService.getUnreadCommentsCount(unreadCommentReqest.getUsername()));
+    		getUnreadCommentCountResponse.setContent(commentService.getUnreadCommentsCount(unreadCommentReqest.getUsername()));
     	}catch(Exception e){
     		getUnreadCommentCountResponse.setResult(-1);
     		getUnreadCommentCountResponse.setResultDesp("数据库连接错误");
@@ -100,7 +102,7 @@ public class CommentSecurityController {
     	try{
     		getCommentsByUsernameResponse.setResult(1);
     		getCommentsByUsernameResponse.setResultDesp("返回成功");
-    		getCommentsByUsernameResponse.setComments(commentService.getCommentsByUsername(unreadCommentReqest.getUsername()));
+    		getCommentsByUsernameResponse.setContent(commentService.getCommentsByUsername(unreadCommentReqest.getUsername()));
     	}catch(Exception e){
     		getCommentsByUsernameResponse.setResult(-1);
     		getCommentsByUsernameResponse.setResultDesp("数据库连接错误");
@@ -113,7 +115,7 @@ public class CommentSecurityController {
     public MarkCommentsAsReadByUsernameResponse markCommentsAsReadByUsername(@RequestBody UnreadCommentRequest unreadCommentReqest){
     	MarkCommentsAsReadByUsernameResponse markCommentsAsReadByUsernameResponse = new MarkCommentsAsReadByUsernameResponse();
     	try{
-    		commentService.markCommentsAsReadByUsername(unreadCommentReqest.getUsername());
+    		markCommentsAsReadByUsernameResponse.setContent(commentService.markCommentsAsReadByUsername(unreadCommentReqest.getUsername()));
     		markCommentsAsReadByUsernameResponse.setResult(1);
     		markCommentsAsReadByUsernameResponse.setResultDesp("返回成功");
     	}catch(Exception e){

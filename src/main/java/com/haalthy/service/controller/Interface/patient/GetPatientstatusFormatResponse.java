@@ -7,7 +7,7 @@ import com.haalthy.service.domain.PatientStatusFormat;
 public class GetPatientstatusFormatResponse {
 	private int result;
 	private String resultDesp;
-	private List<PatientStatusFormat> patientstatusformat;
+	private List<PatientStatusFormat> content;
 	public int getResult() {
 		return result;
 	}
@@ -20,10 +20,10 @@ public class GetPatientstatusFormatResponse {
 	public void setResultDesp(String resultDesp) {
 		this.resultDesp = resultDesp;
 	}
-	public List<PatientStatusFormat> getPatientstatusformat() {
-		return patientstatusformat;
+	public List<PatientStatusFormat> getContent() {
+		return content;
 	}
-	public void setPatientstatusformat(List<PatientStatusFormat> patientstatusformat) {
-		this.patientstatusformat = patientstatusformat;
+	public void setContent(List<PatientStatusFormat> content) {
+		this.content = content;
 	}
 }

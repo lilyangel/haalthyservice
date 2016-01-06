@@ -7,7 +7,7 @@ import com.haalthy.service.domain.User;
 public class GetUsersResponse {
 	private int result;
 	private String resultDesp;
-	private List<User> users;
+	private List<User> content;
 	public int getResult() {
 		return result;
 	}
@@ -20,10 +20,10 @@ public class GetUsersResponse {
 	public void setResultDesp(String resultDesp) {
 		this.resultDesp = resultDesp;
 	}
-	public List<User> getUsers() {
-		return users;
+	public List<User> getContent() {
+		return content;
 	}
-	public void setUsers(List<User> users) {
-		this.users = users;
+	public void setContent(List<User> content) {
+		this.content = content;
 	}
 }

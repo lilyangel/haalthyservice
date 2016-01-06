@@ -7,13 +7,13 @@ import com.haalthy.service.domain.ClinicTrailInfo;
 public class GetCilnicTrailInfoResponse {
 	private String resultDesp;
 	private int result;
-	private List<ClinicTrailInfo> clinicTrailInfoList;
+	private List<ClinicTrailInfo> content;
 	
-	public List<ClinicTrailInfo> getClinicTrailInfoList() {
-		return clinicTrailInfoList;
+	public List<ClinicTrailInfo> getContent() {
+		return content;
 	}
-	public void setClinicTrailInfoList(List<ClinicTrailInfo> clinicTrailInfoList){
-		this.clinicTrailInfoList = clinicTrailInfoList;
+	public void setContent(List<ClinicTrailInfo> content) {
+		this.content = content;
 	}
 	public String getResultDesp() {
 		return resultDesp;

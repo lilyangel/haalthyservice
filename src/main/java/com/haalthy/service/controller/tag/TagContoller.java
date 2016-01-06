@@ -56,11 +56,12 @@ public class TagContoller {
 				tagsInType.add(tag);
 				tagTypes.get(tagTypeIndex).setTags(tagsInType);
 			}
-			getTagTypesResponse.setTagType(tagTypes);
+			getTagTypesResponse.setContent(tagTypes);
 			getTagTypesResponse.setResult(1);
 			getTagTypesResponse.setResultDesp("返回成功");
 		} catch (Exception e) {
 			getTagTypesResponse.setResult(-1);
+			System.out.println(e.getMessage());
 			getTagTypesResponse.setResultDesp("数据库连接错误");
 		}
 		return getTagTypesResponse;
