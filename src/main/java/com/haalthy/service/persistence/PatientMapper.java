@@ -9,6 +9,7 @@ import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.PatientStatusFormat;
 import com.haalthy.service.domain.Treatment;
 import com.haalthy.service.domain.TreatmentFormat;
+import org.apache.ibatis.annotations.Param;
 
 public interface PatientMapper {
 	List<Treatment> getTreatmentsByUser(String username);
@@ -45,6 +46,9 @@ public interface PatientMapper {
 	
 	List<ClinicData> getClinicDataByUsername(String insertUsername);
 
+//	int updatePatientImg(@Param(value = "statusID") int statusId, @Param(value = "filename") String fileName);
+//	int appendPatientImg(@Param(value = "statusID") int statusId, @Param(value = "filename") String fileName);
 	int updatePatientImg(PatientStatus patientStatus);
 	int appendPatientImg(PatientStatus patientStatus);
+
 }

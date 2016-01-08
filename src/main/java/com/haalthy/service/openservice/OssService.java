@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.haalthy.service.controller.Interface.OSSFile;
-import com.haalthy.service.oss.OSSPutSimple;
+import com.haalthy.service.oss.OSSFileOperate;
 import com.haalthy.service.oss.OSSSetting;
 import com.haalthy.service.oss.RefreshImgPath;
 
@@ -43,7 +43,7 @@ public class OssService {
             ObjectMetadata objectMeta = new ObjectMetadata();
             objectMeta.setContentLength(in.available());
             objectMeta.setContentType(setting.getContentType(oss.getFileType()));
-            OSSPutSimple simple = new OSSPutSimple();
+            OSSFileOperate simple = new OSSFileOperate();
             simple.putSimpleObject(client,setting.getBucket(), setting.getOSSKey(oss.getFunctionType(), fileName),
                     in, objectMeta);
             in.close();

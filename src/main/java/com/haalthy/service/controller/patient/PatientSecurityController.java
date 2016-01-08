@@ -207,6 +207,7 @@ public class PatientSecurityController {
 		return addPatientStatusResponse;
 	}
 
+
     @RequestMapping(value = "/treatment/delete", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
 	public DeleteTreatmentByIdResponse deleteTreatmentById(@RequestBody Treatment treatment) {

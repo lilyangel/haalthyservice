@@ -1,5 +1,6 @@
 package com.haalthy.service.cache;
 
+import com.haalthy.service.common.SerializeUtil;
 import org.apache.ibatis.cache.Cache;
 import org.apache.log4j.Logger;
 import redis.clients.jedis.Jedis;
@@ -57,7 +58,7 @@ public final class MybatisRedisCache implements Cache {
     public void putObject(final Object key, final Object value) {
         execute(new RedisCallback() {
             public Object doWithRedis(Jedis jedis) {
-                jedis.hset(id.toString().getBytes(), key.toString().getBytes(), RedisSerialize.serialize(value));
+                jedis.hset(id.toString().getBytes(), key.toString().getBytes(), SerializeUtil.serialize(value));
                 return null;
             }
         });
@@ -66,7 +67,7 @@ public final class MybatisRedisCache implements Cache {
     public Object getObject(final Object key) {
         return execute(new RedisCallback() {
             public Object doWithRedis(Jedis jedis) {
-                return RedisSerialize.unserialize(jedis.hget(id.toString().getBytes(), key.toString().getBytes()));
+                return SerializeUtil.unserialize(jedis.hget(id.toString().getBytes(), key.toString().getBytes()));
             }
         });
     }

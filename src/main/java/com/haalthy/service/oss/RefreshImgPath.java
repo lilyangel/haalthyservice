@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.PostService;
 import com.haalthy.service.openservice.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by Ken on 2015-12-29.
@@ -40,7 +42,7 @@ public class RefreshImgPath {
 
     private int refreshUser(String modifyType,String id,String filePath)
     {
-        if("update".equals(modifyType.toLowerCase()))
+       if("update".equals(modifyType.toLowerCase()))
         {
             return userService.updateUserPhoto(id,filePath);
         }

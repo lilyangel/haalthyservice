@@ -215,6 +215,7 @@ public class PostSecurityController {
 					// index++;
 					// }
 					// post.setPostImageList(postImageList);
+
 				}
 			}
 			getPostsResponse.setContent(posts);
@@ -257,7 +258,7 @@ public class PostSecurityController {
     	return getPostsResponse;
     }
     
-    @RequestMapping(value = "/comments", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/comments/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public GetCommentsResponse getCommentsByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
     	GetCommentsResponse getCommentsResponse = new GetCommentsResponse();
@@ -270,13 +271,14 @@ public class PostSecurityController {
     		getCommentsResponse.setResultDesp("数据库连接错误");
     	}
     	return getCommentsResponse;
+
     }
     
-    @RequestMapping(value = "/mentionedpost/unreadcount", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/mentionedpost/unreadcount", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-	public int getUnreadMentionedPostCountByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
-    	
+	public int getUnreadMentionedPostCountByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){  	
 		return postService.getUnreadMentionedPostCountByUsername(inputUsernameRequest.getUsername());
+
 	}
 	
     @RequestMapping(value = "/mentionedpost/list", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
@@ -318,7 +320,7 @@ public class PostSecurityController {
 		return getPostsResponse;
 	}
     
-    @RequestMapping(value = "/mentionedpost/markasread", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/mentionedpost/markasread", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
 	public MarkAllMessageAsReadResponse refreshUnreadMentionedPostsByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
     	MarkAllMessageAsReadResponse markAllMessageAsReadResponse = new MarkAllMessageAsReadResponse();
@@ -331,5 +333,6 @@ public class PostSecurityController {
       	    markAllMessageAsReadResponse.setResultDesp("数据库连接错误");
     	}
     	return markAllMessageAsReadResponse;
+
 	}
 }

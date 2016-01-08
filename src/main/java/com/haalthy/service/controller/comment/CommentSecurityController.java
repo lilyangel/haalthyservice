@@ -40,7 +40,6 @@ public class CommentSecurityController {
     	AddUpdateCommentResponse addCommentResponse = new AddUpdateCommentResponse();
     	Comment comment = new Comment();
     	comment.setBody(addCommentRequest.getBody());
-    	comment.setInsertUsername(addCommentRequest.getInsertUsername());
     	Date now = new Date();
     	Timestamp ts_now = new Timestamp(now.getTime());
     	comment.setDateInserted(ts_now);

@@ -14,7 +14,7 @@ public class User implements Serializable {
 	private String password;
 	private String createDate;
 	private String updateDate;
-	private String image;
+	private byte[] image;
 	private ImageInfo imageInfo;
 	private String gender;
 	private int isSmoking;
@@ -29,18 +29,17 @@ public class User implements Serializable {
 	private String deviceToken;
 	private String imageURL;
 	
-
+	public byte[] getImage() {
+		return image;
+	}
+	public void setImage(byte[] image) {
+		this.image = image;
+	}
 	public String getImageURL() {
 		return imageURL;
 	}
 	public void setImageURL(String imageURL) {
 		this.imageURL = imageURL;
-	}
-	public String getImage() {
-		return image;
-	}
-	public void setImage(String image) {
-		this.image = image;
 	}
 	public ImageInfo getImageInfo() {
 		return imageInfo;

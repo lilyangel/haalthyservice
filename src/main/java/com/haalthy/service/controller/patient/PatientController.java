@@ -17,6 +17,7 @@ import com.haalthy.service.controller.Interface.patient.GetClinicReportFormatRes
 import com.haalthy.service.controller.Interface.patient.GetPatientstatusFormatResponse;
 import com.haalthy.service.controller.Interface.patient.GetTreatmentFormatResponse;
 import com.haalthy.service.controller.Interface.patient.GetTreatmentsByUserResponse;
+
 import com.haalthy.service.domain.ClinicReportFormat;
 import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.PatientStatusFormat;
@@ -34,11 +35,9 @@ import com.haalthy.service.domain.ClinicReportFormat;
 public class PatientController {
 	@Autowired
 	private transient PatientService patientService;
-	
 	@Autowired
 	private transient UserService userService;
-	
-    @RequestMapping(value = "/treatments", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/treatments/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public GetTreatmentsByUserResponse getTreatmentsByUser(@RequestBody InputUsernameRequest username){
     	GetTreatmentsByUserResponse getTreatmentsByUserResponse = new GetTreatmentsByUserResponse();
@@ -68,7 +67,7 @@ public class PatientController {
     	return getTreatmentFormatResponse;
     }
     
-    @RequestMapping(value = "/clinicreportformat", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/clinicreportformat", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public GetClinicReportFormatResponse getClinicReportFormat(@RequestBody InputUsernameRequest inputUsernameRequest){
 		GetClinicReportFormatResponse getClinicReportFormatResponse = new GetClinicReportFormatResponse();

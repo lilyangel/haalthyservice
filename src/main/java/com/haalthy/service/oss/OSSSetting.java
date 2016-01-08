@@ -53,24 +53,24 @@ public class OSSSetting {
     
     public String getUrl(String functionID,String fileName)
     {
-        return domain + getOSSKey(functionID,fileName);
+        return domain + getOSSKey(functionID,fileName)+";";
     }
     
     public String getContentType(String fileType)
     {
-        if(fileType.equals("BMP")||fileType.equals("bmp")){return "image/bmp";}
-        if(fileType.equals("GIF")||fileType.equals("gif")){return "image/gif";}
-        if(fileType.equals("JPEG")||fileType.equals("jpeg")||
-                fileType.equals("JPG")||fileType.equals("jpg")||
-                fileType.equals("PNG")||fileType.equals("png")){return "image/jpeg";}
-        if(fileType.equals("HTML")||fileType.equals("html")){return "text/html";}
-        if(fileType.equals("TXT")||fileType.equals("txt")){return "text/plain";}
-        if(fileType.equals("VSD")||fileType.equals("vsd")){return "application/vnd.visio";}
-        if(fileType.equals("PPTX")||fileType.equals("pptx")||
-                fileType.equals("PPT")||fileType.equals("ppt")){return "application/vnd.ms-powerpoint";}
-        if(fileType.equals("DOCX")||fileType.equals("docx")||
-                fileType.equals("DOC")||fileType.equals("doc")){return "application/msword";}
-        if(fileType.equals("XML")||fileType.equals("xml")){return "text/xml";}
+        if(fileType.toLowerCase().equals("bmp")){return "image/bmp";}
+        if(fileType.toLowerCase().equals("gif")){return "image/gif";}
+        if(fileType.toLowerCase().equals("jpeg")||
+                fileType.toLowerCase().equals("jpg")||
+                fileType.toLowerCase().equals("png")){return "image/jpeg";}
+        if(fileType.toLowerCase().equals("html")){return "text/html";}
+        if(fileType.toLowerCase().equals("txt")){return "text/plain";}
+        if(fileType.toLowerCase().equals("vsd")){return "application/vnd.visio";}
+        if(fileType.toLowerCase().equals("pptx")||
+                fileType.toLowerCase().equals("ppt")){return "application/vnd.ms-powerpoint";}
+        if(fileType.toLowerCase().equals("docx")||
+                fileType.toLowerCase().equals("doc")){return "application/msword";}
+        if(fileType.toLowerCase().equals("xml")){return "text/xml";}
         return "text/html";
     }
 }

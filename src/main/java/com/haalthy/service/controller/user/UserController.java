@@ -35,11 +35,13 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 @RequestMapping("/open/user")
 public class UserController {
     private String decodePassword(String password){
+		System.out.println(password);
     	String[] codeUnits = password.split("a");
     	String passwordDecode = "";
     	for(int i = 0; i< codeUnits.length; i++){
     		if(!codeUnits[i].equals("")){
         		int intCode = Integer.valueOf(codeUnits[i]).intValue(); 
+        		System.out.println(intCode);
         		char a = (char)intCode;
         		passwordDecode += a;
         	}

@@ -12,16 +12,17 @@ public class TagType {
 	public void setTypeName(String typeName) {
 		this.typeName = typeName;
 	}
-	public int getTypeRank() {
-		return typeRank;
-	}
-	public void setTypeRank(int typeRank) {
-		this.typeRank = typeRank;
-	}
 	public List<Tag> getTags() {
 		return tags;
 	}
 	public void setTags(List<Tag> tags) {
 		this.tags = tags;
 	}
+	public int getTypeRank() {
+		return typeRank;
+	}
+	public void setTypeRank(int typeRank) {
+		this.typeRank = typeRank;
+	}
+	
 }

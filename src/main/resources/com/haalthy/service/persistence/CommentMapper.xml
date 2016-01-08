@@ -3,7 +3,10 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.haalthy.service.persistence.CommentMapper">
-	<cache />
+
+	<cache eviction="LRU"
+		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="8640000"
+		   size="1000" readOnly="true" />
 	<select id="getCommentsByPostId" parameterType="int" resultType="Comment">
 	    SELECT
 	    	CommentID,
@@ -20,12 +23,12 @@
 	  </select>
 	  
 	<insert id="addComment" useGeneratedKeys="true"
-    	keyProperty="commentID" keyColumn = "CommentID">
+    	keyProperty="commentID" keyColumn = "CommentID" flushCache="true">
   		INSERT into Comment (InsertUserName, body, CountBookmarks,DateInserted, IsActive, PostID)
  			 VALUES (#{insertUsername},#{body}, #{countBookmarks},  #{dateInserted}, #{isActive}, #{postID})
 	</insert>
 	
-	<update id = "inactiveComment" parameterType="Comment">
+	<update id = "inactiveComment" parameterType="Comment" flushCache="true">
 		UPDATE Comment SET
 			IsActive = "0"
 		WHERE CommentID = #{commentID} AND InsertUserName = #{insertUsername}
@@ -52,7 +55,7 @@
 		WHERE Comment.PostID in (select postID from post where insertUserName=#{username}) AND IsActive = 1 AND (Comment.InsertUsername = user.Username) order by dateInserted desc;
 	</select>
 	
-	<update id="markCommentsAsReadByUsername" parameterType="String">
+	<update id="markCommentsAsReadByUsername" parameterType="String" flushCache="true">
 		UPDATE Comment SET
 			IsPostOwnerRead = 1
 		WHERE Comment.PostID in (select postID from post where insertUserName=#{username})

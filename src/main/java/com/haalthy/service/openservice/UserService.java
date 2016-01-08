@@ -78,11 +78,12 @@ public class UserService {
 		user.setImageURL(photoPath);
 		return userMapper.updateUserPhoto(user);
 	}
+
 	public int appendUserPhoto(String id,String photoPath)
 	{
 		User user = new User();
 		user.setUsername(id);
-		//
+		user.setImageURL(photoPath);
 		return userMapper.appendUserPhoto(user);
 	}
 	public int resetDeviceToken(User user){
