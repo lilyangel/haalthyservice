@@ -27,7 +27,7 @@
 		Age,
 		Password,
 		geneticMutation,
-		deviceToken,
+		deviceToken
     FROM user
     WHERE user.Username = #{username}
   </select>
