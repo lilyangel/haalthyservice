@@ -73,12 +73,24 @@ public class UserService {
 
 	public int updateUserPhoto(String id,String photoPath)
 	{
-		return userMapper.updateUserPhoto(id,photoPath);
+		User user = new User();
+		user.setUsername(id);
+		user.setImageURL(photoPath);
+		return userMapper.updateUserPhoto(user);
 	}
 
 	public int appendUserPhoto(String id,String photoPath)
 	{
-		return userMapper.appendUserPhoto(id,photoPath);
+		User user = new User();
+		user.setUsername(id);
+		user.setImageURL(photoPath);
+		return userMapper.appendUserPhoto(user);
+	}
+	public int resetDeviceToken(User user){
+		return userMapper.resetDeviceToken(user);
 	}
 
+	public List<User> getUsersByDisplayname(String mentionedDisplayname) {
+		return userMapper.getUsersByDisplayname(mentionedDisplayname);
+	}
 }

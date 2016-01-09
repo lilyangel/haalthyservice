@@ -39,7 +39,12 @@ public interface UserMapper {
 	  int resetPassword(User user);
 	  
 	  int deleteFromSuggestUserByProfile(SuggestedUserPair suggestedUserPair);
+	  
+	  List<User> getUsersByDisplayname(String displayname);
+	  
+	  int resetDeviceToken(User user);
 
-	  int updateUserPhoto(@Param(value = "username") String userName,@Param(value = "filename") String fileName);
-	  int appendUserPhoto(@Param(value = "username") String userName,@Param(value = "filename") String fileName);
+	  int updateUserPhoto(User user);
+	  int appendUserPhoto(User user);
+	  
 }

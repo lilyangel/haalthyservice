@@ -1,16 +1,14 @@
-package com.haalthy.service.controller.Interface;
+package com.haalthy.service.controller.Interface.comment;
 
-import com.haalthy.service.controller.Interface.user.UserDetail;
-
-public class GetUserDetailResponse {
+public class AddUpdateCommentResponse {
 	private String resultDesp;
 	private int result;
-	private UserDetail content;
-
-	public UserDetail getContent() {
+	private int content;
+	
+	public int getContent() {
 		return content;
 	}
-	public void setContent(UserDetail content) {
+	public void setContent(int content) {
 		this.content = content;
 	}
 	public String getResultDesp() {
@@ -25,4 +23,5 @@ public class GetUserDetailResponse {
 	public void setResult(int result) {
 		this.result = result;
 	}
+	
 }

@@ -16,7 +16,7 @@
 		UpdateDate,
 		Displayname,
 		Username,
-		Image,
+		imageURL,
 		Gender,
 		IsSmoking,
 		Pathological,
@@ -41,7 +41,7 @@
 		UpdateDate,
 		Displayname,
 		Username,
-		Image,
+		ImageURL,
 		Gender,
 		IsSmoking,
 		Pathological,
@@ -50,7 +50,8 @@
 		CancerType,
 		metastasis,
 		Age,
-		geneticMutation
+		geneticMutation,
+		deviceToken
     FROM user
     WHERE user.Email = #{email}
   </select>
@@ -58,8 +59,8 @@
   
 	<insert id="addUser" useGeneratedKeys="true"
     	keyProperty="UserID" keyColumn="UserID" flushCache="true">
-  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age, Image, userType, geneticMutation)
- 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age}, #{image}, #{userType}, #{geneticMutation})
+  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age, userType, geneticMutation)
+ 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age}, #{userType}, #{geneticMutation})
 	</insert>
 	
 	<update id="updateUser" parameterType="User" flushCache="true">
@@ -67,7 +68,6 @@
       	EMAIL = #{email},
       	DISPLAYNAME = #{displayname},
 		UpdateDate = #{updateDate},
-		Image = #{image},
 		Gender = #{gender},
 		IsSmoking = #{isSmoking},
 		Pathological = #{pathological},
@@ -76,6 +76,7 @@
 		metastasis = #{metastasis},
 		Age = #{age},
 		geneticMutation = #{geneticMutation}
+                deviceToken = #{deviceToken}
     WHERE username = #{username}
   </update>
   
@@ -121,7 +122,6 @@
 		UpdateDate,
 		Displayname,
 		Username,
-		Image,
 		Gender,
 		IsSmoking,
 		Pathological,
@@ -129,7 +129,9 @@
 		Age,
 		FollowCount,
 		CancerType,
-		geneticMutation
+		geneticMutation,
+		deviceToken,
+		imageURL
     FROM suggestUserByTags
     WHERE (TagID = #{tagID}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>
@@ -142,7 +144,7 @@
 		UpdateDate,
 		Displayname,
 		Username,
-		Image,
+		ImageURL,
 		Gender,
 		IsSmoking,
 		Pathological,
@@ -152,7 +154,8 @@
 		metastasis,
 		Age,
 		Password,
-		geneticMutation
+		geneticMutation,
+		deviceToken
     FROM user
     WHERE   	
 		Displayname LIKE #{keyword}
@@ -167,7 +170,7 @@
 		UpdateDate,
 		Displayname,
 		Username,
-		Image,
+		ImageURL,
 		Gender,
 		IsSmoking,
 		Pathological,
@@ -175,7 +178,8 @@
 		Age,
 		FollowCount,
 		CancerType,
-		geneticMutation
+		geneticMutation,
+		deviceToken
     FROM SuggestUserByProfile
     WHERE (SuggestedUsername = #{username}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>
@@ -186,13 +190,19 @@
     WHERE username = #{username}
   </update>
   
+  <update id="resetDeviceToken" parameterType="User">
+    UPDATE user SET
+	  deviceToken = #{deviceToken}
+    WHERE username = #{username}
+  </update>
+  
   <delete id="deleteFromSuggestUserByProfile" parameterType = "SuggestedUserPair" flushCache="true">
   	DELETE FROM SuggestUserByProfile where SuggestedUsername = #{suggestedUsername} AND username = #{username}
   </delete>
 	<!--更新用户头像-->
-	<update id="updateUserPhoto"  flushCache="true">
+	<update id="updateUserPhoto"  parameterType="User" flushCache="true">
 		update user SET
-		1=1
+		imageURL = #{imageURL}
 		where username=#{username}
 	</update>
 
@@ -202,4 +212,12 @@
 		1=1
 		where username=#{username}
 	</update>
+	
+	<select id = "getUsersByDisplayname" parameterType="String" resultType="User">
+  	SELECT
+ 		UserID,
+ 		Displayname,
+		Username
+	FROM user WHERE (user.Displayname=#{displayname})
+ 	</select>
 </mapper>

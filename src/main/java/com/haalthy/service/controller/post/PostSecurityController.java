@@ -26,16 +26,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.haalthy.service.controller.Interface.AddPostRequest;
-import com.haalthy.service.controller.Interface.AddUpdatePostResponse;
-import com.haalthy.service.controller.Interface.GetFeedsRequest;
 import com.haalthy.service.controller.Interface.GetUnreadMentionedPostRequest;
+import com.haalthy.service.controller.Interface.ImageInfo;
+import com.haalthy.service.controller.Interface.InputUsernameRequest;
+import com.haalthy.service.controller.Interface.OSSFile;
+import com.haalthy.service.controller.Interface.comment.GetCommentsResponse;
+import com.haalthy.service.controller.Interface.post.AddPostRequest;
+import com.haalthy.service.controller.Interface.post.AddUpdatePostResponse;
+import com.haalthy.service.controller.Interface.post.GetFeedsRequest;
+import com.haalthy.service.controller.Interface.post.GetPostResponse;
+import com.haalthy.service.controller.Interface.post.GetPostsResponse;
+import com.haalthy.service.controller.Interface.post.GetUpdatedPostCountResponse;
+import com.haalthy.service.controller.Interface.post.MarkAllMessageAsReadResponse;
 import com.haalthy.service.domain.Comment;
 import com.haalthy.service.domain.Mention;
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostAndUser;
 import com.haalthy.service.domain.PostTag;
 import com.haalthy.service.domain.Tag;
+import com.haalthy.service.openservice.OssService;
 import com.haalthy.service.openservice.PostService;
 
 import com.haalthy.service.configuration.*;
@@ -46,121 +55,109 @@ public class PostSecurityController {
 	@Autowired
 	private transient PostService postService;
 	
+	@Autowired
+	private transient OssService ossService;
+	
 	private static final String imageLocation = "/Users/lily/haalthyServer/post/";
 	
-//	{"body": "it's a test",
-//		"closed":0,
-//		"isBroadcast": 0,
-//		"tags":
-//		[{
-//		"name": "tarceva",
-//		"description": "tarceva",
-//		"tagId": 3
-//		},
-//		{
-//		"name": "易瑞沙",
-//		"description": "",
-//		"tagId": 4
-//		},
-//		{
-//		"name": "腺癌",
-//		"description": "",
-//		"tagId": 5
-//		}]
-//		}
     @RequestMapping(value = "/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public AddUpdatePostResponse addPost(@RequestBody AddPostRequest addPostRequest) throws IOException{
     	AddUpdatePostResponse addPostResponse = new AddUpdatePostResponse();
-    	Post post = new Post();
-    	post.setBody(addPostRequest.getBody());
-    	post.setClosed(addPostRequest.getClosed());
-//    	PostType postType = PostType.valueOf(addPostRequest.getType());
-//    	post.setType(postType.getValue());
-    	post.setType(0);
-    	post.setCountBookmarks(0);
-    	post.setCountComments(0);
-    	post.setCountViews(0);
-    	post.setIsActive(1);
-    	
-        java.util.Date today = new java.util.Date();
-    	Timestamp now = new java.sql.Timestamp(today.getTime());
-    	post.setDateInserted(now);
-    	post.setDateUpdated(now);
-    	
-    	post.setInsertUsername(addPostRequest.getInsertUsername());
-    	post.setIsBroadcast(addPostRequest.getIsBroadcast());
-    	
-    	if (addPostRequest.getImages() != null){
-    		post.setHasImage(addPostRequest.getImages().size());
-    	}else{
-    		post.setHasImage(0);
-    	}
-    	
-    	String tagString = null;
-		if (addPostRequest.getTags() != null) {
-			Iterator<Tag> tagItr = addPostRequest.getTags().iterator();
-			StringBuilder stringBuilder = new StringBuilder();
-			while (tagItr.hasNext()) {
-				String tag = tagItr.next().getName();
-				stringBuilder.append(tag);
-				stringBuilder.append("**");
+		try {
+			Post post = new Post();
+			if (addPostRequest.getBody() != null) {
+				post.setBody(addPostRequest.getBody());
+			}else{
+				post.setBody("");
 			}
-			tagString = stringBuilder.toString();
-			post.setTags(tagString);
-		}
-		int insertPostRow = postService.addPost(post);
-		if (addPostRequest.getTags() != null) {
-			List<PostTag> postTagList = new ArrayList<PostTag>();
-			Iterator<Tag> tagDBItr = addPostRequest.getTags().iterator();
-			while (tagDBItr.hasNext()) {
-				PostTag postTag = new PostTag();
-				postTag.setPostID(post.getPostID());
-				postTag.setTagId(tagDBItr.next().getTagId());
-				postTag.setCreateTime(now);
-				postTagList.add(postTag);
+			post.setClosed(addPostRequest.getClosed());
+			// PostType postType = PostType.valueOf(addPostRequest.getType());
+			// post.setType(postType.getValue());
+			post.setType(0);
+			post.setCountBookmarks(0);
+			post.setCountComments(0);
+			post.setCountViews(0);
+			post.setIsActive(1);
+
+			java.util.Date today = new java.util.Date();
+			Timestamp now = new java.sql.Timestamp(today.getTime());
+			post.setDateInserted(now);
+			post.setDateUpdated(now);
+
+			post.setInsertUsername(addPostRequest.getInsertUsername());
+			post.setIsBroadcast(addPostRequest.getIsBroadcast());
+
+			if (addPostRequest.getImageInfos() != null) {
+				post.setHasImage(addPostRequest.getImageInfos().size());
+			} else {
+				post.setHasImage(0);
 			}
-			postService.addPostTag(postTagList);
+
+			String tagString = null;
+			if (addPostRequest.getTags() != null) {
+				Iterator<Tag> tagItr = addPostRequest.getTags().iterator();
+				StringBuilder stringBuilder = new StringBuilder();
+				while (tagItr.hasNext()) {
+					String tag = tagItr.next().getName();
+					stringBuilder.append(tag);
+					stringBuilder.append("**");
+				}
+				tagString = stringBuilder.toString();
+				post.setTags(tagString);
+			}
+			int insertPostRow = postService.addPost(post);
+			if (addPostRequest.getTags() != null) {
+				List<PostTag> postTagList = new ArrayList<PostTag>();
+				Iterator<Tag> tagDBItr = addPostRequest.getTags().iterator();
+				while (tagDBItr.hasNext()) {
+					PostTag postTag = new PostTag();
+					postTag.setPostID(post.getPostID());
+					postTag.setTagId(tagDBItr.next().getTagId());
+					postTag.setCreateTime(now);
+					postTagList.add(postTag);
+				}
+				postService.addPostTag(postTagList);
+			}
+			if (addPostRequest.getMentionUsers() != null) {
+				List<Mention> mentionList = new ArrayList<Mention>();
+				Iterator<String> usernameItr = addPostRequest.getMentionUsers().iterator();
+				while (usernameItr.hasNext()) {
+					Mention mention = new Mention();
+					mention.setIsUnRead(1);
+					mention.setPostID(post.getPostID());
+					String mUsername = usernameItr.next();
+					mention.setUsername(mUsername);
+
+					mentionList.add(mention);
+				}
+				postService.addMention(mentionList);
+			}
+			List<OSSFile> ossFileList = new ArrayList();
+			if (addPostRequest.getImageInfos() != null) {
+				Iterator<ImageInfo> imageItr = addPostRequest.getImageInfos().iterator();
+				while (imageItr.hasNext()) {
+					ImageInfo image = imageItr.next();
+					OSSFile ossFile = new OSSFile();
+					ossFile.setFileType(image.getType());
+					ossFile.setFunctionType("post");
+					ossFile.setId(String.valueOf(post.getPostID()));
+					ossFile.setImg(image.getData());
+					ossFile.setModifyType("append");
+					ossFileList.add(ossFile);
+				}
+				ossService.ossUploadFile(ossFileList);
+			}
+			if (insertPostRow != 0){
+				addPostResponse.setResult(1);
+				addPostResponse.setResultDesp("返回成功");
+				addPostResponse.setPostId(post.getPostID());
+			}
+		} catch (Exception e) {
+			addPostResponse.setResult(-1);
+			addPostResponse.setResultDesp("数据库连接错误");
+			System.out.println(e.getMessage());
 		}
-	    if (addPostRequest.getMentionUsers() != null) {
-	    	List<Mention> mentionList = new ArrayList<Mention>();
-	    	Iterator<String> usernameItr = addPostRequest.getMentionUsers().iterator();
-	    	while (usernameItr.hasNext()){
-	    		Mention mention = new Mention();
-	    		mention.setIsUnRead(1);
-	    		mention.setPostID(post.getPostID());
-	    		String mUsername = usernameItr.next();
-	    		mention.setUsername(mUsername);
-	    		
-	    		mentionList.add(mention);
-	    	}
-	    	postService.addMention(mentionList);
-	    }
-    	if (addPostRequest.getImages() != null){
-    		Iterator<byte[]> imageItr = addPostRequest.getImages().iterator();
-    		int index = 1;
-    		while(imageItr.hasNext()){
-    	    	ImageService imageService = new ImageService();
-    			byte[] imageInByte = imageItr.next();
-    			byte[] smallImageInByte = imageService.scale(imageInByte, 128, 128);
-    			
-    			// convert byte array back to BufferedImage
-    			InputStream in = new ByteArrayInputStream(imageInByte);
-    			BufferedImage bImageFromConvert = ImageIO.read(in);
-    			String path = imageLocation + Integer.toString(post.getPostID()) + "."+ index +".jpg";
-    			ImageIO.write(bImageFromConvert, "jpg", new File(path));
-    			
-    	    	in = new ByteArrayInputStream(smallImageInByte);
-    	    	bImageFromConvert = ImageIO.read(in);
-    			path = imageLocation + Integer.toString(post.getPostID()) + "."+ index + ".small" +".jpg";
-    			ImageIO.write(bImageFromConvert, "jpg", new File(path));
-    	    	
-    			index++;
-    			in.close();
-    		}
-    	}
-        if(insertPostRow != 0 )
-        	addPostResponse.setStatus("insert post successful");
         return addPostResponse;
     }
     //http://localhost:8080/haalthyservice/security/post/inactive/42?access_token=
@@ -169,157 +166,173 @@ public class PostSecurityController {
     @ResponseBody
     public AddUpdatePostResponse inactivePost(@RequestBody Post post){
     	AddUpdatePostResponse updatePostResponse = new AddUpdatePostResponse();
-
- 	   if(postService.inactivePost(post)!=0)
-    		updatePostResponse.setStatus("inactive successful!");
-    	else 
-    		updatePostResponse.setStatus("inactive unsuccessful");
+		try {
+			if (postService.inactivePost(post) != 0){
+				updatePostResponse.setResult(1);
+				updatePostResponse.setResultDesp("返回成功");
+//				updatePostResponse.setStatus("inactive successful!");
+			}
+			else{
+				updatePostResponse.setResult(-2);
+				updatePostResponse.setResultDesp("此postId不存在");
+//				updatePostResponse.setStatus("inactive unsuccessful");
+			}
+		} catch (Exception e) {
+			updatePostResponse.setResult(-1);
+			updatePostResponse.setResultDesp("数据库连接错误");
+		}
     	return updatePostResponse;
     }
     
-//    @RequestMapping(value = "/feeds", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
-//    @ResponseBody
-//    public List<Post> getFeeds(@RequestBody GetFeedsRequest getFeedsRequest) throws IOException{
-// 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
-// 	    getFeedsRequest.setUsername(currentSessionUsername);
-// 	    List<Post> posts = postService.getFeeds(getFeedsRequest);
-//    	Iterator<Post> postItr = posts.iterator();
-//    	ImageService imageService = new ImageService();
-//    	while(postItr.hasNext()){
-//    		Post currentPost = postItr.next();
-//    		if(currentPost.getImage()!=null){
-//    			currentPost.setImage(imageService.scale(currentPost.getImage(), 32, 32));
-//    		}
-//    	}
-// 	    return posts;
-//    }
-    
     @RequestMapping(value = "/posts", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public List<Post> getPosts(@RequestBody GetFeedsRequest getFeedsRequest) throws IOException{
-// 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
-// 	    getFeedsRequest.setUsername(currentSessionUsername);
- 	    if (getFeedsRequest.getCount() == 0){
- 	    	getFeedsRequest.setCount(50);
- 	    }
- 	    List<Post> posts = postService.getPosts(getFeedsRequest);
-    	Iterator<Post> postItr = posts.iterator();
-		while (postItr.hasNext()) {
-			Post post = postItr.next();
-//    		if (post.getType() == 1){
-//    			String postTitle = "";
-//    			String[] treatmentList = post.getBody().split("\\*\\*",-1);
-//    			for(int i=0;i <treatmentList.length; i++){
-//    				while((treatmentList[i].length()>1)&&(treatmentList[i].charAt(0) == '*')){
-//    					treatmentList[i] = treatmentList[i].substring(1);
-//    				}
-//    				String[] treatmentNameAndInfo = treatmentList[i].split("\\*", -1);
-//    				if(treatmentNameAndInfo.length>0){
-//    					
-//    					postTitle = postTitle.concat(treatmentNameAndInfo[0]+" ");
-//    				}
-//    			}
-//    		}
-//    		if (post.getType() == 2){
-//    			String postTitle = "";
-//    			String patientStatusStr = "";
-//    			if (post.getBody().contains("##")){
-//    				String[] patientStatusAndClinicReport = post.getBody().split("##",-1);
-//    				if(patientStatusAndClinicReport.length > 1){
-//    					patientStatusStr = patientStatusAndClinicReport[0];
-//    				}
-//    			}else{
-//    				patientStatusStr = post.getBody();
-//    			}
-//    			String[] patientStatusArr = patientStatusStr.split("\\*\\*", -1);
-//    			if(patientStatusArr.length > 0){
-//    				post.setHighlightTitle(patientStatusArr[0]);
-//    			}
-//    		}
-//    		if(post.getType() != 0){
-//    			post.setBody(post.getBody().replace('*', ' '));
-//    		}
-			if (post.getHasImage() != 0) {
-				List<byte[]> postImageList = new ArrayList();
-				int index = 1;
-				while (index <= post.getHasImage()) {
-					BufferedImage img = null;
-					String path = imageLocation + Integer.toString(post.getPostID()) + "." + index + ".small" + ".jpg";
-					File smallImageFile = new File(path);
-					if (smallImageFile.exists()) {
-						img = ImageIO.read(new File(path));
-						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-						ImageIO.write(img, "jpg", baos);
-						byte[] bytes = baos.toByteArray();
-						postImageList.add(bytes);
-					}
-					index++;
-				}
-				post.setPostImageList(postImageList);
+	public GetPostsResponse getPosts(@RequestBody GetFeedsRequest getFeedsRequest){
+		GetPostsResponse getPostsResponse = new GetPostsResponse();
+//		try {
+			if (getFeedsRequest.getCount() == 0) {
+				getFeedsRequest.setCount(50);
 			}
-		}
- 	    return posts;
+			List<Post> posts = postService.getPosts(getFeedsRequest);
+			Iterator<Post> postItr = posts.iterator();
+			while (postItr.hasNext()) {
+				Post post = postItr.next();
+				if (post.getHasImage() != 0) {
+					List<byte[]> postImageList = new ArrayList();
+					int index = 1;
+					// while (index <= post.getHasImage()) {
+					// BufferedImage img = null;
+					// String path = imageLocation +
+					// Integer.toString(post.getPostID()) + "." + index +
+					// ".small" + ".jpg";
+					// File smallImageFile = new File(path);
+					// if (smallImageFile.exists()) {
+					// img = ImageIO.read(new File(path));
+					// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					// ImageIO.write(img, "jpg", baos);
+					// byte[] bytes = baos.toByteArray();
+					// postImageList.add(bytes);
+					// }
+					// index++;
+					// }
+					// post.setPostImageList(postImageList);
+
+				}
+			}
+			getPostsResponse.setContent(posts);
+			getPostsResponse.setResult(1);
+			getPostsResponse.setResultDesp("返回成功");
+//		} catch (Exception e) {
+//			getPostsResponse.setResult(-1);
+//			getPostsResponse.setResultDesp("数据库连接错误");
+//		}
+ 	    return getPostsResponse;
     }
     
     @RequestMapping(value = "/postcount", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-	public int getUpdatedPostCount(@RequestBody GetFeedsRequest getFeedsRequest){
-    	return postService.getUpdatedPostCount(getFeedsRequest);
+	public GetUpdatedPostCountResponse getUpdatedPostCount(@RequestBody GetFeedsRequest getFeedsRequest){
+    	GetUpdatedPostCountResponse getUpdatedPostCountResponse = new GetUpdatedPostCountResponse();
+    	try{
+    		getUpdatedPostCountResponse.setResult(1);
+    		getUpdatedPostCountResponse.setResultDesp("返回成功");
+    		getUpdatedPostCountResponse.setCount(postService.getUpdatedPostCount(getFeedsRequest));
+    	}catch(Exception e){
+    		getUpdatedPostCountResponse.setResult(-1);
+    		getUpdatedPostCountResponse.setResultDesp("数据库连接错误");
+    	}
+    	return getUpdatedPostCountResponse;
     }
     
     @RequestMapping(value = "/posts/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public List<Post> getPostsByUsername(@PathVariable String username){
-    	return postService.getPostsByUsername(username);
+    public GetPostsResponse getPostsByUsername(@PathVariable String username){
+    	GetPostsResponse getPostsResponse = new GetPostsResponse();
+    	try{
+    		getPostsResponse.setContent(postService.getPostsByUsername(username));
+    		getPostsResponse.setResult(1);
+    		getPostsResponse.setResultDesp("返回成功");
+    	}catch(Exception e){
+    		getPostsResponse.setResult(-1);
+    		getPostsResponse.setResultDesp("数据库连接错误");
+    	}
+    	return getPostsResponse;
     }
     
     @RequestMapping(value = "/comments/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public List<Comment> getCommentsByUsername(@PathVariable String username){
-    	return postService.getCommentsByUsername(username);
+    public GetCommentsResponse getCommentsByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
+    	GetCommentsResponse getCommentsResponse = new GetCommentsResponse();
+    	try{
+    		getCommentsResponse.setContent(postService.getCommentsByUsername(inputUsernameRequest.getUsername()));
+    		getCommentsResponse.setResult(1);
+    		getCommentsResponse.setResultDesp("返回成功");
+    	}catch(Exception e){
+    		getCommentsResponse.setResult(-1);
+    		getCommentsResponse.setResultDesp("数据库连接错误");
+    	}
+    	return getCommentsResponse;
+
     }
     
     @RequestMapping(value = "/mentionedpost/unreadcount", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-	public int getUnreadMentionedPostCountByUsername(@RequestBody GetUnreadMentionedPostRequest getUnreadMentionedPostRequest){
-		return postService.getUnreadMentionedPostCountByUsername(getUnreadMentionedPostRequest.getUsername());
+	public int getUnreadMentionedPostCountByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){  	
+		return postService.getUnreadMentionedPostCountByUsername(inputUsernameRequest.getUsername());
+
 	}
 	
     @RequestMapping(value = "/mentionedpost/list", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-	public List<Post> getMentionedPostsByUsername(@RequestBody GetFeedsRequest request) throws IOException{
-// 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
-//		request.setUsername(currentSessionUsername);
- 	    List<Post> posts = postService.getMentionedPostsByUsername(request);
-    	Iterator<Post> postItr = posts.iterator();
-		while (postItr.hasNext()) {
-			Post post = postItr.next();
-			if (post.getHasImage() != 0) {
-				List<byte[]> postImageList = new ArrayList();
-				int index = 1;
-				while (index <= post.getHasImage()) {
-					BufferedImage img = null;
-					String path = imageLocation + Integer.toString(post.getPostID()) + "." + index + ".small" + ".jpg";
-					File smallImageFile = new File(path);
-					if (smallImageFile.exists()) {
-						img = ImageIO.read(new File(path));
-						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-						ImageIO.write(img, "jpg", baos);
-						byte[] bytes = baos.toByteArray();
-						postImageList.add(bytes);
-					}
-					index++;
-				}
-				post.setPostImageList(postImageList);
-			}
+	public GetPostsResponse getMentionedPostsByUsername(@RequestBody GetFeedsRequest request) throws IOException{
+		GetPostsResponse getPostsResponse = new GetPostsResponse();
+		try {
+			List<Post> posts = postService.getMentionedPostsByUsername(request);
+			Iterator<Post> postItr = posts.iterator();
+			// while (postItr.hasNext()) {
+			// Post post = postItr.next();
+			// if (post.getHasImage() != 0) {
+			// List<byte[]> postImageList = new ArrayList();
+			// int index = 1;
+			// while (index <= post.getHasImage()) {
+			// BufferedImage img = null;
+			// String path = imageLocation + Integer.toString(post.getPostID())
+			// + "." + index + ".small" + ".jpg";
+			// File smallImageFile = new File(path);
+			// if (smallImageFile.exists()) {
+			// img = ImageIO.read(new File(path));
+			// ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			// ImageIO.write(img, "jpg", baos);
+			// byte[] bytes = baos.toByteArray();
+			// postImageList.add(bytes);
+			// }
+			// index++;
+			// }
+			// post.setPostImageList(postImageList);
+			// }
+			// }
+			getPostsResponse.setContent(posts);
+			getPostsResponse.setResult(1);
+			getPostsResponse.setResultDesp("返回成功");
+		} catch (Exception e) {
+			getPostsResponse.setResult(-1);
+			getPostsResponse.setResultDesp("数据库连接错误");
 		}
- 	   	return posts;
+		return getPostsResponse;
 	}
     
     @RequestMapping(value = "/mentionedpost/markasread", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-	public int refreshUnreadMentionedPostsByUsername(@RequestBody GetUnreadMentionedPostRequest getUnreadMentionedPostRequest){
-// 	   	String currentSessionUsername = ((OAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getAuthorizationRequest().getAuthorizationParameters().get("username");
- 	   	return postService.markMentionedPostAsRead(getUnreadMentionedPostRequest.getUsername());
+	public MarkAllMessageAsReadResponse refreshUnreadMentionedPostsByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
+    	MarkAllMessageAsReadResponse markAllMessageAsReadResponse = new MarkAllMessageAsReadResponse();
+    	try{
+ 	   		postService.markMentionedPostAsRead(inputUsernameRequest.getUsername());
+ 	   		markAllMessageAsReadResponse.setResult(1);
+ 	   		markAllMessageAsReadResponse.setResultDesp("返回成功");
+    	}catch(Exception e){
+     	   	markAllMessageAsReadResponse.setResult(-1);
+      	    markAllMessageAsReadResponse.setResultDesp("数据库连接错误");
+    	}
+    	return markAllMessageAsReadResponse;
+
 	}
 }

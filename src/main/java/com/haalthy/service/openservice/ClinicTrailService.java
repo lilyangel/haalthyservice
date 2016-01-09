@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.haalthy.service.controller.Interface.GetClinicTrailInfoRequest;
+import com.haalthy.service.controller.Interface.ClinicTrail.GetClinicTrailInfoRequest;
 import com.haalthy.service.domain.ClinicTrailInfo;
 import com.haalthy.service.persistence.ClinicTrailMapper;
 
@@ -14,5 +14,12 @@ public class ClinicTrailService {
 	
 	public List<ClinicTrailInfo> getClinicTrailInfo(ClinicTrailInfo clinicTrailInfo){
 		return clinicTrailMapper.getClinicTrailInfo(clinicTrailInfo);
+	}
+	public List<String> getClinicTrailDrugTypes(){
+		return clinicTrailMapper.getClinicTrailDrugTypes();
+	}
+	
+	public List<String> getClinicTrailSubGroups(){
+		return clinicTrailMapper.getSubGroups();
 	}
 }

@@ -1,16 +1,18 @@
-package com.haalthy.service.controller.Interface;
+package com.haalthy.service.controller.Interface.ClinicTrail;
 
-import com.haalthy.service.controller.Interface.user.UserDetail;
+import java.util.List;
 
-public class GetUserDetailResponse {
+import com.haalthy.service.domain.ClinicTrailInfo;
+
+public class GetCilnicTrailInfoResponse {
 	private String resultDesp;
 	private int result;
-	private UserDetail content;
-
-	public UserDetail getContent() {
+	private List<ClinicTrailInfo> content;
+	
+	public List<ClinicTrailInfo> getContent() {
 		return content;
 	}
-	public void setContent(UserDetail content) {
+	public void setContent(List<ClinicTrailInfo> content) {
 		this.content = content;
 	}
 	public String getResultDesp() {
@@ -25,4 +27,5 @@ public class GetUserDetailResponse {
 	public void setResult(int result) {
 		this.result = result;
 	}
+	
 }

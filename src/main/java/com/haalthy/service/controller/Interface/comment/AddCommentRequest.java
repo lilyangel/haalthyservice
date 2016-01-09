@@ -1,4 +1,4 @@
-package com.haalthy.service.controller.Interface;
+package com.haalthy.service.controller.Interface.comment;
 
 public class AddCommentRequest {
 	private String body;

@@ -1,4 +1,4 @@
-package com.haalthy.service.controller.Interface;
+package com.haalthy.service.controller.Interface.ClinicTrail;
 
 public class GetClinicTrailInfoRequest {
 	private String drugType;

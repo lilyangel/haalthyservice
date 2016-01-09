@@ -4,16 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import com.haalthy.service.controller.Interface.AddUpdateUserRequest;
-import com.haalthy.service.controller.Interface.AddUpdateUserResponse;
 import com.haalthy.service.controller.Interface.GetSuggestUsersByTagsRequest;
-import com.haalthy.service.controller.Interface.GetUsersResponse;
 import com.haalthy.service.controller.Interface.InputUsernameRequest;
+import com.haalthy.service.controller.Interface.OSSFile;
+import com.haalthy.service.controller.Interface.user.AddUpdateUserRequest;
+import com.haalthy.service.controller.Interface.user.AddUpdateUserResponse;
+import com.haalthy.service.controller.Interface.user.GetUsersResponse;
 import com.haalthy.service.domain.ClinicTrailInfo;
 import com.haalthy.service.domain.Follow;
 import com.haalthy.service.domain.SelectUserByTagRange;
 import com.haalthy.service.domain.User;
 import com.haalthy.service.openservice.ClinicTrailService;
+import com.haalthy.service.openservice.OssService;
 import com.haalthy.service.openservice.UserService;
 
 import java.util.ArrayList;
@@ -48,46 +50,57 @@ public class UserController {
     }
 	@Autowired
 	private transient UserService userService;
+	
+	@Autowired
+	private transient OssService ossService;
 
-//    @RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
-//    @ResponseBody
-//    public User getUser(@PathVariable String username) {
-//    	User user = userService.getUserByUsername(username);
-//    	user.setPassword(null);
-//    	return user;
-//    }
-    
-    //{"gender":"M","password":"password","pathological":"adenocarcinoma","metastasis":"bone;其他","age":"61","isSmoking":1,"cancerType":"lung","email":"user3@qq.com","username":"user3","stage":1}
     @RequestMapping(value = "/add",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
-    public AddUpdateUserResponse addUser(@RequestBody User user) {
-    	user.setPassword(decodePassword(user.getPassword()));
-    	user.setUsername(generateUsername(user));
-    	//set encoded password
-    	BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    	String hashedPassword = passwordEncoder.encode(user.getPassword());
-    	user.setPassword(hashedPassword);
-    	
-    	//set create date and update date
-    	Date now = new Date();
-    	java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    	String currentDt = sdf.format(now);
-    	user.setCreateDate(currentDt);
-    	user.setUpdateDate(currentDt);
-   
-    	user.setFollowCount(0);
-    	
-    	AddUpdateUserResponse addUserResponse = new AddUpdateUserResponse();
-		if (userService.getUserByEmail(user.getEmail()) != null)
-			addUserResponse.setStatus("this email has been registed, please use another name");
-		else if (userService.getUserByUsername(user.getUsername()) != null)
-			addUserResponse.setStatus("this name has been registed, please login");
-		else if (userService.addUser(user) == 1){
-			String username = userService.getUserByEmail(user.getEmail()).getUsername();
-			addUserResponse.setStatus(username);
+    public AddUpdateUserResponse addUser(@RequestBody User user) throws Exception {
+		AddUpdateUserResponse addUserResponse = new AddUpdateUserResponse();
+		try {
+			user.setPassword(decodePassword(user.getPassword()));
+			user.setUsername(generateUsername(user));
+			// set encoded password
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			String hashedPassword = passwordEncoder.encode(user.getPassword());
+			user.setPassword(hashedPassword);
+
+			// set create date and update date
+			Date now = new Date();
+			java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String currentDt = sdf.format(now);
+			user.setCreateDate(currentDt);
+			user.setUpdateDate(currentDt);
+			user.setFollowCount(0);
+			if (userService.getUserByEmail(user.getEmail()) != null){
+				addUserResponse.setResultDesp("该邮箱/手机已被注册");
+				addUserResponse.setResult(-2);
+				
+			}else if (userService.addUser(user) == 1) {
+				String username = userService.getUserByEmail(user.getEmail()).getUsername();
+				addUserResponse.setResult(1);
+				addUserResponse.setResultDesp("返回成功");
+				addUserResponse.setContent(username);
+				//upload image
+				List<OSSFile> ossFileList = new ArrayList();
+				OSSFile ossFile = new OSSFile();
+				ossFile.setFileType(user.getImageInfo().getType());
+				ossFile.setFunctionType("user");
+				ossFile.setImg(user.getImageInfo().getData());
+				ossFile.setModifyType("append");
+				ossFile.setId(username);
+				ossFileList.add(ossFile);
+				ossService.ossUploadFile(ossFileList);
+			} else {
+				addUserResponse.setResult(-3);
+				addUserResponse.setResultDesp("数据库插入错误");
+			}
+		} catch (Exception e) {
+			addUserResponse.setResult(-1);
+			System.out.println(e.getMessage());
+			addUserResponse.setResultDesp("数据库连接错误");
 		}
-		else
-			addUserResponse.setStatus("insert db error");
 		return addUserResponse;
 	}
     
@@ -107,36 +120,51 @@ public class UserController {
     
     @RequestMapping(value = "/suggestedusers",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
-    public List<User> getSuggestUsersByTags(@RequestBody GetSuggestUsersByTagsRequest getSuggestUsersByTagsRequest) {
-    	int[] tags = getSuggestUsersByTagsRequest.getTags();
-    	int rangeBegin = getSuggestUsersByTagsRequest.getRangeBegin();
-    	int rangeEnd = getSuggestUsersByTagsRequest.getRangeEnd();
-    	List<User> users = new ArrayList<User>();
-    	Set <String> set = new HashSet <String>();
-    	for(int i = 0; i<tags.length; i++){
-    		SelectUserByTagRange selectUserByTagRange = new SelectUserByTagRange();
-    		selectUserByTagRange.setBeginIndex(rangeBegin/tags.length);
-    		selectUserByTagRange.setEndIndex(rangeEnd/tags.length + 1);
-    		selectUserByTagRange.setTagID(tags[i]);
-    		List<User> suggestUsers = userService.selectSuggestUsersByTags(selectUserByTagRange);
-    		Iterator<User> userItr = suggestUsers.iterator();
-    		while(userItr.hasNext()){
-    			User newSuggestUser = userItr.next();
-    			if(set.add(newSuggestUser.getUsername())){
-    				users.add(newSuggestUser);
-    			}
-    		}
-    	}
-    	return users;
+    public GetUsersResponse getSuggestUsersByTags(@RequestBody GetSuggestUsersByTagsRequest getSuggestUsersByTagsRequest) {
+		GetUsersResponse getUsersResponse = new GetUsersResponse();
+		try {
+			int[] tags = getSuggestUsersByTagsRequest.getTags();
+			int rangeBegin = getSuggestUsersByTagsRequest.getRangeBegin();
+			int rangeEnd = getSuggestUsersByTagsRequest.getRangeEnd();
+			List<User> users = new ArrayList<User>();
+			Set<String> set = new HashSet<String>();
+			for (int i = 0; i < tags.length; i++) {
+				SelectUserByTagRange selectUserByTagRange = new SelectUserByTagRange();
+				selectUserByTagRange.setBeginIndex(rangeBegin / tags.length);
+				selectUserByTagRange.setEndIndex(rangeEnd / tags.length + 1);
+				selectUserByTagRange.setTagID(tags[i]);
+				List<User> suggestUsers = userService.selectSuggestUsersByTags(selectUserByTagRange);
+				Iterator<User> userItr = suggestUsers.iterator();
+				while (userItr.hasNext()) {
+					User newSuggestUser = userItr.next();
+					if (set.add(newSuggestUser.getUsername())) {
+						users.add(newSuggestUser);
+					}
+				}
+			}
+			getUsersResponse.setResult(1);
+			getUsersResponse.setResultDesp("返回成功");
+			getUsersResponse.setContent(users);
+		} catch (Exception e) {
+			getUsersResponse.setResult(-1);
+			getUsersResponse.setResultDesp("数据库连接错误");
+		}
+    	return getUsersResponse;
     }
     
     @RequestMapping(value = "/search", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
-    public List<User> searchUsers(@RequestBody InputUsernameRequest inputUsernameRequest){
-//    	String[] keyword = inputUsernameRequest.getUsername().split(" ");
-//    	List<String> keywordList = java.util.Arrays.asList(keyword);
-    	String keyword = "%" + inputUsernameRequest.getUsername() + "%";
-    	return userService.searchUsers(keyword);
-    }
-
+	public GetUsersResponse searchUsers(@RequestBody InputUsernameRequest inputUsernameRequest) {
+		GetUsersResponse getUsersResponse = new GetUsersResponse();
+		try {
+			String keyword = "%" + inputUsernameRequest.getUsername() + "%";
+			getUsersResponse.setResult(1);
+			getUsersResponse.setResultDesp("返回成功");
+			getUsersResponse.setContent(userService.searchUsers(keyword));
+		} catch (Exception e) {
+			getUsersResponse.setResult(-1);
+			getUsersResponse.setResultDesp("数据库连接错误");
+		}
+		return getUsersResponse;
+	}
 }
