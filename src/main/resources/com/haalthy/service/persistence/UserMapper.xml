@@ -26,7 +26,8 @@
 		metastasis,
 		Age,
 		Password,
-		geneticMutation
+		geneticMutation,
+		deviceToken
     FROM user
     WHERE user.Username = #{username}
   </select>
