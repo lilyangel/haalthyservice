@@ -6,6 +6,10 @@ import java.util.List;
 
 import com.haalthy.service.configuration.*;
 
+/**
+ * @author lily
+ *
+ */
 public class Post implements Serializable{
 	private static final long serialVersionUID = 8751282105532159742L;
 	private int postID;
@@ -33,7 +37,21 @@ public class Post implements Serializable{
 	private int hasImage;
 	private List<byte[]> postImageList;
 	private String displayname;
-
+	private String highlight;
+	private String clinicReport;
+	
+	public String getClinicReport() {
+		return clinicReport;
+	}
+	public void setClinicReport(String clinicReport) {
+		this.clinicReport = clinicReport;
+	}
+	public String getHighlight() {
+		return highlight;
+	}
+	public void setHighlight(String highlight) {
+		this.highlight = highlight;
+	}
 	public String getDisplayname() {
 		return displayname;
 	}

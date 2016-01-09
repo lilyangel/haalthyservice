@@ -32,7 +32,7 @@ public interface UserMapper {
 	  
 	  List<User> selectSuggestUsersByTags(SelectUserByTagRange selectUserByTagRange);
 	  
-	  List<User> searchUsers(String[] keyword);
+	  List<User> searchUsers(String keyword);
 	  
 	  List<User> selectSuggestUsersByProfile(GetSuggestUsersByProfileRequest getSuggestUsersByProfileRequest);
 	  

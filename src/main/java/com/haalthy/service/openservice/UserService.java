@@ -58,7 +58,7 @@ public class UserService {
 	public List<User> selectSuggestUsersByTags(SelectUserByTagRange selectUserByTagRange){
 		return userMapper.selectSuggestUsersByTags(selectUserByTagRange);
 	}
-	public  List<User> searchUsers(String[] keyword){
+	public  List<User> searchUsers(String keyword){
 		return userMapper.searchUsers(keyword);
 	}
 	public  List<User> selectSuggestUsersByProfile(GetSuggestUsersByProfileRequest getSuggestUsersByProfileRequest){

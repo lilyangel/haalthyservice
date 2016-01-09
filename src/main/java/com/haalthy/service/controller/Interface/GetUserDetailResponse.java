@@ -2,6 +2,7 @@ package com.haalthy.service.controller.Interface;
 
 import java.util.List;
 
+import com.haalthy.service.domain.ClinicData;
 import com.haalthy.service.domain.ClinicReport;
 import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.Treatment;
@@ -11,8 +12,14 @@ public class GetUserDetailResponse {
 	private User userProfile;
 	private List<Treatment> treatments;
 	private List<PatientStatus> patientStatus;
-	private List<ClinicReport> clinicReport;
+	private List<ClinicDataType> clinicReport;
 	
+	public List<ClinicDataType> getClinicReport() {
+		return clinicReport;
+	}
+	public void setClinicReport(List<ClinicDataType> clinicReport) {
+		this.clinicReport = clinicReport;
+	}
 	public User getUserProfile() {
 		return userProfile;
 	}
@@ -31,11 +38,4 @@ public class GetUserDetailResponse {
 	public void setPatientStatus(List<PatientStatus> patientStatus) {
 		this.patientStatus = patientStatus;
 	}
-	public List<ClinicReport> getClinicReport() {
-		return clinicReport;
-	}
-	public void setClinicReport(List<ClinicReport> clinicReport) {
-		this.clinicReport = clinicReport;
-	}
-	
 }

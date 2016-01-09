@@ -2,6 +2,7 @@ package com.haalthy.service.persistence;
 
 import java.util.List;
 
+import com.haalthy.service.domain.ClinicData;
 import com.haalthy.service.domain.ClinicReport;
 import com.haalthy.service.domain.ClinicReportFormat;
 import com.haalthy.service.domain.PatientStatus;
@@ -40,8 +41,8 @@ public interface PatientMapper {
 	int updateTreatmentById(Treatment treatment);
 	
 	int deleteTreatmentById(int treatmentId);
-
-
-	int updatePatientImg(@Param(value = "statusID") int statusId, @Param(value = "filename") String fileName);
-	int appendPatientImg(@Param(value = "statusID") int statusId, @Param(value = "filename") String fileName);
+	
+	int insertClinicData(List<ClinicData> clinicData);
+	
+	List<ClinicData> getClinicDataByUsername(String insertUsername);
 }

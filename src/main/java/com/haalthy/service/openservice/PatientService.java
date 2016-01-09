@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.haalthy.service.domain.ClinicData;
 import com.haalthy.service.domain.ClinicReport;
 import com.haalthy.service.domain.ClinicReportFormat;
 import com.haalthy.service.domain.PatientStatus;
@@ -77,14 +78,12 @@ public class PatientService {
 	public int deleteTreatmentById(int treatmentId){
 		return patientMapper.deleteTreatmentById(treatmentId);
 	}
-
-
-	public int updatePatientImg(String id,String filePath)
-	{
-		return patientMapper.updatePatientImg(Integer.parseInt(id),filePath);
+	
+	public int insertClinicData(List<ClinicData> clinicData){
+		return patientMapper.insertClinicData(clinicData);
 	}
 
-	public int appendPatientImg(String id,String filePath){
-		return patientMapper.appendPatientImg(Integer.parseInt(id),filePath);
+	public List<ClinicData> getClinicDataByUsername(String insertUsername){
+		return patientMapper.getClinicDataByUsername(insertUsername);
 	}
 }
