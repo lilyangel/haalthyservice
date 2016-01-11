@@ -37,7 +37,7 @@ public class PatientController {
 	private transient PatientService patientService;
 	@Autowired
 	private transient UserService userService;
-    @RequestMapping(value = "/treatments/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/treatments", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public GetTreatmentsByUserResponse getTreatmentsByUser(@RequestBody InputUsernameRequest username){
     	GetTreatmentsByUserResponse getTreatmentsByUserResponse = new GetTreatmentsByUserResponse();

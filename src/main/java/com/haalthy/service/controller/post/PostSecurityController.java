@@ -1,19 +1,9 @@
 package com.haalthy.service.controller.post;
 import java.util.ArrayList;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -26,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.haalthy.service.controller.Interface.GetUnreadMentionedPostRequest;
 import com.haalthy.service.controller.Interface.ImageInfo;
 import com.haalthy.service.controller.Interface.InputUsernameRequest;
 import com.haalthy.service.controller.Interface.OSSFile;
@@ -34,20 +23,16 @@ import com.haalthy.service.controller.Interface.comment.GetCommentsResponse;
 import com.haalthy.service.controller.Interface.post.AddPostRequest;
 import com.haalthy.service.controller.Interface.post.AddUpdatePostResponse;
 import com.haalthy.service.controller.Interface.post.GetFeedsRequest;
-import com.haalthy.service.controller.Interface.post.GetPostResponse;
 import com.haalthy.service.controller.Interface.post.GetPostsResponse;
 import com.haalthy.service.controller.Interface.post.GetUpdatedPostCountResponse;
 import com.haalthy.service.controller.Interface.post.MarkAllMessageAsReadResponse;
-import com.haalthy.service.domain.Comment;
 import com.haalthy.service.domain.Mention;
 import com.haalthy.service.domain.Post;
-import com.haalthy.service.domain.PostAndUser;
 import com.haalthy.service.domain.PostTag;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.openservice.OssService;
 import com.haalthy.service.openservice.PostService;
 
-import com.haalthy.service.configuration.*;
 
 @Controller
 @RequestMapping("/security/post")
@@ -57,9 +42,7 @@ public class PostSecurityController {
 	
 	@Autowired
 	private transient OssService ossService;
-	
-	private static final String imageLocation = "/Users/lily/haalthyServer/post/";
-	
+		
     @RequestMapping(value = "/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public AddUpdatePostResponse addPost(@RequestBody AddPostRequest addPostRequest) throws IOException{
@@ -188,7 +171,7 @@ public class PostSecurityController {
     @ResponseBody
 	public GetPostsResponse getPosts(@RequestBody GetFeedsRequest getFeedsRequest){
 		GetPostsResponse getPostsResponse = new GetPostsResponse();
-//		try {
+		try {
 			if (getFeedsRequest.getCount() == 0) {
 				getFeedsRequest.setCount(50);
 			}
@@ -199,32 +182,16 @@ public class PostSecurityController {
 				if (post.getHasImage() != 0) {
 					List<byte[]> postImageList = new ArrayList();
 					int index = 1;
-					// while (index <= post.getHasImage()) {
-					// BufferedImage img = null;
-					// String path = imageLocation +
-					// Integer.toString(post.getPostID()) + "." + index +
-					// ".small" + ".jpg";
-					// File smallImageFile = new File(path);
-					// if (smallImageFile.exists()) {
-					// img = ImageIO.read(new File(path));
-					// ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					// ImageIO.write(img, "jpg", baos);
-					// byte[] bytes = baos.toByteArray();
-					// postImageList.add(bytes);
-					// }
-					// index++;
-					// }
-					// post.setPostImageList(postImageList);
-
 				}
 			}
 			getPostsResponse.setContent(posts);
 			getPostsResponse.setResult(1);
 			getPostsResponse.setResultDesp("返回成功");
-//		} catch (Exception e) {
-//			getPostsResponse.setResult(-1);
-//			getPostsResponse.setResultDesp("数据库连接错误");
-//		}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			getPostsResponse.setResult(-1);
+			getPostsResponse.setResultDesp("数据库连接错误");
+		}
  	    return getPostsResponse;
     }
     
@@ -288,28 +255,6 @@ public class PostSecurityController {
 		try {
 			List<Post> posts = postService.getMentionedPostsByUsername(request);
 			Iterator<Post> postItr = posts.iterator();
-			// while (postItr.hasNext()) {
-			// Post post = postItr.next();
-			// if (post.getHasImage() != 0) {
-			// List<byte[]> postImageList = new ArrayList();
-			// int index = 1;
-			// while (index <= post.getHasImage()) {
-			// BufferedImage img = null;
-			// String path = imageLocation + Integer.toString(post.getPostID())
-			// + "." + index + ".small" + ".jpg";
-			// File smallImageFile = new File(path);
-			// if (smallImageFile.exists()) {
-			// img = ImageIO.read(new File(path));
-			// ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			// ImageIO.write(img, "jpg", baos);
-			// byte[] bytes = baos.toByteArray();
-			// postImageList.add(bytes);
-			// }
-			// index++;
-			// }
-			// post.setPostImageList(postImageList);
-			// }
-			// }
 			getPostsResponse.setContent(posts);
 			getPostsResponse.setResult(1);
 			getPostsResponse.setResultDesp("返回成功");
@@ -333,6 +278,5 @@ public class PostSecurityController {
       	    markAllMessageAsReadResponse.setResultDesp("数据库连接错误");
     	}
     	return markAllMessageAsReadResponse;
-
 	}
 }

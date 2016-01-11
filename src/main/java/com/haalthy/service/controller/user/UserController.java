@@ -35,13 +35,11 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 @RequestMapping("/open/user")
 public class UserController {
     private String decodePassword(String password){
-		System.out.println(password);
     	String[] codeUnits = password.split("a");
     	String passwordDecode = "";
     	for(int i = 0; i< codeUnits.length; i++){
     		if(!codeUnits[i].equals("")){
         		int intCode = Integer.valueOf(codeUnits[i]).intValue(); 
-        		System.out.println(intCode);
         		char a = (char)intCode;
         		passwordDecode += a;
         	}
@@ -85,13 +83,19 @@ public class UserController {
 				//upload image
 				List<OSSFile> ossFileList = new ArrayList();
 				OSSFile ossFile = new OSSFile();
-				ossFile.setFileType(user.getImageInfo().getType());
-				ossFile.setFunctionType("user");
-				ossFile.setImg(user.getImageInfo().getData());
-				ossFile.setModifyType("append");
-				ossFile.setId(username);
-				ossFileList.add(ossFile);
-				ossService.ossUploadFile(ossFileList);
+				if ((user.getImageInfo() != null) && (user.getImageInfo().getType() != null)
+						&& (user.getImageInfo().getData() != null)) {
+					ossFile.setFileType(user.getImageInfo().getType());
+					ossFile.setFunctionType("user");
+					ossFile.setImg(user.getImageInfo().getData());
+					ossFile.setModifyType("append");
+					ossFile.setId(username);
+					ossFileList.add(ossFile);
+					ossService.ossUploadFile(ossFileList);
+				}else{
+					addUserResponse.setResult(-4);
+					addUserResponse.setResultDesp("添加用户头像失败");
+				}
 			} else {
 				addUserResponse.setResult(-3);
 				addUserResponse.setResultDesp("数据库插入错误");

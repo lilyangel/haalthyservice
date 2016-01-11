@@ -28,7 +28,14 @@ public class User implements Serializable {
 	private String geneticMutation;
 	private String deviceToken;
 	private String imageURL;
+	private String phone;
 	
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 	public byte[] getImage() {
 		return image;
 	}

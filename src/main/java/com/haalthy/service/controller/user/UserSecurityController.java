@@ -51,6 +51,7 @@ import com.haalthy.service.controller.Interface.GetMentionedUsernameRequest;
 import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
 import com.haalthy.service.controller.Interface.GetUserDetailResponse;
 import com.haalthy.service.controller.Interface.InputUsernameRequest;
+import com.haalthy.service.controller.Interface.JpushPair;
 import com.haalthy.service.controller.Interface.OSSFile;
 import com.haalthy.service.controller.Interface.ResetPasswordRequest;
 
@@ -80,6 +81,14 @@ public class UserSecurityController {
 //		}
 //		return user;
 //	}
+	
+	@RequestMapping(value = "/updatejpushcode", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json" })
+	@ResponseBody
+	public AddUpdateUserResponse updateJpushDeviceToken(@RequestBody JpushPair jpushPair){
+		AddUpdateUserResponse addUpdateUserResponse = new AddUpdateUserResponse();
+		
+		return addUpdateUserResponse;
+	}
 	
 	@RequestMapping(value = "/detail", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
@@ -515,11 +524,8 @@ public class UserSecurityController {
  	   user.setUsername(currentSessionUsername);
  	   if(password!=null && password!=""){
  		   password = decodePassword(password);
- 		   System.out.println(password);
- 		   System.out.println(currentSessionUsername);
  		   BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
  		   String hashedPassword = passwordEncoder.encode(password);
- 		   System.out.println(hashedPassword);
  		   user.setPassword(hashedPassword);
  	   }
  	   int result  = userService.resetPassword(user);

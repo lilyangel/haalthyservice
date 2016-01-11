@@ -27,7 +27,9 @@
 		Age,
 		Password,
 		geneticMutation,
-		deviceToken
+		deviceToken,
+		image,
+		phone
     FROM user
     WHERE user.Username = #{username}
   </select>
@@ -51,7 +53,8 @@
 		metastasis,
 		Age,
 		geneticMutation,
-		deviceToken
+		deviceToken,
+		phone
     FROM user
     WHERE user.Email = #{email}
   </select>
@@ -59,8 +62,8 @@
   
 	<insert id="addUser" useGeneratedKeys="true"
     	keyProperty="UserID" keyColumn="UserID" flushCache="true">
-  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age, userType, geneticMutation)
- 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age}, #{userType}, #{geneticMutation})
+  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age, userType, geneticMutation, deviceToken, phone)
+ 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age}, #{userType}, #{geneticMutation}, #{deviceToken}, #{phone})
 	</insert>
 	
 	<update id="updateUser" parameterType="User" flushCache="true">
@@ -75,7 +78,8 @@
 		CancerType = #{cancerType},
 		metastasis = #{metastasis},
 		Age = #{age},
-		geneticMutation = #{geneticMutation}
+		geneticMutation = #{geneticMutation},
+		phone = #{phone}
     WHERE username = #{username}
   </update>
   
@@ -130,7 +134,8 @@
 		CancerType,
 		geneticMutation,
 		deviceToken,
-		imageURL
+		imageURL,
+		phone
     FROM suggestUserByTags
     WHERE (TagID = #{tagID}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>
@@ -154,7 +159,8 @@
 		Age,
 		Password,
 		geneticMutation,
-		deviceToken
+		deviceToken,
+		phone
     FROM user
     WHERE   	
 		Displayname LIKE #{keyword}
@@ -178,7 +184,8 @@
 		FollowCount,
 		CancerType,
 		geneticMutation,
-		deviceToken
+		deviceToken,
+		phone
     FROM SuggestUserByProfile
     WHERE (SuggestedUsername = #{username}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>

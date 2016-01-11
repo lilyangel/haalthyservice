@@ -141,6 +141,9 @@ public class PatientSecurityController {
 
 			for (int i = 0; i < cliniReprotItem.length; i++) {
 				if (cliniReprotItem[i].length() > 0) {
+					if (cliniReprotItem[i].charAt(0) == ' ') {
+						cliniReprotItem[i] = cliniReprotItem[i].substring(1);
+					}
 					if (cliniReprotItem[i].charAt(0) == '[') {
 						cliniReprotItem[i] = cliniReprotItem[i].substring(1);
 					}

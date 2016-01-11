@@ -26,16 +26,20 @@ public class AuthCodeController {
     public PostResponse sendEmailAuthCode(@RequestBody EmailAuthCodeRequest emailAuthCodeRequest) throws Exception {
 
         PostResponse postResponse = new PostResponse();
-        try {
-            authCodeService.addEmailAuthCode(emailAuthCodeRequest.geteMail());
-            postResponse.setResult(1);
-            postResponse.setResultDesp("返回成功");
-            postResponse.setContent("{\"1\":\"验证成功\"}");
-        } catch (Exception e) {
+		try {
+			int addAuthCode = authCodeService.addEmailAuthCode(emailAuthCodeRequest.geteMail());
+			if (addAuthCode > 0) {
+				postResponse.setResult(1);
+				postResponse.setResultDesp("返回成功");
+				postResponse.setContent(addAuthCode);
+			}else{
+				postResponse.setResult(-2);
+				postResponse.setResultDesp("获取失败");
+			}
+		} catch (Exception e) {
             e.printStackTrace();
-            postResponse.setResult(1);
-            postResponse.setResultDesp("返回成功");
-            postResponse.setContent("{\"-999\":\"异常错误\"}");
+            postResponse.setResult(-1);
+            postResponse.setResultDesp("数据库连接错误");
         }
         return postResponse;
     }
@@ -50,19 +54,16 @@ public class AuthCodeController {
             {
                 postResponse.setResult(1);
                 postResponse.setResultDesp("返回成功");
-                postResponse.setContent("{\"1\":\"验证成功\"}");
             }
             else
             {
-                postResponse.setResult(1);
-                postResponse.setResultDesp("返回成功");
-                postResponse.setContent("{\"-1\":\"验证失败\"}");
+                postResponse.setResult(-2);
+                postResponse.setResultDesp("验证失败");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            postResponse.setResult(1);
-            postResponse.setResultDesp("返回成功");
-            postResponse.setContent("{\"-999\":\"异常错误\"}");
+            postResponse.setResult(-1);
+            postResponse.setResultDesp("数据库连接错误");
         }
         return postResponse;
     }
