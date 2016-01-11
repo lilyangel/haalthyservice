@@ -19,6 +19,7 @@ public class DateUtils {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
     private static SimpleDateFormat sdf3 = new SimpleDateFormat("yyyyMMddHHmmss");
+    private static SimpleDateFormat sdf4 = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
     private static final long ONE_MINUTE = 60000L;
     private static final long ONE_HOUR = 3600000L;
@@ -278,6 +279,18 @@ public class DateUtils {
     }
 
     /**
+     * 将long类型的时间转换为String
+     * 格式为：yyyy-MM-dd
+     * @param time 时间单位：毫秒
+     * @return
+     */
+    public static String getDateToString3(long time ){
+        return sdf4.format(new Date(time));
+    }
+
+    public static String getDateToString4(Date date){return sdf4.format(date);};
+
+    /**
      * 将秒转换为Date
      * @param time
      * @return Date
@@ -285,7 +298,6 @@ public class DateUtils {
     public static Date getDateBySecond(long time ){
         return new Date(time * 1000);
     }
-
 
 
     /**

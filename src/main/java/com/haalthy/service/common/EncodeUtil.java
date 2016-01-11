@@ -33,6 +33,7 @@ public class EncodeUtil {
 
     private static String ENCRYPTKEY = "www.haalthy.com";
     private static String SOURCESTRING = "89qwertyuipas56xcvb789qwerpasd123tyui45hjklz67fgnm12lzxcv34dfghjkbnm";
+    private static String SOURCESTRINGNUMERIC = "78945612300321456789963852741085201479631590487623";
 
     public static void main(String[] args) throws Exception {
         String content = "我爱你";
@@ -44,13 +45,6 @@ public class EncodeUtil {
 
     }
 
-
-    public  static boolean IsEmpty(String str){
-        boolean isEmpty = true;
-        if(str != null || (str.trim()).length() > 0)
-            isEmpty = false;
-        return isEmpty;
-    }
     /**
      * 将byte[]转为各种进制的字符串
      * @param bytes byte[]
@@ -77,7 +71,7 @@ public class EncodeUtil {
      * @throws Exception
      */
     public static byte[] base64Decode(String base64Code) throws Exception{
-        return IsEmpty(base64Code) ? null : new BASE64Decoder().decodeBuffer(base64Code);
+        return StringUtils.IsEmpty(base64Code) ? null : new BASE64Decoder().decodeBuffer(base64Code);
     }
 
     /**
@@ -100,7 +94,7 @@ public class EncodeUtil {
      * @throws Exception
      */
     public static byte[] md5(String msg) throws Exception {
-        return IsEmpty(msg) ? null : md5(msg.getBytes());
+        return StringUtils.IsEmpty(msg) ? null : md5(msg.getBytes());
     }
 
     /**
@@ -110,7 +104,7 @@ public class EncodeUtil {
      * @throws Exception
      */
     public static String md5Encrypt(String msg) throws Exception{
-        return IsEmpty(msg) ? null : base64Encode(md5(msg));
+        return StringUtils.IsEmpty(msg) ? null : base64Encode(md5(msg));
     }
 
     /**
@@ -171,7 +165,7 @@ public class EncodeUtil {
      */
     public static String aesDecrypt(String encryptStr) throws Exception {
 
-        return IsEmpty(encryptStr)? null : aesDecryptByBytes(base64Decode(encryptStr));
+        return StringUtils.IsEmpty(encryptStr)? null : aesDecryptByBytes(base64Decode(encryptStr));
     }
 
     /**
@@ -187,6 +181,21 @@ public class EncodeUtil {
         Random rdm = new Random(System.currentTimeMillis());
         for(int i = 0;i<byteCount;i++)
             stringBuilder.append(SOURCESTRING.charAt(Math.abs(rdm.nextInt())%68));
+        return stringBuilder.toString().toUpperCase();
+    }
+    /**
+     * 获取指定位数的验证码
+     * @param byteCount 验证码的位数
+     * @return 验证码String
+     * @throws Exception
+     */
+    public static String getNumericAuthCode(int byteCount) throws Exception{
+        StringBuilder stringBuilder = new StringBuilder();
+        if(byteCount <= 0 && byteCount > 10)
+            byteCount = 6;
+        Random rdm = new Random(System.currentTimeMillis());
+        for(int i = 0;i<byteCount;i++)
+            stringBuilder.append(SOURCESTRINGNUMERIC.charAt(Math.abs(rdm.nextInt())%50));
         return stringBuilder.toString().toUpperCase();
     }
 
