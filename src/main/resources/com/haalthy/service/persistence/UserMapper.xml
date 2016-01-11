@@ -78,8 +78,9 @@
 		CancerType = #{cancerType},
 		metastasis = #{metastasis},
 		Age = #{age},
-		geneticMutation = #{geneticMutation},
 		phone = #{phone}
+		geneticMutation = #{geneticMutation}
+                deviceToken = #{deviceToken}
     WHERE username = #{username}
   </update>
   
@@ -227,3 +228,4 @@
 	FROM user WHERE (user.Displayname=#{displayname})
  	</select>
 </mapper>
+

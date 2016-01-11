@@ -21,7 +21,7 @@ public class AuthCodeController {
     private transient AuthCodeService authCodeService;
 
     @RequestMapping(value ="/emailsend", method = RequestMethod.POST, headers = "Accept=application/json",
-            produces = {"application/json"})
+            produces = {"application/json"},consumes = {"application/json"})
     @ResponseBody
     public PostResponse sendEmailAuthCode(@RequestBody EmailAuthCodeRequest emailAuthCodeRequest) throws Exception {
 
@@ -45,7 +45,7 @@ public class AuthCodeController {
     }
 
     @RequestMapping(value ="/emailcheck", method = RequestMethod.POST, headers = "Accept=application/json",
-            produces = {"application/json"})
+            produces = {"application/json"},consumes = {"application/json"})
     @ResponseBody
     public PostResponse checkEmailAuthCode(@RequestBody EmailAuthCodeRequest emailAuthCodeRequest) throws Exception {
         PostResponse postResponse = new PostResponse();

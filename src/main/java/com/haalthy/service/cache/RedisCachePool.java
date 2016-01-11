@@ -1,5 +1,6 @@
 package com.haalthy.service.cache;
 
+import com.haalthy.service.common.ConfigLoader;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -10,7 +11,7 @@ import redis.clients.jedis.JedisPoolConfig;
 public class RedisCachePool {
     private JedisPool pool;
     private static final RedisCachePool cachePool = new RedisCachePool();
-    private RedisConfigLoader configLoader = RedisConfigLoader.getInstance();
+    private ConfigLoader configLoader = ConfigLoader.getInstance();
 
     public static RedisCachePool getInstance() {
         return cachePool;

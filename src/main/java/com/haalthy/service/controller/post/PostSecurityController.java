@@ -42,7 +42,7 @@ public class PostSecurityController {
 	
 	@Autowired
 	private transient OssService ossService;
-		
+	
     @RequestMapping(value = "/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public AddUpdatePostResponse addPost(@RequestBody AddPostRequest addPostRequest) throws IOException{

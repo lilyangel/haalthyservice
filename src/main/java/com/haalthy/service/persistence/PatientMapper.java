@@ -51,4 +51,5 @@ public interface PatientMapper {
 	int updatePatientImg(PatientStatus patientStatus);
 	int appendPatientImg(PatientStatus patientStatus);
 
+
 }
