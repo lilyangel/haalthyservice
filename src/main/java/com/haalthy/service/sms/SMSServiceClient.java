@@ -1,7 +1,7 @@
 package com.haalthy.service.sms;
 
 import com.haalthy.service.common.ConfigLoader;
-import com.haalthy.service.common.EncodeUtil;
+import com.haalthy.service.common.StringUtils;
 
 import java.net.URL;
 
@@ -40,11 +40,11 @@ public class SMSServiceClient {
     public String sendSMS(String msg, String phoneNum, String otime) throws Exception {
         String result = null;
         try {
-            if(EncodeUtil.IsEmpty(msg))
+            if(StringUtils.IsEmpty(msg))
                 throw new Exception("-1：无短信内容");
-            if(EncodeUtil.IsEmpty(phoneNum))
+            if(StringUtils.IsEmpty(phoneNum))
                 throw new Exception("-2：接收手机号码为空");
-            if(EncodeUtil.IsEmpty(otime))
+            if(StringUtils.IsEmpty(otime))
                 otime = "";
             //post请求参数
             String postContent = "LoginName=" + loginName + "&pwd=" + pwd + "&Msg=" + msg + "&phoneNum=" + phoneNum + "&otime=" + otime;
