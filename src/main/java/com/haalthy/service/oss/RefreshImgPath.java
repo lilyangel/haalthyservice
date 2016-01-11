@@ -1,5 +1,8 @@
 package com.haalthy.service.oss;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.PostService;
 import com.haalthy.service.openservice.UserService;
@@ -11,13 +14,15 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class RefreshImgPath {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private PostService postService;
-    @Autowired
-    private PatientService patientService;
-
+	@Autowired
+	private transient UserService userService;
+	
+	@Autowired
+	private transient PostService postService;
+	
+	@Autowired
+	private transient PatientService patientService;
+	
     public int refreshImg(String functionType,String modifyType,String id,String filePath)
     {
         if("user".equals(functionType.toLowerCase()))
@@ -37,8 +42,7 @@ public class RefreshImgPath {
 
     private int refreshUser(String modifyType,String id,String filePath)
     {
-
-        if("update".equals(modifyType.toLowerCase()))
+       if("update".equals(modifyType.toLowerCase()))
         {
             return userService.updateUserPhoto(id,filePath);
         }

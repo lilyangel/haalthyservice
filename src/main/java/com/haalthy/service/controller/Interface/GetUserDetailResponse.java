@@ -1,41 +1,28 @@
 package com.haalthy.service.controller.Interface;
 
-import java.util.List;
-
-import com.haalthy.service.domain.ClinicReport;
-import com.haalthy.service.domain.PatientStatus;
-import com.haalthy.service.domain.Treatment;
-import com.haalthy.service.domain.User;
+import com.haalthy.service.controller.Interface.user.UserDetail;
 
 public class GetUserDetailResponse {
-	private User userProfile;
-	private List<Treatment> treatments;
-	private List<PatientStatus> patientStatus;
-	private List<ClinicReport> clinicReport;
-	
-	public User getUserProfile() {
-		return userProfile;
+	private String resultDesp;
+	private int result;
+	private UserDetail content;
+
+	public UserDetail getContent() {
+		return content;
 	}
-	public void setUserProfile(User userProfile) {
-		this.userProfile = userProfile;
+	public void setContent(UserDetail content) {
+		this.content = content;
 	}
-	public List<Treatment> getTreatments() {
-		return treatments;
+	public String getResultDesp() {
+		return resultDesp;
 	}
-	public void setTreatments(List<Treatment> treatments) {
-		this.treatments = treatments;
+	public void setResultDesp(String resultDesp) {
+		this.resultDesp = resultDesp;
 	}
-	public List<PatientStatus> getPatientStatus() {
-		return patientStatus;
+	public int getResult() {
+		return result;
 	}
-	public void setPatientStatus(List<PatientStatus> patientStatus) {
-		this.patientStatus = patientStatus;
+	public void setResult(int result) {
+		this.result = result;
 	}
-	public List<ClinicReport> getClinicReport() {
-		return clinicReport;
-	}
-	public void setClinicReport(List<ClinicReport> clinicReport) {
-		this.clinicReport = clinicReport;
-	}
-	
 }

@@ -32,14 +32,19 @@ public interface UserMapper {
 	  
 	  List<User> selectSuggestUsersByTags(SelectUserByTagRange selectUserByTagRange);
 	  
-	  List<User> searchUsers(String[] keyword);
+	  List<User> searchUsers(String keyword);
 	  
 	  List<User> selectSuggestUsersByProfile(GetSuggestUsersByProfileRequest getSuggestUsersByProfileRequest);
 	  
 	  int resetPassword(User user);
 	  
 	  int deleteFromSuggestUserByProfile(SuggestedUserPair suggestedUserPair);
+	  
+	  List<User> getUsersByDisplayname(String displayname);
+	  
+	  int resetDeviceToken(User user);
 
-	  int updateUserPhoto(@Param(value = "username") String userName,@Param(value = "filename") String fileName);
-	  int appendUserPhoto(@Param(value = "username") String userName,@Param(value = "filename") String fileName);
+	  int updateUserPhoto(User user);
+	  int appendUserPhoto(User user);
+	  
 }

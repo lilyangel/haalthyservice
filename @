@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.haalthy.service.persistence.PatientMapper">
+
+	<cache eviction="LRU"
+		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="8640000"
+		   size="1000" readOnly="true" />
+  
+  <select id="getTreatmentFormat" resultType="TreatmentFormat">
+     	SELECT 
+   			TreatmentFormatID,
+   			Type,
+   			name
+		FROM treatmentformat
+   </select>
+   
+   <select id="getPatientStatusFormat" resultType="PatientStatusFormat">
+     	SELECT 
+   			statusFormatID,
+   			statusName
+		FROM patientStatusFormat
+   </select>
+   
+   <select id="getClinicReportFormat" resultType="ClinicReportFormat">
+     	SELECT 
+   			reportFormatID,
+   			clinicItem
+		FROM clinicReportFormat
+   </select>
+   
+   <select id = "getTreatmentsByUser" parameterType="String" resultType="Treatment">
+   		SELECT 
+   			TreatmentID,
+   			Username,
+			TreatmentName,
+			Description,
+			Dosage,
+			beginDate,
+			endDate,
+			IsPosted
+		FROM treatment
+			WHERE username = #{username}
+		ORDER BY endDate DESC
+   </select>
+   
+   <update id = "updateTreatmentById" parameterType="Treatment" flushCache="true">
+   		UPDATE treatment SET
+   			TreatmentName = #{treatmentName},
+   			Dosage = #{dosage},
+   			BeginDate = #{beginDate},
+   			EndDate = #{endDate}
+   		WHERE TreatmentId = #{treatmentID}
+   </update>
+  
+   <select id = "getPatientStatusByUser" parameterType="String" resultType="PatientStatus">
+   		SELECT 
+   			StatusID,
+			Username,
+			ClinicReport,
+			StatusDesc,
+			InsertedDate,
+			IsPosted,
+			scanData
+		FROM patientstatus
+			WHERE username = #{username}
+		ORDER BY InsertedDate DESC
+   </select>
+   
+   <select id = "getClinicReportByUser" parameterType="String" resultType="ClinicReport">
+   		SELECT 
+   			username,
+   			CEA,
+   			CT,
+   			SCC,
+   			CYFRA21,
+   			NSE,
+   			ProGRP,
+			clinicReport,
+			dateInserted,
+			isPosted
+		FROM ClinicReport
+			WHERE username = #{username}
+		ORDER BY dateInserted DESC
+   </select>
+
+   <select id = "getPostedTreatmentsByUser" parameterType="String" resultType="Treatment">
+   		SELECT 
+   			TreatmentID,
+   			Username,
+			TreatmentName,
+			Description,
+			Dosage,
+			beginDate,
+			endDate,
+			IsPosted
+		FROM treatment
+			WHERE username = #{username}  AND IsPosted = 1
+		ORDER BY endDate DESC
+   </select>
+  
+   <select id = "getPostedPatientStatusByUser" parameterType="String" resultType="PatientStatus">
+   		SELECT 
+   			StatusID,
+			Username,
+			ClinicReport,
+			StatusDesc,
+			InsertedDate,
+			IsPosted,
+			scanData
+		FROM patientstatus
+			WHERE username = #{username}  AND IsPosted = 1
+		ORDER BY InsertedDate DESC
+   </select>
+   
+   <select id = "getPostedClinicReportByUser" parameterType="String" resultType="ClinicReport">
+   		SELECT 
+   			username,
+			clinicReport,
+			dateInserted,
+			cea,
+			ct,
+			isPosted
+		FROM ClinicReport
+			WHERE username = #{username}
+		ORDER BY dateInserted DESC
+   </select>
+
+  <insert id = "insertTreatment" useGeneratedKeys="true"
+    	keyProperty="treatmentID" keyColumn = "treatmentID" flushCache="true">
+  	INSERT INTO treatment(Username, treatmentName, Description, Dosage, BeginDate, EndDate, IsPosted) VALUES(
+  		#{username}, #{treatmentName}, #{description}, #{dosage}, #{beginDate}, #{endDate}, #{isPosted}
+  	)
+  </insert>
+  
+    <insert id = "insertPatientStatus" useGeneratedKeys="true"
+    	keyProperty="statusID" keyColumn = "statusID">
+  	INSERT INTO patientstatus(Username,
+			ClinicReport,
+			statusDesc,
+			InsertedDate,
+			IsPosted,
+			scanData) VALUES(
+  		#{username}, #{clinicReport}, #{statusDesc}, #{insertedDate}, #{isPosted}, #{scanData}
+  	)
+  </insert>
+  
+  <insert id = "insertClinicReport" useGeneratedKeys="true"
+    	keyProperty="ClinicReportID" keyColumn = "ClinicReportID" flushCache="true">
+  	INSERT INTO ClinicReport(Username,
+  			clinicReport,
+			cea,
+			ct,
+			DateInserted,
+			IsPosted) VALUES(
+  		#{username},#{clinicReport}, #{CEAValue}, #{CTDesc}, #{dateInserted}, #{isPosted}
+  	)
+  </insert>
+  
+<<<<<<< HEAD
+  <insert id = "insertClinicData"  parameterType="java.util.List">
+    	INSERT INTO ClinicData(clinicItemName, clinicItemValue, statusID, insertUsername, insertDate) values
+  		<foreach collection="list" item="ClinicData" index="index" separator=",">
+  			(#{ClinicData.clinicItemName}, #{ClinicData.clinicItemValue}, #{ClinicData.statusID}, #{ClinicData.insertUsername},  #{ClinicData.insertDate})
+  		</foreach>
+  </insert>
+  
+  <select id = "getClinicDataByUsername" parameterType="String"  resultType="ClinicData">
+  	  SELECT 
+  	  	clinicDataID,
+  	  	statusID,
+  	  	clinicItemName,
+  	  	clinicItemValue,
+  	  	insertUsername,
+  	  	insertDate
+  	  FROM
+  	    ClinicData WHERE insertUsername=#{insertUsername}
+  </select>
+  
+  <delete id = "deleteTreatmentById" parameterType="int" flushCache="true">
+  	DELETE FROM treatment
+  	Where TreatmentID = #{treatmentId}
+  </delete>
+
+	<!--更新图片-->
+	<update id="updatePatientImg" parameterType="PatientStatus" flushCache="true">
+		update PatientStatus SET
+		1=1
+		where statusID=#{statusID}
+	</update>
+
+	<!--追加图片-->
+	<update id="appendPatientImg" parameterType="PatientStatus" flushCache="true">
+		update PatientStatus SET
+		1=1
+		where statusID=#{statusID}
+	</update>
+</mapper>

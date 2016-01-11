@@ -1,4 +1,4 @@
-package com.haalthy.service.controller.Interface;
+package com.haalthy.service.controller.Interface.user;
 
 import java.util.List;
 

@@ -1,37 +1,38 @@
-package com.haalthy.service.controller.Interface;
+package com.haalthy.service.controller.Interface.post;
 
 import java.util.List;
 
+import com.haalthy.service.controller.Interface.ImageInfo;
 import com.haalthy.service.domain.Tag;
 
 public class AddPostRequest {
 
 	private String insertUsername;
-	public String getInsertUsername() {
-		return insertUsername;
-	}
-	public void setInsertUsername(String insertUsername) {
-		this.insertUsername = insertUsername;
-	}
 	private String body;
 	private int closed;
 	private int isBroadcast;
 	private String type;
 	private List<Tag> tags;
 	private List<String> mentionUsers;
-	private List<byte[]> images;
+	private List<ImageInfo> imageInfos;
 	
+	public String getInsertUsername() {
+		return insertUsername;
+	}
+	public void setInsertUsername(String insertUsername) {
+		this.insertUsername = insertUsername;
+	}
 	public List<String> getMentionUsers() {
 		return mentionUsers;
 	}
 	public void setMentionUsers(List<String> mentionUsers) {
 		this.mentionUsers = mentionUsers;
 	}
-	public List<byte[]> getImages() {
-		return images;
+	public List<ImageInfo> getImageInfos() {
+		return imageInfos;
 	}
-	public void setImages(List<byte[]> images) {
-		this.images = images;
+	public void setImageInfos(List<ImageInfo> imageInfos) {
+		this.imageInfos = imageInfos;
 	}
 	public String getType() {
 		return type;

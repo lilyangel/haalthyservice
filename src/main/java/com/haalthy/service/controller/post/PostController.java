@@ -27,9 +27,12 @@ import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostTag;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.openservice.PostService;
-import com.haalthy.service.controller.Interface.AddPostRequest;
-import com.haalthy.service.controller.Interface.AddUpdatePostResponse;
-import com.haalthy.service.controller.Interface.GetPostsByTagsRequest;
+import com.haalthy.service.controller.Interface.post.AddPostRequest;
+import com.haalthy.service.controller.Interface.post.AddUpdatePostResponse;
+import com.haalthy.service.controller.Interface.post.GetPostResponse;
+import com.haalthy.service.controller.Interface.post.GetPostsByTagsCountResponse;
+import com.haalthy.service.controller.Interface.post.GetPostsByTagsRequest;
+import com.haalthy.service.controller.Interface.post.GetPostsResponse;
 
 @Controller
 @RequestMapping("/open/post")
@@ -40,31 +43,46 @@ public class PostController {
 
     @RequestMapping(value = "/{postid}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public Post getPostById(@PathVariable int postid) throws IOException{
-    	ImageService imageService = new ImageService();
-    	Post post = postService.getPostById(postid);
-    	if(post.getImage()!=null){
-    		post.setImage(imageService.scale(post.getImage(), 32, 32));
-    	}
-		if (post.getHasImage() != 0) {
-			List<byte[]> postImageList = new ArrayList();
-			int index = 1;
-			while (index <= post.getHasImage()) {
-				BufferedImage img = null;
-				String path = imageLocation + Integer.toString(post.getPostID()) + "." + index + ".small" + ".jpg";
-				File smallImageFile = new File(path);
-				if (smallImageFile.exists()) {
-					img = ImageIO.read(new File(path));
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					ImageIO.write(img, "jpg", baos);
-					byte[] bytes = baos.toByteArray();
-					postImageList.add(bytes);
-				}
-				index++;
-			}
-			post.setPostImageList(postImageList);
-		}
-    	return post;
+    public GetPostResponse getPostById(@PathVariable int postid){
+    	GetPostResponse getPostResponse = new GetPostResponse();
+		try {
+			ImageService imageService = new ImageService();
+			Post post = postService.getPostById(postid);
+//			if (post.getImage() != null) {
+//				post.setImage(imageService.scale(post.getImage(), 32, 32));
+//			}
+//			if (post.getHasImage() != 0) {
+//				List<byte[]> postImageList = new ArrayList();
+//				int index = 1;
+//				while (index <= post.getHasImage()) {
+//					BufferedImage img = null;
+//					String path = imageLocation + Integer.toString(post.getPostID()) + "." + index + ".small" + ".jpg";
+//					File smallImageFile = new File(path);
+//					if (smallImageFile.exists()) {
+//						img = ImageIO.read(new File(path));
+//						ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//						ImageIO.write(img, "jpg", baos);
+//						byte[] bytes = baos.toByteArray();
+//						postImageList.add(bytes);
+//					}
+//					index++;
+//				}
+//				post.setPostImageList(postImageList);
+//			}
+			getPostResponse.setContent(post);
+			getPostResponse.setResult(1);
+			getPostResponse.setResultDesp("返回成功");
+		} catch(NullPointerException nullPE){
+			getPostResponse.setResult(-2);
+			System.out.println(nullPE);
+			getPostResponse.setResultDesp("系统异常");
+		} 
+		catch (Exception e) {
+			getPostResponse.setResult(-1);
+			System.out.println(e);
+			getPostResponse.setResultDesp("数据库连接错误");
+		} 
+    	return getPostResponse;
     }
 
 //    [{
@@ -79,56 +97,76 @@ public class PostController {
 //		}]
     @RequestMapping(value = "/tags", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public List<Post> getPostByTags(@RequestBody GetPostsByTagsRequest request) throws IOException{
-    	List<Post> posts = null;
- 	    if (request.getCount() == 0){
- 	    	request.setCount(50);
- 	    }
-    	if((request.getTags() == null) || (request.getTags().size() == 0)){
-    		posts = postService.getAllBroadcast(request);
-    	}else{
-    		posts = postService.getPostsByTags(request);
-    	}
-    	Iterator<Post> postItr = posts.iterator();
-    	ImageService imageService = new ImageService();
-    	while(postItr.hasNext()){
-    		Post post = postItr.next();
-    		if(post.getImage()!=null){
-    			post.setImage(imageService.scale(post.getImage(), 32, 32));
-    		}
-			if (post.getHasImage() != 0) {
-				List<byte[]> postImageList = new ArrayList();
-				int index = 1;
-				while (index <= post.getHasImage()) {
-					BufferedImage img = null;
-					String path = imageLocation + Integer.toString(post.getPostID()) + "." + index + ".small" + ".jpg";
-					File smallImageFile = new File(path);
-					if (smallImageFile.exists()) {
-						img = ImageIO.read(new File(path));
-						ByteArrayOutputStream baos = new ByteArrayOutputStream();
-						ImageIO.write(img, "jpg", baos);
-						byte[] bytes = baos.toByteArray();
-						postImageList.add(bytes);
-					}
-					index++;
-				}
-				post.setPostImageList(postImageList);
+	public GetPostsResponse getPostByTags(@RequestBody GetPostsByTagsRequest request) throws IOException {
+		GetPostsResponse getPostsResponse = new GetPostsResponse();
+		try {
+			List<Post> posts = null;
+			if (request.getCount() == 0) {
+				request.setCount(50);
 			}
-    	}
-
-    	return posts;
+			if ((request.getTags() == null) || (request.getTags().size() == 0)) {
+				posts = postService.getAllBroadcast(request);
+			} else {
+				posts = postService.getPostsByTags(request);
+			}
+			Iterator<Post> postItr = posts.iterator();
+			ImageService imageService = new ImageService();
+			while (postItr.hasNext()) {
+				Post post = postItr.next();
+//				if (post.getImage() != null) {
+//					post.setImage(imageService.scale(post.getImage(), 32, 32));
+//				}
+//				if (post.getHasImage() != 0) {
+//					List<byte[]> postImageList = new ArrayList();
+//					int index = 1;
+//					while (index <= post.getHasImage()) {
+//						BufferedImage img = null;
+//						String path = imageLocation + Integer.toString(post.getPostID()) + "." + index + ".small"
+//								+ ".jpg";
+//						File smallImageFile = new File(path);
+//						if (smallImageFile.exists()) {
+//							img = ImageIO.read(new File(path));
+//							ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//							ImageIO.write(img, "jpg", baos);
+//							byte[] bytes = baos.toByteArray();
+//							postImageList.add(bytes);
+//						}
+//						index++;
+//					}
+//					post.setPostImageList(postImageList);
+//				}
+			}
+			getPostsResponse.setResult(1);
+			getPostsResponse.setResultDesp("返回成功");
+			getPostsResponse.setContent(posts);
+		} catch (Exception e) {
+			getPostsResponse.setResult(-1);
+			getPostsResponse.setResultDesp("数据库连接错误");
+		}
+//    	return posts;
+		return getPostsResponse;
     }
     
-    @RequestMapping(value = "/tags/count", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
-    @ResponseBody
-    public int getPostsByTagsCount(@RequestBody GetPostsByTagsRequest request) throws IOException{
-    	int postCount = 0;
-    	if((request.getTags() == null) || (request.getTags().size() == 0)){
-    		postCount = postService.getAllBroadcastCount(request);
+	@RequestMapping(value = "/tags/count", method = RequestMethod.POST, headers = "Accept=application/json", produces = {
+			"application/json" })
+	@ResponseBody
+	public GetPostsByTagsCountResponse getPostsByTagsCount(@RequestBody GetPostsByTagsRequest request) {
+		GetPostsByTagsCountResponse getPostsByTagsCountRequest = new GetPostsByTagsCountResponse();
+		try {
+			int postCount = 0;
+			if ((request.getTags() == null) || (request.getTags().size() == 0)) {
+				postCount = postService.getAllBroadcastCount(request);
 
-    	}else{
-    		postCount = postService.getPostsByTagsCount(request);
-    	}
-    	return postCount;
-    }
+			} else {
+				postCount = postService.getPostsByTagsCount(request);
+			}
+			getPostsByTagsCountRequest.setResult(1);
+			getPostsByTagsCountRequest.setResultDesp("返回成功");
+			getPostsByTagsCountRequest.setContent(postCount);
+		} catch (Exception e) {
+			getPostsByTagsCountRequest.setResult(-1);
+			getPostsByTagsCountRequest.setResultDesp("数据库连接错误");
+		}
+		return getPostsByTagsCountRequest;
+	}
 }
