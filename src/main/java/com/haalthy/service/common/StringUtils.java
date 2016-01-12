@@ -35,6 +35,7 @@ public class StringUtils {
     public static String DoubleToString(double d){
         return Double.toString(d);
     }
+
     public static String DateToString(Date date, String format)
     {
         SimpleDateFormat sdf = new SimpleDateFormat(format);
@@ -142,7 +143,7 @@ public class StringUtils {
 
 
     /**
-     * 封装将java集合对象转换为JSON串
+     * 封装将java对象转换为JSON串
      *
      * @param <T>
      * @param clazz
