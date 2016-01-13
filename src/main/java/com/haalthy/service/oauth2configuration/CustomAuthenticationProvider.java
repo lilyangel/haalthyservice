@@ -30,8 +30,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			user = userService.getUserByEmail(name);
 			if (user == null) {
 				return null;
-			}else{
-				System.out.println(user.getUsername());
 			}
 		}
 //		User user = userService.getUserByEmail(name);

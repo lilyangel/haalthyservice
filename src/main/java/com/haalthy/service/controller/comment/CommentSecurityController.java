@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haalthy.service.controller.Interface.ContentIntEapsulate;
 import com.haalthy.service.controller.Interface.UnreadCommentRequest;
 import com.haalthy.service.controller.Interface.comment.AddCommentRequest;
 import com.haalthy.service.controller.Interface.comment.AddUpdateCommentResponse;
@@ -46,7 +47,9 @@ public class CommentSecurityController {
     	comment.setIsActive(1);
     	comment.setPostID(addCommentRequest.getPostID());
 		try {
-			addCommentResponse.setContent(postService.increasePostCountComment(addCommentRequest.getPostID()));
+			ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+			contentIntEapsulate.setCount(postService.increasePostCountComment(addCommentRequest.getPostID()));
+			addCommentResponse.setContent(contentIntEapsulate);
 			if (commentService.addComment(comment) > 0){
 				addCommentResponse.setResult(1);
 				addCommentResponse.setResultDesp("返回成功");
@@ -64,7 +67,9 @@ public class CommentSecurityController {
 		AddUpdateCommentResponse updateCommentResponse = new AddUpdateCommentResponse();
 		try {
 			int inactiveCommentCount = commentService.inactiveComment(comment);
-			updateCommentResponse.setContent(inactiveCommentCount);
+			ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+			contentIntEapsulate.setCount(inactiveCommentCount);
+			updateCommentResponse.setContent(contentIntEapsulate);
 			if ( inactiveCommentCount != 0) {
 				updateCommentResponse.setResult(1);
 				updateCommentResponse.setResultDesp("返回成功");
@@ -84,9 +89,11 @@ public class CommentSecurityController {
     public GetUnreadCommentCountResponse getUnreadCommentsCount(@RequestBody UnreadCommentRequest unreadCommentReqest){
     	GetUnreadCommentCountResponse getUnreadCommentCountResponse = new GetUnreadCommentCountResponse();
     	try{
+    		ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
     		getUnreadCommentCountResponse.setResult(1);
     		getUnreadCommentCountResponse.setResultDesp("返回成功");
-    		getUnreadCommentCountResponse.setContent(commentService.getUnreadCommentsCount(unreadCommentReqest.getUsername()));
+    		contentIntEapsulate.setCount(commentService.getUnreadCommentsCount(unreadCommentReqest.getUsername()));
+    		getUnreadCommentCountResponse.setContent(contentIntEapsulate);
     	}catch(Exception e){
     		getUnreadCommentCountResponse.setResult(-1);
     		getUnreadCommentCountResponse.setResultDesp("数据库连接错误");
@@ -114,7 +121,9 @@ public class CommentSecurityController {
     public MarkCommentsAsReadByUsernameResponse markCommentsAsReadByUsername(@RequestBody UnreadCommentRequest unreadCommentReqest){
     	MarkCommentsAsReadByUsernameResponse markCommentsAsReadByUsernameResponse = new MarkCommentsAsReadByUsernameResponse();
     	try{
-    		markCommentsAsReadByUsernameResponse.setContent(commentService.markCommentsAsReadByUsername(unreadCommentReqest.getUsername()));
+    		ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+    		contentIntEapsulate.setCount(commentService.markCommentsAsReadByUsername(unreadCommentReqest.getUsername()));
+    		markCommentsAsReadByUsernameResponse.setContent(contentIntEapsulate);
     		markCommentsAsReadByUsernameResponse.setResult(1);
     		markCommentsAsReadByUsernameResponse.setResultDesp("返回成功");
     	}catch(Exception e){

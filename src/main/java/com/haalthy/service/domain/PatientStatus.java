@@ -8,7 +8,6 @@ public class PatientStatus implements Serializable{
 
 	private int statusID;
 	private String username;
-	private String clinicReport;
 	private String statusDesc;
 	private String scanData;
 	private Timestamp insertedDate;
@@ -50,12 +49,6 @@ public class PatientStatus implements Serializable{
 	}
 	public void setUsername(String username) {
 		this.username = username;
-	}
-	public String getClinicReport() {
-		return clinicReport;
-	}
-	public void setClinicReport(String clinicReport) {
-		this.clinicReport = clinicReport;
 	}
 	public Timestamp getInsertedDate() {
 		return insertedDate;

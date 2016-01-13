@@ -1,15 +1,17 @@
 package com.haalthy.service.controller.Interface.post;
 
+import com.haalthy.service.controller.Interface.ContentIntEapsulate;
+
 public class AddUpdatePostResponse {
 	private int result;
 	private String resultDesp;
-	private int postId;
+	private ContentIntEapsulate content;
 	
-	public int getPostId() {
-		return postId;
+	public ContentIntEapsulate getContent() {
+		return content;
 	}
-	public void setPostId(int postId) {
-		this.postId = postId;
+	public void setContent(ContentIntEapsulate content) {
+		this.content = content;
 	}
 	public int getResult() {
 		return result;

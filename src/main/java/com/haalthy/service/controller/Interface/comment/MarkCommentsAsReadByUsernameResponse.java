@@ -3,12 +3,12 @@ package com.haalthy.service.controller.Interface.comment;
 public class MarkCommentsAsReadByUsernameResponse {
 	private int result;
 	private String resultDesp;
-	private int content;
+	private Object content;
 	
-	public int getContent() {
+	public Object getContent() {
 		return content;
 	}
-	public void setContent(int content) {
+	public void setContent(Object content) {
 		this.content = content;
 	}
 	public int getResult() {

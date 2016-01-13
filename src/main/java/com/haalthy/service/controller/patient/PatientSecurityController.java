@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haalthy.service.controller.Interface.ContentIntEapsulate;
 import com.haalthy.service.controller.Interface.ImageInfo;
 import com.haalthy.service.controller.Interface.OSSFile;
 import com.haalthy.service.controller.Interface.patient.AddPatientStatusRequest;
@@ -69,7 +70,7 @@ public class PatientSecurityController {
 			while (treatmentItr.hasNext()) {
 				Treatment treatment = treatmentItr.next();
 				treatment.setUsername(addTreatmentsRequest.getInsertUsername());
-				insertCount = patientService.insertTreatment(treatment);
+				insertCount += patientService.insertTreatment(treatment);
 				isPosted = treatment.getIsPosted();
 				highlight += treatment.getTreatmentName() + " ";
 				if (treatmentList.size() > 1) {
@@ -78,6 +79,9 @@ public class PatientSecurityController {
 					postBody += treatment.getDosage();
 				}
 			}
+			ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+			contentIntEapsulate.setCount(insertCount);
+			addTreatmentResponse.setContent(contentIntEapsulate);
 			if (isPosted > 0) {
 				java.util.Date today = new java.util.Date();
 				Timestamp now = new java.sql.Timestamp(today.getTime());
@@ -94,7 +98,8 @@ public class PatientSecurityController {
 				post.setType(1);
 				post.setIsBroadcast(0);
 				post.setIsActive(1);
-				addTreatmentResponse.setContent(postService.addPost(post));
+				postService.addPost(post);
+
 			}
 			addTreatmentResponse.setResult(1);
 			addTreatmentResponse.setResultDesp("返回成功");
@@ -110,7 +115,9 @@ public class PatientSecurityController {
 	public UpdateTreatmentResponse updateTreatment(@RequestBody Treatment treatment) {
 		UpdateTreatmentResponse updateTreatmentResponse = new UpdateTreatmentResponse();
 		try{
-			updateTreatmentResponse.setContent(patientService.updateTreatmentById(treatment));
+			ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+			contentIntEapsulate.setCount(patientService.updateTreatmentById(treatment));
+			updateTreatmentResponse.setContent(contentIntEapsulate);
 			updateTreatmentResponse.setResult(1);
 			updateTreatmentResponse.setResultDesp("返回成功");
 		}catch(Exception e){
@@ -130,10 +137,9 @@ public class PatientSecurityController {
 			Timestamp now = new java.sql.Timestamp(today.getTime());
 
 			PatientStatus patientStatus = addPatientStatusRequest.getPatientStatus();
-
 			patientStatus.setUsername(addPatientStatusRequest.getInsertUsername());
-			patientStatus.setStatusDesc(patientStatus.getStatusDesc());
 			int insertCount = patientService.insertPatientStatus(patientStatus);
+
 
 			ClinicReport clinicReport = addPatientStatusRequest.getClinicReport();
 			String[] cliniReprotItem = clinicReport.getClinicReport().split("\\]", -1);
@@ -168,7 +174,7 @@ public class PatientSecurityController {
 				Post post = new Post();
 				String postStr = "";
 				post.setHighlight(postHightlightAndBody[0]);
-				post.setClinicReport(patientStatus.getClinicReport());
+				post.setClinicReport(clinicReport.getClinicReport());
 				post.setClosed(0);
 				if (postHightlightAndBody.length > 1) {
 					postStr = postHightlightAndBody[1];
@@ -202,7 +208,9 @@ public class PatientSecurityController {
 			
 			addPatientStatusResponse.setResult(1);
 			addPatientStatusResponse.setResultDesp("返回成功");
-			addPatientStatusResponse.setContent(patientStatus.getStatusID());
+			ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+			contentIntEapsulate.setCount(patientStatus.getStatusID());
+			addPatientStatusResponse.setContent(contentIntEapsulate);
 		} catch (Exception e) {
 			addPatientStatusResponse.setResult(-1);
 			addPatientStatusResponse.setResultDesp("数据库连接错误");
@@ -231,6 +239,7 @@ public class PatientSecurityController {
 				deleteTreatmentByIdResponse.setResult(1);
 				deleteTreatmentByIdResponse.setResultDesp("返回成功");
 			}
+			
 		} catch (Exception e) {
 			deleteTreatmentByIdResponse.setResult(-1);
 			deleteTreatmentByIdResponse.setResultDesp("数据库连接错误");

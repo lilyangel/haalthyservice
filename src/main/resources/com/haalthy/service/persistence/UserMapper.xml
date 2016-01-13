@@ -28,7 +28,6 @@
 		Password,
 		geneticMutation,
 		deviceToken,
-		image,
 		phone
     FROM user
     WHERE user.Username = #{username}

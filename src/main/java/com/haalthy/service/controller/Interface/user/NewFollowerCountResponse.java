@@ -1,9 +1,11 @@
 package com.haalthy.service.controller.Interface.user;
 
+import com.haalthy.service.controller.Interface.ContentIntEapsulate;
+
 public class NewFollowerCountResponse {
 	private int result;
 	private String resultDesp;
-	private int content;
+	private ContentIntEapsulate content;
 	public int getResult() {
 		return result;
 	}
@@ -16,10 +18,11 @@ public class NewFollowerCountResponse {
 	public void setResultDesp(String resultDesp) {
 		this.resultDesp = resultDesp;
 	}
-	public int getContent() {
+	public ContentIntEapsulate getContent() {
 		return content;
 	}
-	public void setContent(int content) {
+	public void setContent(ContentIntEapsulate content) {
 		this.content = content;
 	}
+
 }

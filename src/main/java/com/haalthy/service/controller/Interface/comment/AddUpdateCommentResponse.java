@@ -1,14 +1,16 @@
 package com.haalthy.service.controller.Interface.comment;
 
+import com.haalthy.service.controller.Interface.ContentIntEapsulate;
+
 public class AddUpdateCommentResponse {
 	private String resultDesp;
 	private int result;
-	private int content;
+	private ContentIntEapsulate content;
 	
-	public int getContent() {
+	public ContentIntEapsulate getContent() {
 		return content;
 	}
-	public void setContent(int content) {
+	public void setContent(ContentIntEapsulate content) {
 		this.content = content;
 	}
 	public String getResultDesp() {

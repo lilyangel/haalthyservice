@@ -35,7 +35,6 @@ public class Post implements Serializable{
 	private String metastasis;
 	private int stage;
 	private int hasImage;
-	private List<byte[]> postImageList;
 	private String displayname;
 	private String highlight;
 	private String clinicReport;
@@ -71,12 +70,6 @@ public class Post implements Serializable{
 	}
 	public void setDisplayname(String displayname) {
 		this.displayname = displayname;
-	}
-	public List<byte[]> getPostImageList() {
-		return postImageList;
-	}
-	public void setPostImageList(List<byte[]> postImageList) {
-		this.postImageList = postImageList;
 	}
 	public int getHasImage() {
 		return hasImage;

@@ -1,5 +1,6 @@
 package com.haalthy.service.controller.user;
 
+import com.haalthy.service.controller.Interface.ContentStringEapsulate;
 import com.haalthy.service.controller.Interface.EmailAuthCodeRequest;
 import com.haalthy.service.controller.Interface.PostResponse;
 import com.haalthy.service.openservice.AuthCodeService;
@@ -28,10 +29,12 @@ public class AuthCodeController {
         PostResponse postResponse = new PostResponse();
 		try {
 			int addAuthCode = authCodeService.addEmailAuthCode(emailAuthCodeRequest.geteMail());
-			if (addAuthCode > 0) {
+			if (addAuthCode == 0) {
 				postResponse.setResult(1);
 				postResponse.setResultDesp("返回成功");
-				postResponse.setContent(addAuthCode);
+				ContentStringEapsulate contentStringEapsulate = new ContentStringEapsulate();
+				contentStringEapsulate.setResult(String.valueOf(addAuthCode));
+				postResponse.setContent(contentStringEapsulate);
 			}else{
 				postResponse.setResult(-2);
 				postResponse.setResultDesp("获取失败");

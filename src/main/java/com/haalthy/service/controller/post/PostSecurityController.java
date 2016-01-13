@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haalthy.service.controller.Interface.ContentIntEapsulate;
+import com.haalthy.service.controller.Interface.GetCountResponse;
 import com.haalthy.service.controller.Interface.ImageInfo;
 import com.haalthy.service.controller.Interface.InputUsernameRequest;
 import com.haalthy.service.controller.Interface.OSSFile;
@@ -84,7 +86,7 @@ public class PostSecurityController {
 				while (tagItr.hasNext()) {
 					String tag = tagItr.next().getName();
 					stringBuilder.append(tag);
-					stringBuilder.append("**");
+					stringBuilder.append(", ");
 				}
 				tagString = stringBuilder.toString();
 				post.setTags(tagString);
@@ -134,7 +136,9 @@ public class PostSecurityController {
 			if (insertPostRow != 0){
 				addPostResponse.setResult(1);
 				addPostResponse.setResultDesp("返回成功");
-				addPostResponse.setPostId(post.getPostID());
+				ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+				contentIntEapsulate.setCount(post.getPostID());
+				addPostResponse.setContent(contentIntEapsulate);
 			}
 		} catch (Exception e) {
 			addPostResponse.setResult(-1);
@@ -153,12 +157,10 @@ public class PostSecurityController {
 			if (postService.inactivePost(post) != 0){
 				updatePostResponse.setResult(1);
 				updatePostResponse.setResultDesp("返回成功");
-//				updatePostResponse.setStatus("inactive successful!");
 			}
 			else{
 				updatePostResponse.setResult(-2);
 				updatePostResponse.setResultDesp("此postId不存在");
-//				updatePostResponse.setStatus("inactive unsuccessful");
 			}
 		} catch (Exception e) {
 			updatePostResponse.setResult(-1);
@@ -176,14 +178,6 @@ public class PostSecurityController {
 				getFeedsRequest.setCount(50);
 			}
 			List<Post> posts = postService.getPosts(getFeedsRequest);
-			Iterator<Post> postItr = posts.iterator();
-			while (postItr.hasNext()) {
-				Post post = postItr.next();
-				if (post.getHasImage() != 0) {
-					List<byte[]> postImageList = new ArrayList();
-					int index = 1;
-				}
-			}
 			getPostsResponse.setContent(posts);
 			getPostsResponse.setResult(1);
 			getPostsResponse.setResultDesp("返回成功");
@@ -202,7 +196,9 @@ public class PostSecurityController {
     	try{
     		getUpdatedPostCountResponse.setResult(1);
     		getUpdatedPostCountResponse.setResultDesp("返回成功");
-    		getUpdatedPostCountResponse.setCount(postService.getUpdatedPostCount(getFeedsRequest));
+    		ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+    		contentIntEapsulate.setCount(postService.getUpdatedPostCount(getFeedsRequest));
+    		getUpdatedPostCountResponse.setContent(contentIntEapsulate);
     	}catch(Exception e){
     		getUpdatedPostCountResponse.setResult(-1);
     		getUpdatedPostCountResponse.setResultDesp("数据库连接错误");
@@ -210,12 +206,12 @@ public class PostSecurityController {
     	return getUpdatedPostCountResponse;
     }
     
-    @RequestMapping(value = "/posts/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/posts/username", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public GetPostsResponse getPostsByUsername(@PathVariable String username){
+    public GetPostsResponse getPostsByUsername(@RequestBody InputUsernameRequest username){
     	GetPostsResponse getPostsResponse = new GetPostsResponse();
     	try{
-    		getPostsResponse.setContent(postService.getPostsByUsername(username));
+    		getPostsResponse.setContent(postService.getPostsByUsername(username.getUsername()));
     		getPostsResponse.setResult(1);
     		getPostsResponse.setResultDesp("返回成功");
     	}catch(Exception e){
@@ -225,7 +221,7 @@ public class PostSecurityController {
     	return getPostsResponse;
     }
     
-    @RequestMapping(value = "/comments/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/comments", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public GetCommentsResponse getCommentsByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
     	GetCommentsResponse getCommentsResponse = new GetCommentsResponse();
@@ -241,10 +237,22 @@ public class PostSecurityController {
 
     }
     
-    @RequestMapping(value = "/mentionedpost/unreadcount", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/mentionedpost/unreadcount", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-	public int getUnreadMentionedPostCountByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){  	
-		return postService.getUnreadMentionedPostCountByUsername(inputUsernameRequest.getUsername());
+	public GetCountResponse getUnreadMentionedPostCountByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
+    	GetCountResponse getCountResponse = new GetCountResponse();
+    	try{
+    		ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+    		contentIntEapsulate.setCount(postService.getUnreadMentionedPostCountByUsername(inputUsernameRequest.getUsername()));
+    		getCountResponse.setContent(contentIntEapsulate);
+    		getCountResponse.setResult(1);
+    		getCountResponse.setResultDesp("返回成功");
+    	}catch(Exception e){
+    		System.out.println(e.getMessage());
+    		getCountResponse.setResult(-1);
+    		getCountResponse.setResultDesp("数据库连接错误");
+    	}
+		return getCountResponse;
 
 	}
 	
@@ -265,7 +273,7 @@ public class PostSecurityController {
 		return getPostsResponse;
 	}
     
-    @RequestMapping(value = "/mentionedpost/markasread", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/mentionedpost/markasread", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
 	public MarkAllMessageAsReadResponse refreshUnreadMentionedPostsByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
     	MarkAllMessageAsReadResponse markAllMessageAsReadResponse = new MarkAllMessageAsReadResponse();

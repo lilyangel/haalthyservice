@@ -1,14 +1,16 @@
 package com.haalthy.service.controller.Interface.patient;
 
+import com.haalthy.service.controller.Interface.ContentIntEapsulate;
+
 public class AddPatientStatusResponse {
 	private int result;
 	private String resultDesp;
-	private int content;
+	private ContentIntEapsulate content;
 	
-	public int getContent() {
+	public ContentIntEapsulate getContent() {
 		return content;
 	}
-	public void setContent(int content) {
+	public void setContent(ContentIntEapsulate content) {
 		this.content = content;
 	}
 	public int getResult() {

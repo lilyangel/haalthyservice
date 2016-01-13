@@ -1,10 +1,11 @@
 package com.haalthy.service.controller.Interface.post;
 
+import com.haalthy.service.controller.Interface.ContentIntEapsulate;
 
 public class GetPostsByTagsCountResponse {
 	private int result;
 	private String resultDesp;
-	private int content;
+	private ContentIntEapsulate content;
 	public int getResult() {
 		return result;
 	}
@@ -17,10 +18,10 @@ public class GetPostsByTagsCountResponse {
 	public void setResultDesp(String resultDesp) {
 		this.resultDesp = resultDesp;
 	}
-	public int getContent() {
+	public ContentIntEapsulate getContent() {
 		return content;
 	}
-	public void setContent(int content) {
+	public void setContent(ContentIntEapsulate content) {
 		this.content = content;
 	}
 }

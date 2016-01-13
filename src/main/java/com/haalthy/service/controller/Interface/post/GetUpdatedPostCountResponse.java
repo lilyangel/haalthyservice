@@ -1,9 +1,11 @@
 package com.haalthy.service.controller.Interface.post;
 
+import com.haalthy.service.controller.Interface.ContentIntEapsulate;
+
 public class GetUpdatedPostCountResponse {
 	private int result;
 	private String resultDesp;
-	private int count;
+	private ContentIntEapsulate content;
 	public int getResult() {
 		return result;
 	}
@@ -16,11 +18,11 @@ public class GetUpdatedPostCountResponse {
 	public void setResultDesp(String resultDesp) {
 		this.resultDesp = resultDesp;
 	}
-	public int getCount() {
-		return count;
+	public ContentIntEapsulate getContent() {
+		return content;
 	}
-	public void setCount(int count) {
-		this.count = count;
+	public void setContent(ContentIntEapsulate content) {
+		this.content = content;
 	}
-	
+
 }

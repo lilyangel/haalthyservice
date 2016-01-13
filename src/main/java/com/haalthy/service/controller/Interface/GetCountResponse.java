@@ -1,8 +1,7 @@
-package com.haalthy.service.controller.Interface.user;
-
+package com.haalthy.service.controller.Interface;
 import com.haalthy.service.controller.Interface.ContentIntEapsulate;
 
-public class UpdateNewFollowerResponse {
+public class GetCountResponse {
 	private int result;
 	private String resultDesp;
 	private ContentIntEapsulate content;

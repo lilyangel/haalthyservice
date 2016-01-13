@@ -58,14 +58,13 @@
    		SELECT 
    			StatusID,
 			Username,
-			ClinicReport,
 			StatusDesc,
 			InsertedDate,
 			IsPosted,
 			scanData,
 			imageURL
 		FROM patientstatus
-			WHERE username = #{username}
+			WHERE username = #{username} and (((StatusDesc is not null) and (StatusDesc != "")) or ((scanData is not null) and scanData != ""))
 		ORDER BY InsertedDate DESC
    </select>
    
@@ -138,12 +137,11 @@
     <insert id = "insertPatientStatus" useGeneratedKeys="true"
     	keyProperty="statusID" keyColumn = "statusID">
   	INSERT INTO patientstatus(Username,
-			ClinicReport,
 			statusDesc,
 			InsertedDate,
 			IsPosted,
 			scanData) VALUES(
-  		#{username}, #{clinicReport}, #{statusDesc}, #{insertedDate}, #{isPosted}, #{scanData}
+  		#{username}, #{statusDesc}, #{insertedDate}, #{isPosted}, #{scanData}
   	)
   </insert>
   

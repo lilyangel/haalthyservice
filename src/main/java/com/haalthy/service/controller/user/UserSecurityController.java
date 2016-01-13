@@ -46,6 +46,8 @@ import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.UserService;
 
 import com.haalthy.service.configuration.ImageService;
+import com.haalthy.service.controller.Interface.ContentIntEapsulate;
+import com.haalthy.service.controller.Interface.ContentStringEapsulate;
 import com.haalthy.service.controller.Interface.FollowUserRequest;
 import com.haalthy.service.controller.Interface.GetMentionedUsernameRequest;
 import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
@@ -98,10 +100,6 @@ public class UserSecurityController {
 			ImageService imageService = new ImageService();
 			String username = inputUsernameRequest.getUsername();
 			User user = userService.getUserByUsername(username);
-
-//			if (user != null && user.getImage() != null) {
-//				user.setImage(imageService.scale(user.getImage(), 88, 88));
-//			}
 
 			List<Treatment> treatments = null;
 			List<PatientStatus> patientStatus = null;
@@ -211,7 +209,9 @@ public class UserSecurityController {
 			if (userService.updateUser(user) == 1) {
 				updateUserResponse.setResult(1);
 				updateUserResponse.setResultDesp("返回成功");
-				updateUserResponse.setContent(user.getUsername());
+				ContentStringEapsulate contentStringEapsulate = new ContentStringEapsulate();
+				contentStringEapsulate.setResult(user.getUsername());
+				updateUserResponse.setContent(contentStringEapsulate);
 
 			} else {
 				updateUserResponse.setResult(-4);
@@ -224,12 +224,14 @@ public class UserSecurityController {
 		return updateUserResponse;
 	}
 	
-	@RequestMapping(value="/newfollow/count", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@RequestMapping(value="/newfollow/count", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
 	public NewFollowerCountResponse selectNewFollowerCount(@RequestBody InputUsernameRequest inputUsernameRequest){
 		NewFollowerCountResponse newFollowerCountResponse = new NewFollowerCountResponse();
 		try{
-			newFollowerCountResponse.setContent(followService.selectNewFollowerCount(inputUsernameRequest.getUsername()).getCount());
+			ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+			contentIntEapsulate.setCount(followService.selectNewFollowerCount(inputUsernameRequest.getUsername()).getCount());
+			newFollowerCountResponse.setContent(contentIntEapsulate);
 			newFollowerCountResponse.setResult(1);
 			newFollowerCountResponse.setResultDesp("返回成功");
 		}catch(Exception e){
@@ -239,15 +241,15 @@ public class UserSecurityController {
 		return newFollowerCountResponse;
 	}
 	
-	@RequestMapping(value="/newfollow/increase/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@RequestMapping(value="/newfollow/increase", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
-	public UpdateNewFollowerResponse increaseNewFollowerCount(@PathVariable String username){
+	public UpdateNewFollowerResponse increaseNewFollowerCount(@RequestBody InputUsernameRequest username){
 		UpdateNewFollowerResponse updateNewFollowerCountResponse = new UpdateNewFollowerResponse();
 		try {
 			int returnValue = 0;
-			returnValue = followService.updateNewFollowerCount(username);
+			returnValue = followService.updateNewFollowerCount(username.getUsername());
 			if (returnValue == 0)
-				returnValue = followService.insertNewFollowerCount(username);
+				returnValue = followService.insertNewFollowerCount(username.getUsername());
 			updateNewFollowerCountResponse.setResult(1);
 			updateNewFollowerCountResponse.setResultDesp("返回成功");
 		} catch (Exception e) {
@@ -257,7 +259,7 @@ public class UserSecurityController {
 		return updateNewFollowerCountResponse;
 	}
 	
-	@RequestMapping(value="/newfollow/refresh", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@RequestMapping(value="/newfollow/refresh", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
 	public UpdateNewFollowerResponse refreshNewFollowerCount(@RequestBody InputUsernameRequest inputUsernameRequest){
 		UpdateNewFollowerResponse updateNewFollowerCountResponse = new UpdateNewFollowerResponse();
@@ -288,7 +290,7 @@ public class UserSecurityController {
 	}
 	
 	
-	@RequestMapping(value="/followerusers", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
+	@RequestMapping(value="/followerusers", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
 	public GetUsersResponse getFollowersByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
 		GetUsersResponse getUsersResponse = new GetUsersResponse();
@@ -345,7 +347,7 @@ public class UserSecurityController {
 		return addUpdateUserResponse;
 	}
     
-    @RequestMapping(value = "/follow/inactive", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/follow/inactive", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public AddUpdateUserResponse inactiveFollowing(@RequestBody Follow follow){
 		AddUpdateUserResponse addUpdateUserResponse = new AddUpdateUserResponse();
@@ -366,12 +368,14 @@ public class UserSecurityController {
     	return addUpdateUserResponse;
     }
     
-    @RequestMapping(value = "/follow/isfollowing", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/follow/isfollowing", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public IsFollowingUserResponse isFollowingUser(@RequestBody Follow follow){
     	IsFollowingUserResponse isFollowingUserResponse = new IsFollowingUserResponse();
     	try{
-    		isFollowingUserResponse.setContent(followService.isFollowingUser(follow));
+    		ContentIntEapsulate contentIntEapsulate= new ContentIntEapsulate();
+    		contentIntEapsulate.setCount(followService.isFollowingUser(follow));
+    		isFollowingUserResponse.setContent(contentIntEapsulate);
     		isFollowingUserResponse.setResult(1);
     		isFollowingUserResponse.setResultDesp("返回成功");
     	}catch(Exception e){
@@ -515,36 +519,36 @@ public class UserSecurityController {
 //    	
 //    	return userService.deleteFromSuggestUserByProfile(suggestedUserPair);
 //    }
-    public int resetPassword(@RequestBody String password){
- 	   User user = new User();
- 	   Authentication a = SecurityContextHolder.getContext().getAuthentication();
- 	   String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
- 	   if (userService.getUserByUsername(currentSessionUsername) == null)
- 		  currentSessionUsername = userService.getUserByEmail(currentSessionUsername).getUsername();
- 	   user.setUsername(currentSessionUsername);
- 	   if(password!=null && password!=""){
- 		   password = decodePassword(password);
- 		   BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
- 		   String hashedPassword = passwordEncoder.encode(password);
- 		   user.setPassword(hashedPassword);
- 	   }
- 	   int result  = userService.resetPassword(user);
- 	   return result;
-    }
+//    public int resetPassword(@RequestBody String password){
+// 	   User user = new User();
+// 	   Authentication a = SecurityContextHolder.getContext().getAuthentication();
+// 	   String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
+// 	   if (userService.getUserByUsername(currentSessionUsername) == null)
+// 		  currentSessionUsername = userService.getUserByEmail(currentSessionUsername).getUsername();
+// 	   user.setUsername(currentSessionUsername);
+// 	   if(password!=null && password!=""){
+// 		   password = decodePassword(password);
+// 		   BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+// 		   String hashedPassword = passwordEncoder.encode(password);
+// 		   user.setPassword(hashedPassword);
+// 	   }
+// 	   int result  = userService.resetPassword(user);
+// 	   return result;
+//    }
     
-    @RequestMapping(value = "/deletesuggesteduser/{username}",method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
-    @ResponseBody
-    public int getSuggestUsersByProfile(@RequestBody SuggestedUserPair suggestedUserPair) {
+//    @RequestMapping(value = "/deletesuggesteduser/{username}",method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
+//    @ResponseBody
+//    public int getSuggestUsersByProfile(@RequestBody SuggestedUserPair suggestedUserPair) {
 //    	SuggestedUserPair suggestedUserPair = new SuggestedUserPair();
 //    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
 //    	suggestedUserPair.setSuggestedUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
 //    	suggestedUserPair.setUsername(username);
 //    	System.out.println(suggestedUserPair.getSuggestedUsername());
 //    	System.out.println(suggestedUserPair.getUsername());
-    	return userService.deleteFromSuggestUserByProfile(suggestedUserPair);
-    }
+//    	return userService.deleteFromSuggestUserByProfile(suggestedUserPair);
+//    }
     
-    @RequestMapping(value = "/getusername",method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
+    @RequestMapping(value = "/getusername",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
     public AddUpdateUserResponse getUsernameByEmail(@RequestBody InputUsernameRequest inputUsernameReqeust){
 		AddUpdateUserResponse addUpdateUserResponse = new AddUpdateUserResponse();
@@ -553,7 +557,9 @@ public class UserSecurityController {
 			if (user != null) {
 				addUpdateUserResponse.setResult(1);
 				addUpdateUserResponse.setResultDesp("返回成功");
-				addUpdateUserResponse.setContent(user.getUsername());
+				ContentStringEapsulate contentStringEapsulate = new ContentStringEapsulate();
+				contentStringEapsulate.setResult(user.getUsername());
+				addUpdateUserResponse.setContent(contentStringEapsulate);
 			}else{
 				addUpdateUserResponse.setResult(-2);
 				addUpdateUserResponse.setResultDesp("找不到该用户");	

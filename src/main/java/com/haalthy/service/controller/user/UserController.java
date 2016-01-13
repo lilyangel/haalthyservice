@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import com.haalthy.service.controller.Interface.ContentStringEapsulate;
 import com.haalthy.service.controller.Interface.GetSuggestUsersByTagsRequest;
 import com.haalthy.service.controller.Interface.InputUsernameRequest;
 import com.haalthy.service.controller.Interface.OSSFile;
@@ -79,7 +80,9 @@ public class UserController {
 				String username = userService.getUserByEmail(user.getEmail()).getUsername();
 				addUserResponse.setResult(1);
 				addUserResponse.setResultDesp("返回成功");
-				addUserResponse.setContent(username);
+				ContentStringEapsulate contentStringEapsulate = new ContentStringEapsulate();
+				contentStringEapsulate.setResult(username);
+				addUserResponse.setContent(contentStringEapsulate);
 				//upload image
 				List<OSSFile> ossFileList = new ArrayList();
 				OSSFile ossFile = new OSSFile();

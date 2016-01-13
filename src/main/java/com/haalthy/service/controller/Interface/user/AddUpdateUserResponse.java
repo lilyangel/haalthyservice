@@ -1,14 +1,16 @@
 package com.haalthy.service.controller.Interface.user;
 
+import com.haalthy.service.controller.Interface.ContentStringEapsulate;
+
 public class AddUpdateUserResponse {
 	private int result;
 	private String resultDesp;
-	private String content;
+	private ContentStringEapsulate content;
 	
-	public String getContent() {
+	public ContentStringEapsulate getContent() {
 		return content;
 	}
-	public void setContent(String content) {
+	public void setContent(ContentStringEapsulate content) {
 		this.content = content;
 	}
 	public int getResult() {

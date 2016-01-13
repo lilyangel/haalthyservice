@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haalthy.service.controller.Interface.ContentStringsEapsulate;
 import com.haalthy.service.controller.Interface.ClinicTrail.GetCilnicTrailInfoResponse;
 import com.haalthy.service.controller.Interface.ClinicTrail.GetClinicTrailDrugTypeResponse;
 import com.haalthy.service.controller.Interface.ClinicTrail.GetClinicTrailSubGroupsResponse;
@@ -40,7 +41,9 @@ public class ClinictrailController {
     public GetClinicTrailDrugTypeResponse getClinicTrailDrugTypes(){
     	GetClinicTrailDrugTypeResponse getCilnicTrailDrugTypeResponse = new GetClinicTrailDrugTypeResponse();
     	try{
-        	getCilnicTrailDrugTypeResponse.setContent(clinicTrailService.getClinicTrailDrugTypes());
+    		ContentStringsEapsulate clinicTrailDrugTypes = new ContentStringsEapsulate();
+    		clinicTrailDrugTypes.setResults(clinicTrailService.getClinicTrailDrugTypes());
+        	getCilnicTrailDrugTypeResponse.setContent(clinicTrailDrugTypes);
         	getCilnicTrailDrugTypeResponse.setResult(1);
         	getCilnicTrailDrugTypeResponse.setResultDesp("返回成功");
     	} catch (Exception e) {
@@ -55,7 +58,9 @@ public class ClinictrailController {
     public GetClinicTrailSubGroupsResponse getClinicTrailSubGroup(){
     	GetClinicTrailSubGroupsResponse getClinicTrailSubGroupsResponse = new GetClinicTrailSubGroupsResponse();
     	try{
-    		getClinicTrailSubGroupsResponse.setContent(clinicTrailService.getClinicTrailSubGroups());
+    		ContentStringsEapsulate clinicTrailSubgroups = new ContentStringsEapsulate();
+    		clinicTrailSubgroups.setResults(clinicTrailService.getClinicTrailSubGroups());
+    		getClinicTrailSubGroupsResponse.setContent(clinicTrailSubgroups);
     		getClinicTrailSubGroupsResponse.setResult(1);
     		getClinicTrailSubGroupsResponse.setResultDesp("返回成功");
     	} catch (Exception e) {
