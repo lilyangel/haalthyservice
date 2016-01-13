@@ -38,7 +38,7 @@ public class AuthCodeService {
         eMail.setToEmail(toEmail.toLowerCase());
 
         eMailMapper.insertEmail(eMail);
-        StringBuilder stringBuilder = new StringBuilder("EmailAuthCode.");
+        StringBuilder stringBuilder = new StringBuilder("AuthCode.Email.");
         StringBuilder append = stringBuilder.append(toEmail.toLowerCase());
         redisCache.putObject(stringBuilder.toString(),EncodeUtil.md5Encrypt(strAuthCode),172800);
 
@@ -50,33 +50,61 @@ public class AuthCodeService {
     public int authEmailAuthCode( String toEmail, String authCode) throws Exception{
         int iReturn = 1;
         String lastAuthCode = EncodeUtil.md5Encrypt(authCode.toUpperCase());
-        StringBuilder stringBuilder = new StringBuilder("EmailAuthCode.");
+        StringBuilder stringBuilder = new StringBuilder("AuthCode.Email.");
         stringBuilder.append(toEmail.toLowerCase());
-        logger.info("authCode  :"+authCode);
-        logger.info("Redis data:"+redisCache.getObject(stringBuilder.toString()).toString());
-        logger.info("Encrypt   :"+lastAuthCode);
+        try {
+            Object oReturn = redisCache.getObject(stringBuilder.toString());
+            if (oReturn.toString().equals(lastAuthCode)){
+                redisCache.deleteObject(stringBuilder.toString());
+                logger.info("delete key");
+                iReturn = 0;
+            }
+            else
+                iReturn = -1;
 
-        if(redisCache.getObject(stringBuilder.toString()).toString().equals(lastAuthCode)) {
-            redisCache.deleteObject(stringBuilder.toString());
-            logger.info("delete key");
-            iReturn = 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            iReturn = -2;
         }
-        else
-            iReturn = -1;
         return iReturn;
     }
 
 
-    public int addMobileAuthCode() throws Exception{
-        return 0;
+    public String addMobileAuthCode(String toMobile) throws Exception{
+        String strAuthCode = EncodeUtil.getNumericAuthCode(6);
+        /*
+        * send sms
+        * */
+
+        /*
+        *
+        * */
+        StringBuilder stringBuilder = new StringBuilder("AuthCode.Mobile.");
+        StringBuilder append = stringBuilder.append(toMobile.toLowerCase());
+        redisCache.putObject(stringBuilder.toString(),EncodeUtil.md5Encrypt(strAuthCode),120);
+        return strAuthCode;
     }
 
 
-    public int authMobileAuthCode() throws Exception {
-        return 0;
-    }
+    public int authMobileAuthCode(String toMobile, String authCode) throws Exception {
+        int iReturn = 1;
+        String lastAuthCode = EncodeUtil.md5Encrypt(authCode.toUpperCase());
+        StringBuilder stringBuilder = new StringBuilder("AuthCode.Mobile.");
+        stringBuilder.append(toMobile.toLowerCase());
+        try {
+            Object oReturn = redisCache.getObject(stringBuilder.toString());
+            if (oReturn.toString().equals(lastAuthCode)){
+                redisCache.deleteObject(stringBuilder.toString());
+                logger.info("delete key");
+                iReturn = 0;
+            }
+            else
+                iReturn = -1;
 
-    public int resetPassword(String userName,String password) throws  Exception{
-        return 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            iReturn = -2;
+        }
+        return iReturn;
     }
 }
