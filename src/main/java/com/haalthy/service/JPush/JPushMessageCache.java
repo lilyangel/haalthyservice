@@ -21,7 +21,7 @@ public class JPushMessageCache {
     @SuppressWarnings("rawtypes")
     @Resource
     private RedisTemplate redisTemplate;
-    private static final String namespace="com.haalthy.service.JPush.msg.";
+    private static final String namespace="haalthy.JPush.msg.";
 
     @SuppressWarnings("unchecked")
     public void saveMessage(final JPushMessage msg)
@@ -29,8 +29,6 @@ public class JPushMessageCache {
         logger.debug("putFieldValue to redis:to" +msg.getToUserName()+";from:"
                 +msg.getPushMessageContent().getFromUserName()+";msg:" +msg.getPushMessageContent().getContent().toString());
         redisTemplate.execute(new RedisCallback<JPushMessage>(){
-            private RedisConnection connection;
-
             @Override
             public JPushMessage doInRedis(RedisConnection connection) throws DataAccessException {
                 byte[] btyKey = redisTemplate.getStringSerializer().serialize(namespace + msg.getToUserName());
