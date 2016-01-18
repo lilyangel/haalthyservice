@@ -70,4 +70,66 @@ public class AuthCodeController {
         }
         return postResponse;
     }
+
+    /**
+     *
+     private String eMail;
+     手机短信验证时，eMail字段用电话号码
+     private String authCode;
+     * */
+    @RequestMapping(value ="/smssend", method = RequestMethod.POST, headers = "Accept=application/json",
+            produces = {"application/json"},consumes = {"application/json"})
+    @ResponseBody
+    public PostResponse smsAuthCode(@RequestBody EmailAuthCodeRequest emailAuthCodeRequest) throws Exception {
+
+        PostResponse postResponse = new PostResponse();
+        try {
+            String addAuthCode = authCodeService.addMobileAuthCode(emailAuthCodeRequest.geteMail());
+            if (!addAuthCode.isEmpty()) {
+                postResponse.setResult(1);
+                postResponse.setResultDesp("返回成功");
+                ContentStringEapsulate contentStringEapsulate = new ContentStringEapsulate();
+                contentStringEapsulate.setResult(String.valueOf(addAuthCode));
+                postResponse.setContent(contentStringEapsulate);
+            }else{
+                postResponse.setResult(-2);
+                postResponse.setResultDesp("获取失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            postResponse.setResult(-1);
+            postResponse.setResultDesp("数据库连接错误");
+        }
+        return postResponse;
+    }
+
+    /**
+     *
+        private String eMail;
+        手机短信验证时，eMail字段用电话号码
+        private String authCode;
+     * */
+    @RequestMapping(value ="/smscheck", method = RequestMethod.POST, headers = "Accept=application/json",
+            produces = {"application/json"},consumes = {"application/json"})
+    @ResponseBody
+    public PostResponse checkSmsAuthCode(@RequestBody EmailAuthCodeRequest emailAuthCodeRequest) throws Exception {
+        PostResponse postResponse = new PostResponse();
+        try {
+            if(authCodeService.authMobileAuthCode(emailAuthCodeRequest.geteMail(), emailAuthCodeRequest.getAuthCode())==0)
+            {
+                postResponse.setResult(1);
+                postResponse.setResultDesp("返回成功");
+            }
+            else
+            {
+                postResponse.setResult(-2);
+                postResponse.setResultDesp("验证失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            postResponse.setResult(-1);
+            postResponse.setResultDesp("数据库连接错误");
+        }
+        return postResponse;
+    }
 }
