@@ -6,6 +6,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.Map;
 /**
  * Created by Ken on 2016-01-08.
  */
+@Service("jPushMessageCache")
 public class JPushMessageCache {
     protected Logger logger=Logger.getLogger(this.getClass());
 
@@ -35,7 +37,7 @@ public class JPushMessageCache {
                 byte[] btyField =  redisTemplate.getStringSerializer().serialize(StringUtils.DateToString(new Date(),"yyyyMMddHHmmssSSS"));
                 byte[] btyBody = redisTemplate.getStringSerializer().serialize(StringUtils.getJson(msg.getPushMessageContent()));
                 connection.hSetNX(btyKey,btyField,btyBody);
-                connection.expire(btyKey,604800);
+                //connection.expire(btyKey,604800);
                 return null;
             }
         });
@@ -67,8 +69,9 @@ public class JPushMessageCache {
 
         for (Map.Entry<byte[],byte[]> entry: keyValue.entrySet()
                 ) {
-            JPushMessageContent jpmc = (JPushMessageContent)StringUtils.getJava(entry.getValue().toString());
-            map.put(entry.getKey().toString(),jpmc);
+            JPushMessageContent jpmc = (JPushMessageContent)StringUtils.getJava(
+                    redisTemplate.getStringSerializer().deserialize(entry.getValue()).toString());
+            map.put(redisTemplate.getStringSerializer().deserialize(entry.getKey()).toString(),jpmc);
         }
         return map;
     }
