@@ -10,6 +10,7 @@ import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.notification.Notification;
 import cn.jpush.api.report.ReceivedsResult;
+import com.haalthy.service.common.ConfigLoader;
 import com.haalthy.service.common.SerializeUtil;
 import com.haalthy.service.common.StringUtils;
 import org.apache.log4j.Logger;
@@ -26,19 +27,23 @@ public class JPushService {
 
     protected Logger logger=Logger.getLogger(this.getClass());
 
-    private static String JPushAPPKEY = "44ed963ca26a8ebec76754da";
-    private static String JPushSECRETKEY = "f351853ca9a0922f52dc8adc";
+    private String JPushAPPKEY ;
+    private String JPushSECRETKEY ;
 
     @Autowired
     private JPushRegister jPushRegister;
     @Autowired
     private JPushMessageCache jPushMessageCache;
 
-    JPushClient jpushClient;
+    protected static JPushClient jpushClient;
 
     public  JPushService()
     {
-        jpushClient = new JPushClient(JPushSECRETKEY,JPushAPPKEY);
+        ConfigLoader configLoader = ConfigLoader.getInstance();
+        JPushAPPKEY = configLoader.getProperty("JPush.APPKEY");
+        JPushSECRETKEY = configLoader.getProperty("JPush.SECRETKEY");
+        if(jpushClient == null)
+            jpushClient = new JPushClient(JPushSECRETKEY,JPushAPPKEY);
     }
 
     /**
