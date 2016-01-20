@@ -11,18 +11,17 @@ import java.util.List;
 public class SmsSDKClient {
     private static CCPRestSmsSDK restAPI;
     private static SmsSDKClient smsSDKClient;
-    private String smsTempID;
+    private static String smsTempID;
 
     private SmsSDKClient()
     {
-        if(restAPI == null)
-            restAPI = new CCPRestSmsSDK();
+        restAPI = new CCPRestSmsSDK();
         ConfigLoader configLoader = ConfigLoader.getInstance();
-        restAPI.init(configLoader.getProperty("sms.url"),configLoader.getProperty("sms.port"));
-        restAPI.setAccount(configLoader.getProperty("sms.accountSid"),
-                configLoader.getProperty("sms.accountToken"));
-        restAPI.setAppId(configLoader.getProperty("sms.appId"));
-        smsTempID = configLoader.getProperty("sms.authcodetempId");
+        restAPI.init(configLoader.getConfigProperty("sms.url"),configLoader.getConfigProperty("sms.port"));
+        restAPI.setAccount(configLoader.getConfigProperty("sms.accountSid"),
+                configLoader.getConfigProperty("sms.accountToken"));
+        restAPI.setAppId(configLoader.getConfigProperty("sms.appId"));
+        smsTempID = configLoader.getConfigProperty("sms.authcodetempId");
     }
 
     public static synchronized SmsSDKClient getInstance()

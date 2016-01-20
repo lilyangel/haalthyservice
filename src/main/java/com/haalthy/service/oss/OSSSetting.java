@@ -1,5 +1,7 @@
 package com.haalthy.service.oss;
 
+import com.haalthy.service.common.ConfigLoader;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -8,29 +10,49 @@ import java.util.Date;
  */
 public class OSSSetting {
     //private OssFile file;
-    private static String Bucket = "haalthy";
-    private static String Access_ID = "vUvBZoEgcPosj9ZB";
-    private static String Secret_ID = "59cbtCaHVo44XXaic6n5lDQoyp9cBu";
-    private static String Endpoint = "http://oss-cn-beijing.aliyuncs.com/";
-    private static String domain = "http://haalthy.oss-cn-beijing.aliyuncs.com/";
+    private static String Bucket;
+    private static String Access_ID;
+    private static String Secret_ID;
+    private static String Endpoint;
+    private static String domain;
 
-    public static String getBucket() {
+    private static OSSSetting ossSetting;
+
+    public static synchronized OSSSetting getInstance()
+    {
+        if(ossSetting == null)
+            ossSetting = new OSSSetting();
+        return ossSetting;
+    }
+
+    private OSSSetting()
+    {
+        ConfigLoader configLoader = ConfigLoader.getInstance();
+        Bucket = configLoader.getConfigProperty("oss.Bucket");
+        Access_ID = configLoader.getConfigProperty("oss.AccessID");
+        Secret_ID = configLoader.getConfigProperty("oss.SecretID");
+        Endpoint = configLoader.getConfigProperty("oss.Endpoint");
+        domain = configLoader.getConfigProperty("oss.domain");
+
+    }
+
+    public String getBucket() {
         return Bucket;
     }
 
-    public static String getAccess_ID() {
+    public String getAccess_ID() {
         return Access_ID;
     }
 
-    public static String getSecret_ID() {
+    public String getSecret_ID() {
         return Secret_ID;
     }
 
-    public static String getEndpoint() {
+    public String getEndpoint() {
         return Endpoint;
     }
 
-    public static String getDomain() {
+    public String getDomain() {
         return domain;
     }
 

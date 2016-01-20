@@ -36,7 +36,7 @@ public class OssController {
     public int ossUploadFile(@RequestBody OSSFile oss) throws Exception
     {
         //get file type
-        setting = new OSSSetting();
+        setting =OSSSetting.getInstance();
         String fileName = setting.getFileName(oss.getFileType());
         //get file name
 
@@ -65,7 +65,7 @@ public class OssController {
     public String ossUploadFileList(@RequestBody List<OSSFile> ossList) throws Exception
     {
         //get file type
-        setting = new OSSSetting();
+        setting = OSSSetting.getInstance();
         //get file name
 
         OSSClient client = new OSSClient(setting.getEndpoint(),setting.getAccess_ID(),setting.getSecret_ID());
@@ -110,7 +110,7 @@ public class OssController {
             throws Exception
     {
         //get file type
-        setting = new OSSSetting();
+        setting = OSSSetting.getInstance();
         String fileName = setting.getFileName("jpg");
         //get file name
 

@@ -27,8 +27,8 @@ public class JPushService {
 
     protected Logger logger=Logger.getLogger(this.getClass());
 
-    private String JPushAPPKEY ;
-    private String JPushSECRETKEY ;
+    private static String JPushAPPKEY ="399fbda4ffa9d6acf43c53b0";
+    private static String JPushSECRETKEY = "45e3f39ece70295fb0808a0a";
 
     @Autowired
     private JPushRegister jPushRegister;
@@ -37,14 +37,21 @@ public class JPushService {
 
     protected static JPushClient jpushClient;
 
-    public  JPushService()
-    {
-        ConfigLoader configLoader = ConfigLoader.getInstance();
-        JPushAPPKEY = configLoader.getProperty("JPush.APPKEY");
-        JPushSECRETKEY = configLoader.getProperty("JPush.SECRETKEY");
-        if(jpushClient == null)
-            jpushClient = new JPushClient(JPushSECRETKEY,JPushAPPKEY);
-    }
+//    private static JPushService jPushService;
+//
+//    public static synchronized JPushService getInstance()
+//    {
+//        if(jPushService == null)
+//            jPushService = new JPushService();
+//        return jPushService;
+//    }
+//
+//    private JPushService()
+//    {
+//        ConfigLoader configLoader = ConfigLoader.getInstance();
+//        JPushAPPKEY = configLoader.getProperty("JPush.APPKEY");
+//        JPushSECRETKEY = configLoader.getProperty("JPush.SECRETKEY");
+//    }
 
     /**
      *发送系统消息
@@ -161,6 +168,9 @@ public class JPushService {
     private PushResult push(PushPayload payload)
     {
         try {
+            ConfigLoader configLoader = ConfigLoader.getInstance();
+            jpushClient = new JPushClient(configLoader.getConfigProperty("JPush.SECRETKEY"),
+                    configLoader.getConfigProperty("JPush.APPKEY"));
             PushResult result = jpushClient.sendPush(payload);
             logger.info("Got result - " + result);
             return result;

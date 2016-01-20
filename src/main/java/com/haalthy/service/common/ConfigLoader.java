@@ -17,11 +17,13 @@ public class ConfigLoader {
 
     private static ConfigLoader configLoader=null;
     private Properties redisProps;
+    private Properties configProps;
     private Provider props;
 
     private ConfigLoader(){
         try {
             redisProps = PropertiesLoaderUtils.loadAllProperties("redis.properties");
+            configProps =   PropertiesLoaderUtils.loadAllProperties("config.properties");
         } catch (IOException e) {
             // TODO 自动生成 catch 块
             logger.error("load chartServer Config failed!",e);
@@ -41,6 +43,9 @@ public class ConfigLoader {
 
     public String getRedisProperty(String key){
         return this.redisProps.getProperty(key);
+    }
+    public String getConfigProperty(String key){
+        return this.configProps.getProperty(key);
     }
 
 }

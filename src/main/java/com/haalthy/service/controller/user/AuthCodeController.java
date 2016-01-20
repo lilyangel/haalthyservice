@@ -80,7 +80,7 @@ public class AuthCodeController {
     @RequestMapping(value ="/smssend", method = RequestMethod.POST, headers = "Accept=application/json",
             produces = {"application/json"},consumes = {"application/json"})
     @ResponseBody
-    public PostResponse smsAuthCode(@RequestBody EmailAuthCodeRequest emailAuthCodeRequest) throws Exception {
+    public PostResponse sendSmsAuthCode(@RequestBody EmailAuthCodeRequest emailAuthCodeRequest) throws Exception {
 
         PostResponse postResponse = new PostResponse();
         try {
