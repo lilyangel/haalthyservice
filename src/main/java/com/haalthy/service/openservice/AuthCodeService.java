@@ -5,11 +5,14 @@ import com.haalthy.service.common.DateUtils;
 import com.haalthy.service.common.EncodeUtil;
 import com.haalthy.service.domain.EMail;
 import com.haalthy.service.persistence.EMailMapper;
+import com.haalthy.service.sms.SmsSDKClient;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Ken on 2016-01-05.
@@ -24,6 +27,7 @@ public class AuthCodeService {
 
     @Autowired
     private RedisCache redisCache;
+
 
 
     public int addEmailAuthCode(String toEmail) throws Exception {
@@ -75,6 +79,16 @@ public class AuthCodeService {
         /*
         * send sms
         * */
+        logger.info(strAuthCode);
+        List<String> param = new ArrayList<String>();
+        param.add(strAuthCode);
+        param.add("2");
+
+        logger.info(param.toArray());
+        SmsSDKClient smsSDKClient = SmsSDKClient.getInstance();
+        logger.info(smsSDKClient);
+        smsSDKClient.sendAuthSms(toMobile,param);
+        logger.info(smsSDKClient);
 
         /*
         *
