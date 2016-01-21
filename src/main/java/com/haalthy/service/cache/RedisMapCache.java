@@ -37,8 +37,6 @@ public class RedisMapCache {
                 connection.hSetNX(btyKey,btyField,btyValue);
                 if(expire > 0)
                     connection.expire(btyKey,expire);
-                else
-                    connection.expire(btyKey,624800);
                 return null;
             }
         });
@@ -58,8 +56,6 @@ public class RedisMapCache {
                     connection.hSet(btyKey,btyField,btyValue);
                 if(expire > 0)
                     connection.expire(btyKey,expire);
-                else
-                    connection.expire(btyKey,604800);
                 return null;
             }
         });
@@ -87,7 +83,7 @@ public class RedisMapCache {
             public String doInRedis(RedisConnection connection) throws DataAccessException {
                 byte[] btyKey = redisTemplate.getStringSerializer().serialize(namespace + key);
                 byte[] btyField = redisTemplate.getStringSerializer().serialize(field);
-                return connection.hGet(btyKey,btyField).toString();
+                return redisTemplate.getStringSerializer().deserialize(connection.hGet(btyKey,btyField)).toString();
             }
         });
     }
@@ -103,6 +99,7 @@ public class RedisMapCache {
         return map;
     }
 
+
     @SuppressWarnings("unchecked")
     public Map<String,String>getAllValues(final String key)
     {
@@ -116,7 +113,32 @@ public class RedisMapCache {
         Map<String,String> map = new HashMap<String,String>();
         for (Map.Entry<byte[],byte[]> e:keyValue.entrySet()
              ) {
-            map.put(e.getKey().toString(),e.getValue().toString());
+            map.put(redisTemplate.getStringSerializer().deserialize(e.getKey()).toString(),
+                    redisTemplate.getStringSerializer().deserialize(e.getValue()).toString());
+        }
+        return map;
+    }
+
+    /*
+    * 获取value大于等于制定值的字段
+    *
+    * */
+    @SuppressWarnings("unchecked")
+    public Map<String,String>getValuesUp(final String key,final String value)
+    {
+        Map<byte[],byte[]> keyValue
+                = (Map<byte[], byte[]>) redisTemplate.execute(new RedisCallback<Map<byte[],byte[]>>() {
+            @Override
+            public Map<byte[], byte[]> doInRedis(RedisConnection connection) throws DataAccessException {
+                return connection.hGetAll(redisTemplate.getStringSerializer().serialize(namespace+key));
+            }
+        });
+        Map<String,String> map = new HashMap<String,String>();
+        for (Map.Entry<byte[],byte[]> e:keyValue.entrySet()
+                ) {
+            if( redisTemplate.getStringSerializer().deserialize(e.getValue()).toString().compareTo(value)>=0)
+                map.put(redisTemplate.getStringSerializer().deserialize(e.getKey()).toString(),
+                        redisTemplate.getStringSerializer().deserialize(e.getValue()).toString());
         }
         return map;
     }
@@ -135,7 +157,7 @@ public class RedisMapCache {
         List <String> listFields = new ArrayList<String>();
         for (byte[] s:fields
              ) {
-            listFields.add(s.toString());
+            listFields.add(redisTemplate.getStringSerializer().deserialize(s).toString());
         }
         return listFields;
     }
@@ -194,8 +216,6 @@ public class RedisMapCache {
                 byte[] btyKey = redisTemplate.getStringSerializer().serialize(namespace + key);
                 if(seconds>0)
                     connection.expire(btyKey, seconds);
-                else
-                    connection.expire(btyKey, 604800);
                 return null;
             }
         });
