@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.io.IOException;
-import java.security.Provider;
 import java.util.Properties;
 
 /**
@@ -18,7 +17,6 @@ public class ConfigLoader {
     private static ConfigLoader configLoader=null;
     private Properties redisProps;
     private Properties configProps;
-    private Provider props;
 
     private ConfigLoader(){
         try {
@@ -37,9 +35,6 @@ public class ConfigLoader {
         return configLoader;
     }
 
-    public String getProperty(String key){
-        return this.props.getProperty(key);
-    }
 
     public String getRedisProperty(String key){
         return this.redisProps.getProperty(key);
