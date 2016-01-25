@@ -10,6 +10,7 @@ import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.notification.Notification;
 import cn.jpush.api.report.ReceivedsResult;
+import com.haalthy.service.common.ConfigLoader;
 import com.haalthy.service.common.SerializeUtil;
 import com.haalthy.service.common.StringUtils;
 import org.apache.log4j.Logger;
@@ -26,20 +27,31 @@ public class JPushService {
 
     protected Logger logger=Logger.getLogger(this.getClass());
 
-    private static String JPushAPPKEY = "44ed963ca26a8ebec76754da";
-    private static String JPushSECRETKEY = "f351853ca9a0922f52dc8adc";
+    private static String JPushAPPKEY ="399fbda4ffa9d6acf43c53b0";
+    private static String JPushSECRETKEY = "45e3f39ece70295fb0808a0a";
 
     @Autowired
     private JPushRegister jPushRegister;
     @Autowired
     private JPushMessageCache jPushMessageCache;
 
-    JPushClient jpushClient;
+    protected static JPushClient jpushClient;
 
-    public  JPushService()
-    {
-        jpushClient = new JPushClient(JPushSECRETKEY,JPushAPPKEY);
-    }
+//    private static JPushService jPushService;
+//
+//    public static synchronized JPushService getInstance()
+//    {
+//        if(jPushService == null)
+//            jPushService = new JPushService();
+//        return jPushService;
+//    }
+//
+//    private JPushService()
+//    {
+//        ConfigLoader configLoader = ConfigLoader.getInstance();
+//        JPushAPPKEY = configLoader.getProperty("JPush.APPKEY");
+//        JPushSECRETKEY = configLoader.getProperty("JPush.SECRETKEY");
+//    }
 
     /**
      *发送系统消息
@@ -157,6 +169,9 @@ public class JPushService {
     private PushResult push(PushPayload payload)
     {
         try {
+            ConfigLoader configLoader = ConfigLoader.getInstance();
+            jpushClient = new JPushClient(configLoader.getConfigProperty("JPush.SECRETKEY"),
+                    configLoader.getConfigProperty("JPush.APPKEY"));
             PushResult result = jpushClient.sendPush(payload);
             logger.info("Got result - " + result);
             return result;

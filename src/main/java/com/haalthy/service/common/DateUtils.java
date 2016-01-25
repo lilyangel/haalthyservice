@@ -139,10 +139,6 @@ public class DateUtils {
     }
 
 
-
-
-
-
     /***
      * 将String字符串 转换成 Sting类型时间 ，格式为yyyyMMddHHmmss, 例：返回2009-10-10 15:30:30
      *

@@ -1,22 +1,20 @@
 package com.haalthy.service.openservice;
 
-import java.io.ByteArrayInputStream;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.ObjectMetadata;
 import com.haalthy.service.controller.Interface.OSSFile;
 import com.haalthy.service.oss.OSSFileOperate;
 import com.haalthy.service.oss.OSSSetting;
 import com.haalthy.service.oss.RefreshImgPath;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.ByteArrayInputStream;
+import java.util.List;
 
 public class OssService {
     //private OssFile file;
-    private OSSSetting setting = new OSSSetting();
+    private OSSSetting setting;
     protected Logger logger = Logger.getLogger(this.getClass());
     
     @Autowired
@@ -26,7 +24,7 @@ public class OssService {
     {
 
         //get file type
-        setting = new OSSSetting();
+        setting = OSSSetting.getInstance();
         //get file name
 
         OSSClient client = new OSSClient(setting.getEndpoint(),setting.getAccess_ID(),setting.getSecret_ID());

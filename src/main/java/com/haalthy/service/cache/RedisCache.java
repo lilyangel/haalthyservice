@@ -24,7 +24,7 @@ public class RedisCache
     @SuppressWarnings("rawtypes")
     @Resource
     private RedisTemplate redisTemplate;
-    private static final String namespace="com.haalthy.service.";
+    private static final String namespace="haalthy.string.";
 
     @SuppressWarnings("unchecked")
     public void putObject(final String key, final Object obj){

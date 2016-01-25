@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
 import java.io.IOException;
-import java.security.Provider;
 import java.util.Properties;
 
 /**
@@ -17,11 +16,12 @@ public class ConfigLoader {
 
     private static ConfigLoader configLoader=null;
     private Properties redisProps;
-    private Provider props;
+    private Properties configProps;
 
     private ConfigLoader(){
         try {
             redisProps = PropertiesLoaderUtils.loadAllProperties("redis.properties");
+            configProps =   PropertiesLoaderUtils.loadAllProperties("config.properties");
         } catch (IOException e) {
             // TODO 自动生成 catch 块
             logger.error("load chartServer Config failed!",e);
@@ -35,12 +35,12 @@ public class ConfigLoader {
         return configLoader;
     }
 
-    public String getProperty(String key){
-        return this.props.getProperty(key);
-    }
 
     public String getRedisProperty(String key){
         return this.redisProps.getProperty(key);
+    }
+    public String getConfigProperty(String key){
+        return this.configProps.getProperty(key);
     }
 
 }

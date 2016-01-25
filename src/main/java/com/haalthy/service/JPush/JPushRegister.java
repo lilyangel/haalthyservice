@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 /**
  * Created by Ken on 2016-01-08.
  */
-@Service
+@Service("jPushRegister")
 public class JPushRegister {
 
     protected Logger logger=Logger.getLogger(this.getClass());
@@ -25,8 +25,6 @@ public class JPushRegister {
     public void Register(final String userName,final String jPushID)
     {
         redisTemplate.execute(new RedisCallback<String>(){
-            private RedisConnection connection;
-
             @Override
             public String doInRedis(RedisConnection connection) throws DataAccessException {
                 byte[] btyKey = redisTemplate.getStringSerializer().serialize(namespace + userName);

@@ -156,4 +156,24 @@ public class StringUtils {
         String json = array.toString();
         return json;
     }
+
+    /*
+    * List<String> 转成,分割的字符串
+    * */
+    public static String listToString(List<String> stringList){
+        if (stringList==null) {
+            return null;
+        }
+        StringBuilder result=new StringBuilder();
+        boolean flag=false;
+        for (String string : stringList) {
+            if (flag) {
+                result.append(",");
+            }else {
+                flag=true;
+            }
+            result.append(string);
+        }
+        return result.toString();
+    }
 }

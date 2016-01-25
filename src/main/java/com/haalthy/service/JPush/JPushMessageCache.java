@@ -16,14 +16,14 @@ import java.util.Map;
 /**
  * Created by Ken on 2016-01-08.
  */
-@Service
+@Service("jPushMessageCache")
 public class JPushMessageCache {
     protected Logger logger=Logger.getLogger(this.getClass());
 
     @SuppressWarnings("rawtypes")
     @Resource
     private RedisTemplate redisTemplate;
-    private static final String namespace="com.haalthy.service.JPush.msg.";
+    private static final String namespace="haalthy.JPush.msg.";
 
     @SuppressWarnings("unchecked")
     public void saveMessage(final JPushMessage msg)
@@ -31,15 +31,13 @@ public class JPushMessageCache {
         logger.debug("putFieldValue to redis:to" +msg.getToUserName()+";from:"
                 +msg.getPushMessageContent().getFromUserName()+";msg:" +msg.getPushMessageContent().getContent().toString());
         redisTemplate.execute(new RedisCallback<JPushMessage>(){
-            private RedisConnection connection;
-
             @Override
             public JPushMessage doInRedis(RedisConnection connection) throws DataAccessException {
                 byte[] btyKey = redisTemplate.getStringSerializer().serialize(namespace + msg.getToUserName());
                 byte[] btyField =  redisTemplate.getStringSerializer().serialize(StringUtils.DateToString(new Date(),"yyyyMMddHHmmssSSS"));
                 byte[] btyBody = redisTemplate.getStringSerializer().serialize(StringUtils.getJson(msg.getPushMessageContent()));
                 connection.hSetNX(btyKey,btyField,btyBody);
-                connection.expire(btyKey,604800);
+                //connection.expire(btyKey,604800);
                 return null;
             }
         });
@@ -71,8 +69,9 @@ public class JPushMessageCache {
 
         for (Map.Entry<byte[],byte[]> entry: keyValue.entrySet()
                 ) {
-            JPushMessageContent jpmc = (JPushMessageContent)StringUtils.getJava(entry.getValue().toString());
-            map.put(entry.getKey().toString(),jpmc);
+            JPushMessageContent jpmc = (JPushMessageContent)StringUtils.getJava(
+                    redisTemplate.getStringSerializer().deserialize(entry.getValue()).toString());
+            map.put(redisTemplate.getStringSerializer().deserialize(entry.getKey()).toString(),jpmc);
         }
         return map;
     }
