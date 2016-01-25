@@ -2,12 +2,14 @@ package com.haalthy.service.persistence;
 
 import java.util.List;
 
+import com.haalthy.service.controller.Interface.patient.GetPostedTreatmentListRequest;
 import com.haalthy.service.domain.ClinicData;
 import com.haalthy.service.domain.ClinicReport;
 import com.haalthy.service.domain.ClinicReportFormat;
 import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.PatientStatusFormat;
 import com.haalthy.service.domain.Treatment;
+import com.haalthy.service.domain.TreatmentContent;
 import com.haalthy.service.domain.TreatmentFormat;
 import org.apache.ibatis.annotations.Param;
 
@@ -51,5 +53,5 @@ public interface PatientMapper {
 	int updatePatientImg(PatientStatus patientStatus);
 	int appendPatientImg(PatientStatus patientStatus);
 
-
+	List<TreatmentContent> getAllPostedTreatmentList(GetPostedTreatmentListRequest getPostedTreatmentListRequest);
 }

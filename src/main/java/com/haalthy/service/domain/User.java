@@ -14,7 +14,6 @@ public class User implements Serializable {
 	private String password;
 	private String createDate;
 	private String updateDate;
-	private byte[] image;
 	private ImageInfo imageInfo;
 	private String gender;
 	private int isSmoking;
@@ -35,12 +34,6 @@ public class User implements Serializable {
 	}
 	public void setPhone(String phone) {
 		this.phone = phone;
-	}
-	public byte[] getImage() {
-		return image;
-	}
-	public void setImage(byte[] image) {
-		this.image = image;
 	}
 	public String getImageURL() {
 		return imageURL;

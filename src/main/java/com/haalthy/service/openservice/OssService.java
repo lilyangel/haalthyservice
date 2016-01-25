@@ -50,8 +50,6 @@ public class OssService {
             functionType = oss.getFunctionType();
             id = oss.getId();
             result.append(setting.getUrl(oss.getFunctionType(),fileName));
-            result.append(";");
-
         }
 
         client.shutdown();

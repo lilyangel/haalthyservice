@@ -16,6 +16,8 @@ public interface UserMapper {
 	  
 	  User getUserByEmail(String email);
 	  
+	  User getUserByPhone(String phone);
+	  
 	  int addUser(User user);
 	  
 	  int updateUser(User user);

@@ -146,6 +146,7 @@ public class JPushService {
             }
 
         } catch (Exception e) {
+        	e.printStackTrace();
             logger.info("Exception" + e.getMessage());
         }
     }

@@ -27,7 +27,7 @@ public class JPushController {
     @RequestMapping(value ="/jpushlogin", method = RequestMethod.POST, headers = "Accept=application/json",
             produces = {"application/json"},consumes = {"application/json"})
     @ResponseBody
-    public PostResponse JPushLogin(@RequestBody JPushMassageRequest request) throws Exception
+    public PostResponse JPushLogin(@RequestBody JPushMassageRequest request)
     {
         PostResponse postResponse = new PostResponse();
         try {

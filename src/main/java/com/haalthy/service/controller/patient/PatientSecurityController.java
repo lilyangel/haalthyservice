@@ -132,49 +132,54 @@ public class PatientSecurityController {
 	public AddPatientStatusResponse addPatientStatus(@RequestBody AddPatientStatusRequest addPatientStatusRequest) {
 		AddPatientStatusResponse addPatientStatusResponse = new AddPatientStatusResponse();
 		try {
+			int insertCount = 0;
 			Authentication a = SecurityContextHolder.getContext().getAuthentication();
 			java.util.Date today = new java.util.Date();
 			Timestamp now = new java.sql.Timestamp(today.getTime());
 
 			PatientStatus patientStatus = addPatientStatusRequest.getPatientStatus();
-			patientStatus.setUsername(addPatientStatusRequest.getInsertUsername());
-			int insertCount = patientService.insertPatientStatus(patientStatus);
-
+			if(addPatientStatusRequest.getPatientStatus()!=null){
+				patientStatus.setUsername(addPatientStatusRequest.getInsertUsername());
+				insertCount = patientService.insertPatientStatus(patientStatus);
+			}
 
 			ClinicReport clinicReport = addPatientStatusRequest.getClinicReport();
-			String[] cliniReprotItem = clinicReport.getClinicReport().split("\\]", -1);
-			List<ClinicData> clinicDataList = new ArrayList();
+			if (clinicReport != null) {
+				String[] cliniReprotItem = clinicReport.getClinicReport().split("\\]", -1);
+				List<ClinicData> clinicDataList = new ArrayList();
 
-			for (int i = 0; i < cliniReprotItem.length; i++) {
-				if (cliniReprotItem[i].length() > 0) {
-					if (cliniReprotItem[i].charAt(0) == ' ') {
-						cliniReprotItem[i] = cliniReprotItem[i].substring(1);
+				for (int i = 0; i < cliniReprotItem.length; i++) {
+					if (cliniReprotItem[i].length() > 0) {
+						if (cliniReprotItem[i].charAt(0) == ' ') {
+							cliniReprotItem[i] = cliniReprotItem[i].substring(1);
+						}
+						if (cliniReprotItem[i].charAt(0) == '[') {
+							cliniReprotItem[i] = cliniReprotItem[i].substring(1);
+						}
+						ClinicData clinicData = new ClinicData();
+						String[] clinicItemNameAndValue = cliniReprotItem[i].split("\\:", -1);
+						if (clinicItemNameAndValue.length > 1) {
+							clinicData.setClinicItemName(clinicItemNameAndValue[0]);
+							clinicData.setClinicItemValue(Float.valueOf(clinicItemNameAndValue[1]));
+							clinicData.setStatusID(patientStatus.getStatusID());
+							clinicData.setInsertUsername(addPatientStatusRequest.getInsertUsername());
+							clinicData.setInsertDate(addPatientStatusRequest.getPatientStatus().getInsertedDate());
+						}
+						clinicDataList.add(clinicData);
 					}
-					if (cliniReprotItem[i].charAt(0) == '[') {
-						cliniReprotItem[i] = cliniReprotItem[i].substring(1);
-					}
-					ClinicData clinicData = new ClinicData();
-					String[] clinicItemNameAndValue = cliniReprotItem[i].split("\\:", -1);
-					if (clinicItemNameAndValue.length > 1) {
-						clinicData.setClinicItemName(clinicItemNameAndValue[0]);
-						clinicData.setClinicItemValue(Float.valueOf(clinicItemNameAndValue[1]));
-						clinicData.setStatusID(patientStatus.getStatusID());
-						clinicData.setInsertUsername(addPatientStatusRequest.getInsertUsername());
-						clinicData.setInsertDate(addPatientStatusRequest.getPatientStatus().getInsertedDate());
-					}
-					clinicDataList.add(clinicData);
+				}
+				if (clinicDataList.size() > 0) {
+					patientService.insertClinicData(clinicDataList);
 				}
 			}
-			if (clinicDataList.size() > 0) {
-				patientService.insertClinicData(clinicDataList);
-			}
-
-			if (patientStatus.getIsPosted() == 1) {
+			if ((patientStatus != null) && (patientStatus.getIsPosted() == 1)) {
 				String[] postHightlightAndBody = patientStatus.getStatusDesc().split("\\:\\:");
 				Post post = new Post();
 				String postStr = "";
 				post.setHighlight(postHightlightAndBody[0]);
-				post.setClinicReport(clinicReport.getClinicReport());
+				if(clinicReport != null){
+					post.setClinicReport(clinicReport.getClinicReport());
+				}
 				post.setClosed(0);
 				if (postHightlightAndBody.length > 1) {
 					postStr = postHightlightAndBody[1];
@@ -212,6 +217,7 @@ public class PatientSecurityController {
 			contentIntEapsulate.setCount(patientStatus.getStatusID());
 			addPatientStatusResponse.setContent(contentIntEapsulate);
 		} catch (Exception e) {
+            e.printStackTrace();
 			addPatientStatusResponse.setResult(-1);
 			addPatientStatusResponse.setResultDesp("数据库连接错误");
 		}

@@ -21,12 +21,12 @@ public class ClinictrailController {
 	@Autowired
 	private transient ClinicTrailService clinicTrailService;
 	
-    @RequestMapping(value = "/list", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/list", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public GetCilnicTrailInfoResponse getClinicTrailInfo(@RequestBody ClinicTrailInfo clinicTrailInfo)  {
+    public GetCilnicTrailInfoResponse getClinicTrailInfo()  {
     	GetCilnicTrailInfoResponse getCilnicTrailInfoResponse = new GetCilnicTrailInfoResponse();
     	try{
-    		getCilnicTrailInfoResponse.setContent(clinicTrailService.getClinicTrailInfo(clinicTrailInfo));
+    		getCilnicTrailInfoResponse.setContent(clinicTrailService.getClinicTrailInfo());
     		getCilnicTrailInfoResponse.setResult(1);
     		getCilnicTrailInfoResponse.setResultDesp("返回成功");
     	} catch (Exception e) {

@@ -1,9 +1,13 @@
 package com.haalthy.service.controller.patient;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.spi.LocationAwareLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,16 +17,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haalthy.service.controller.Interface.InputUsernameRequest;
+import com.haalthy.service.controller.Interface.Response;
 import com.haalthy.service.controller.Interface.patient.GetClinicReportFormatResponse;
 import com.haalthy.service.controller.Interface.patient.GetPatientstatusFormatResponse;
+import com.haalthy.service.controller.Interface.patient.GetPostedTreatmentListRequest;
 import com.haalthy.service.controller.Interface.patient.GetTreatmentFormatResponse;
 import com.haalthy.service.controller.Interface.patient.GetTreatmentsByUserResponse;
-
 import com.haalthy.service.domain.ClinicReportFormat;
 import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.PatientStatusFormat;
 import com.haalthy.service.domain.Treatment;
 import com.haalthy.service.domain.TreatmentFormat;
+import com.haalthy.service.domain.TreatmentContent;
 import com.haalthy.service.domain.User;
 import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.UserService;
@@ -67,7 +73,7 @@ public class PatientController {
     	return getTreatmentFormatResponse;
     }
     
-    @RequestMapping(value = "/clinicreportformat", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @RequestMapping(value = "/clinicreportformat", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public GetClinicReportFormatResponse getClinicReportFormat(@RequestBody InputUsernameRequest inputUsernameRequest){
 		GetClinicReportFormatResponse getClinicReportFormatResponse = new GetClinicReportFormatResponse();
@@ -79,11 +85,12 @@ public class PatientController {
 			} else {
 				User user = userService.getUserByUsername(inputUsernameRequest.getUsername());
 				Iterator<ClinicReportFormat> clinicReportFormatItr = clinicReportFormatList.iterator();
+				System.out.println(clinicReportFormatList.size());
 				List<ClinicReportFormat> newClinicReprotFormatList = new ArrayList();
 				while (clinicReportFormatItr.hasNext()) {
 					ClinicReportFormat clinicReportFormat = clinicReportFormatItr.next();
 					if (user.getCancerType().equals(clinicReportFormat.getCancerType()) == false) {
-						clinicReportFormatList.remove(clinicReportFormat);
+//						clinicReportFormatList.remove(clinicReportFormat);
 					} else {
 						String pathologicalStr = clinicReportFormat.getPathological();
 						if (pathologicalStr != null) {
@@ -102,6 +109,7 @@ public class PatientController {
 				getClinicReportFormatResponse.setContent(newClinicReprotFormatList);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			getClinicReportFormatResponse.setResult(-1);
 			getClinicReportFormatResponse.setResultDesp("数据库连接错误");
 		}
@@ -121,5 +129,22 @@ public class PatientController {
     		getPatientstatusFormatResponse.setResultDesp("数据库连接错误");
     	}
     	return getPatientstatusFormatResponse;
+    }
+    
+    @RequestMapping(value = "/treatment/list", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public Response getAllPostedTreatmentList(@RequestBody GetPostedTreatmentListRequest getPostedTreatmentListRequest){
+    	Response response = new Response();
+    	try{
+    		List<TreatmentContent> treatments = patientService.getAllPostedTreatmentList(getPostedTreatmentListRequest);
+    		response.setContent(treatments);
+    		response.setResult(1);
+    		response.setResultDesp("返回成功");
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		response.setResult(-1);
+    		response.setResultDesp("数据库连接错误");
+    	}
+    	return response;
     }
 }

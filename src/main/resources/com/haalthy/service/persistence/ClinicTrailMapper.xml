@@ -8,7 +8,7 @@
 		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="8640000"
 		   size="1000" readOnly="true" />
 
-	<select id="getClinicTrailInfo" parameterType="ClinicTrailInfo" resultType="ClinicTrailInfo">
+	<select id="getClinicTrailInfo" resultType="ClinicTrailInfo">
 		SELECT 	
 			DrugType,
 			DrugName,
@@ -19,8 +19,8 @@
 			SideEffect,
 			Original
 		FROM clinictrail
-		WHERE  DrugType = #{drugType} AND SubGroup = #{subGroup}
-	</select>
+<!-- 		WHERE  DrugType = #{drugType} AND SubGroup = #{subGroup}
+ -->	</select>
 	
 		<select id = "getClinicTrailDrugTypes" resultType="String">
 		SELECT DISTINCT

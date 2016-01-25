@@ -40,7 +40,14 @@ public class Post implements Serializable{
 	private String clinicReport;
 	private String imageURL;
 	private String portraitURL;
+	private String geneticMutation;
 	
+	public String getGeneticMutation() {
+		return geneticMutation;
+	}
+	public void setGeneticMutation(String geneticMutation) {
+		this.geneticMutation = geneticMutation;
+	}
 	public String getPortraitURL() {
 		return portraitURL;
 	}

@@ -5,12 +5,14 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
 /**
  * Created by Ken on 2016-01-08.
  */
+@Service
 public class JPushRegister {
 
     protected Logger logger=Logger.getLogger(this.getClass());

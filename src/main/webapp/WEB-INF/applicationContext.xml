@@ -135,7 +135,9 @@
     </bean>
     <bean id="ossService" class="com.haalthy.service.openservice.OssService">
     </bean>
-
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.haalthy.service.JPush" />
+    </bean>
 
     <!--<bean id="RefreshImgPath" class="com.haalthy.service.oss.RefreshImgPath" />-->
 

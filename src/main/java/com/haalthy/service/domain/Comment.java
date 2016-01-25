@@ -12,13 +12,14 @@ public class Comment  implements Serializable{
 	private int countBookmarks;
 	private Timestamp dateInserted;
 	private int isActive;
-	private byte[] image;
+//	private byte[] image;
+	private String imageURL;
 	
-	public byte[] getImage() {
-		return image;
+	public String getImageURL() {
+		return imageURL;
 	}
-	public void setImage(byte[] image) {
-		this.image = image;
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
 	}
 	public int getCommentID() {
 		return commentID;

@@ -5,12 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.haalthy.service.controller.Interface.patient.GetPostedTreatmentListRequest;
 import com.haalthy.service.domain.ClinicData;
 import com.haalthy.service.domain.ClinicReport;
 import com.haalthy.service.domain.ClinicReportFormat;
 import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.PatientStatusFormat;
 import com.haalthy.service.domain.Treatment;
+import com.haalthy.service.domain.TreatmentContent;
 import com.haalthy.service.domain.TreatmentFormat;
 import com.haalthy.service.persistence.PatientMapper;
 
@@ -85,6 +87,9 @@ public class PatientService {
 
 	public List<ClinicData> getClinicDataByUsername(String insertUsername){
 		return patientMapper.getClinicDataByUsername(insertUsername);
+	}
+	public List<TreatmentContent> getAllPostedTreatmentList(GetPostedTreatmentListRequest getPostedTreatmentListRequest){
+		return patientMapper.getAllPostedTreatmentList(getPostedTreatmentListRequest);
 	}
 
 	public int updatePatientImg(String id,String filePath)

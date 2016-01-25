@@ -6,6 +6,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.Map;
 /**
  * Created by Ken on 2016-01-08.
  */
+@Service
 public class JPushMessageCache {
     protected Logger logger=Logger.getLogger(this.getClass());
 

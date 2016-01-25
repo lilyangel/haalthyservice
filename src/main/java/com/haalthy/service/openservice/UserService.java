@@ -26,6 +26,10 @@ public class UserService {
     public User getUserByEmail(String email) {
     	return userMapper.getUserByEmail(email);
     }
+    
+    public User getUserByPhone(String phone) {
+    	return userMapper.getUserByEmail(phone);
+    }
 
     public int addUser(User user){
     	return userMapper.addUser(user);

@@ -6,7 +6,7 @@ import com.haalthy.service.controller.Interface.ClinicTrail.GetClinicTrailInfoRe
 import com.haalthy.service.domain.ClinicTrailInfo;
 
 public interface ClinicTrailMapper {
-	public List<ClinicTrailInfo> getClinicTrailInfo(ClinicTrailInfo clinicTrailInfo);
+	public List<ClinicTrailInfo> getClinicTrailInfo();
 	
 	public List<String> getClinicTrailDrugTypes();
 	

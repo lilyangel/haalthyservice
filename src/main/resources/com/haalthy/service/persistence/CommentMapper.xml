@@ -7,7 +7,7 @@
 	<cache eviction="LRU"
 		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="8640000"
 		   size="1000" readOnly="true" />
-	<select id="getCommentsByPostId" parameterType="int" resultType="Comment">
+	<select id="getCommentsByPostId" resultType="Comment">
 	    SELECT
 	    	CommentID,
 			PostID,
@@ -16,9 +16,9 @@
 			CountBookmarks,
 			DateInserted,
 			isActive,
-			image
+			imageURL
 	    FROM Comment, user
-	    WHERE POSTID = #{postID} AND IsActive = 1 AND (Comment.InsertUsername = user.Username)
+	    WHERE POSTID = #{id} AND IsActive = 1 AND (Comment.InsertUsername = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) 
 	    ORDER BY DateInserted DESC    
 	  </select>
 	  
@@ -50,7 +50,7 @@
 			CountBookmarks,
 			DateInserted,
 			isActive,
-			image
+			imageURL
 			FROM Comment, user
 		WHERE Comment.PostID in (select postID from post where insertUserName=#{username}) AND IsActive = 1 AND (Comment.InsertUsername = user.Username) order by dateInserted desc;
 	</select>

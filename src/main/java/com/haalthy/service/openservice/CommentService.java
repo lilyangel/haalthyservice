@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.haalthy.service.controller.Interface.IntRequest;
 import com.haalthy.service.domain.Comment;
 import com.haalthy.service.persistence.CommentMapper;
 
@@ -11,7 +12,7 @@ public class CommentService {
 	@Autowired
 	private CommentMapper commentMapper;
 	
-	public List<Comment> getCommentsByPostId(int postID){
+	public List<Comment> getCommentsByPostId(IntRequest postID){
 		return commentMapper.getCommentsByPostId(postID);
 	}
 	

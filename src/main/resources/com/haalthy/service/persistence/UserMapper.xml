@@ -33,6 +33,31 @@
     WHERE user.Username = #{username}
   </select>
   
+  <select id="getUserByPhone" parameterType="string" resultType="User">
+  	SELECT
+  		UserID,
+		password,
+		Email,
+		CreateDate,
+		UpdateDate,
+		Displayname,
+		Username,
+		ImageURL,
+		Gender,
+		IsSmoking,
+		Pathological,
+		Stage,
+		FollowCount,
+		CancerType,
+		metastasis,
+		Age,
+		geneticMutation,
+		deviceToken,
+		phone
+	FROM user
+    WHERE user.Email = #{phone}
+  </select>
+  
     <select id="getUserByEmail" parameterType="string" resultType="User">
     SELECT
 		UserID,

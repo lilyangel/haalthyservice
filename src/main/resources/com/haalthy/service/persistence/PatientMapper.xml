@@ -26,7 +26,9 @@
    <select id="getClinicReportFormat" resultType="ClinicReportFormat">
      	SELECT 
    			reportFormatID,
-   			clinicItem
+   			clinicItem,
+   			CancerType,
+   			Pathological
 		FROM clinicReportFormat
    </select>
    
@@ -174,6 +176,23 @@
   	  	insertDate
   	  FROM
   	    ClinicData WHERE insertUsername=#{insertUsername}
+  </select>
+  
+  <select id = "getAllPostedTreatmentList" resultType="TreatmentContent">
+  	SELECT 
+  		user.username,
+		age,
+		stage,
+		cancerType,
+		pathological,
+		metastasis,
+		geneticMutation,
+		treatmentName,
+		dosage,
+		beginDate,
+		endDate
+	FROM user, treatment
+	WHERE treatment.Username = user.username and isPosted = 1 and (beginDate &gt;= #{beginIndexDate}) AND (beginDate &lt;= #{endIndexDate})  order by beginDate Desc
   </select>
   
   <delete id = "deleteTreatmentById" parameterType="int" flushCache="true">

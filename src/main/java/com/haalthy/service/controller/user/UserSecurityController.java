@@ -84,13 +84,13 @@ public class UserSecurityController {
 //		return user;
 //	}
 	
-	@RequestMapping(value = "/updatejpushcode", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json" })
-	@ResponseBody
-	public AddUpdateUserResponse updateJpushDeviceToken(@RequestBody JpushPair jpushPair){
-		AddUpdateUserResponse addUpdateUserResponse = new AddUpdateUserResponse();
-		
-		return addUpdateUserResponse;
-	}
+//	@RequestMapping(value = "/updatejpushcode", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json" })
+//	@ResponseBody
+//	public AddUpdateUserResponse updateJpushDeviceToken(@RequestBody JpushPair jpushPair){
+//		AddUpdateUserResponse addUpdateUserResponse = new AddUpdateUserResponse();
+//		
+//		return addUpdateUserResponse;
+//	}
 	
 	@RequestMapping(value = "/detail", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody
@@ -172,7 +172,7 @@ public class UserSecurityController {
 			if (updateUser.getDisplayname() != null && updateUser.getDisplayname() != "") {
 				user.setDisplayname(updateUser.getDisplayname());
 			}
-			if (updateUser.getImage() != null) {
+			if (updateUser.getImageInfo() != null) {
 //				user.setImage(updateUser.getImage());
 //				userService.updateUserPhoto("user", photoPath)
 				List<OSSFile> ossFileList = new ArrayList();

@@ -26,7 +26,8 @@
 			displayname,
 			highlight,
 			clinicReport,
-			user.imageURL as portraitURL
+			user.imageURL as portraitURL,
+			geneticMutation
 	    FROM post, user
 	    WHERE POSTID = #{PostID} AND post.InsertUserName = user.username
 	  </select>
@@ -78,7 +79,14 @@
 			displayname,
 			highlight,
 			clinicReport,
-			user.imageURL as portraitURL
+			user.imageURL as portraitURL,
+			geneticMutation,
+			cancerType,
+			stage,
+			pathological,
+			age,
+			gender,
+			metastasis
 	    FROM post, user
 	    WHERE ((PostID IN(
 	    	SELECT PostID 
@@ -129,7 +137,14 @@
 			post.imageURL as imageURL,
 			displayname,
 			highlight,
-			clinicReport
+			clinicReport,
+			geneticMutation,
+			cancerType,
+			stage,
+			pathological,
+			age,
+			gender,
+			metastasis
 	    FROM post, user
 	    WHERE post.InsertUserName IN(
 	    	SELECT FollowingUser 
@@ -167,7 +182,8 @@
 			displayname,
 			highlight,
 			clinicReport,
-			post.imageURL as imageURL
+			post.imageURL as imageURL,
+			geneticMutation
 	FROM post, user
 	    WHERE (((post.InsertUserName IN(
 	    	SELECT FollowingUser 
@@ -271,7 +287,14 @@
 			displayname,
 			highlight,
 			clinicReport,
-			user.imageURL as portraitURL
+			user.imageURL as portraitURL,
+			geneticMutation,
+			cancerType,
+			stage,
+			pathological,
+			age,
+			gender,
+			metastasis
 	    FROM post, user
 	    WHERE 
 	    (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)

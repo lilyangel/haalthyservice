@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import com.haalthy.service.JPush.JPushService;
 import com.haalthy.service.controller.Interface.ContentStringEapsulate;
 import com.haalthy.service.controller.Interface.GetSuggestUsersByTagsRequest;
 import com.haalthy.service.controller.Interface.InputUsernameRequest;
@@ -52,6 +53,9 @@ public class UserController {
 	
 	@Autowired
 	private transient OssService ossService;
+	
+    @Autowired
+    private transient JPushService jPushService;
 
     @RequestMapping(value = "/add",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
@@ -72,17 +76,21 @@ public class UserController {
 			user.setCreateDate(currentDt);
 			user.setUpdateDate(currentDt);
 			user.setFollowCount(0);
-			if (userService.getUserByEmail(user.getEmail()) != null){
+			if ((userService.getUserByEmail(user.getEmail()) != null) || (userService.getUserByEmail(user.getEmail()) != null)) {
 				addUserResponse.setResultDesp("该邮箱/手机已被注册");
 				addUserResponse.setResult(-2);
 				
 			}else if (userService.addUser(user) == 1) {
-				String username = userService.getUserByEmail(user.getEmail()).getUsername();
+//				String username = userService.getUserByEmail(user.getEmail()).getUsername();
+				String username = user.getUsername();
 				addUserResponse.setResult(1);
 				addUserResponse.setResultDesp("返回成功");
 				ContentStringEapsulate contentStringEapsulate = new ContentStringEapsulate();
 				contentStringEapsulate.setResult(username);
 				addUserResponse.setContent(contentStringEapsulate);
+				//
+	            jPushService.Login(username,user.getDeviceToken());
+
 				//upload image
 				List<OSSFile> ossFileList = new ArrayList();
 				OSSFile ossFile = new OSSFile();

@@ -26,7 +26,7 @@ public class CommentController {
     public GetCommentsByPostIdResponse getCommentsByPostId(@RequestBody IntRequest postid){
     	GetCommentsByPostIdResponse getCommentsByPostIdResponse = new GetCommentsByPostIdResponse();
     	try{
-    		List<Comment> comments = commentService.getCommentsByPostId(postid.getId());
+    		List<Comment> comments = commentService.getCommentsByPostId(postid);
     		if (comments.size() > 0){
         		getCommentsByPostIdResponse.setResult(1);
         		getCommentsByPostIdResponse.setResultDesp("返回成功");
@@ -36,6 +36,7 @@ public class CommentController {
         		getCommentsByPostIdResponse.setResultDesp("无评论");
     		}
     	}catch(Exception e){
+    		e.printStackTrace();
     		getCommentsByPostIdResponse.setResult(-1);
     		getCommentsByPostIdResponse.setResultDesp("数据库连接错误");
     	}

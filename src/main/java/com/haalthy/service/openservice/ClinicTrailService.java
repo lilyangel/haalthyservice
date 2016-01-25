@@ -12,8 +12,8 @@ public class ClinicTrailService {
 	@Autowired 
 	private ClinicTrailMapper clinicTrailMapper;
 	
-	public List<ClinicTrailInfo> getClinicTrailInfo(ClinicTrailInfo clinicTrailInfo){
-		return clinicTrailMapper.getClinicTrailInfo(clinicTrailInfo);
+	public List<ClinicTrailInfo> getClinicTrailInfo(){
+		return clinicTrailMapper.getClinicTrailInfo();
 	}
 	public List<String> getClinicTrailDrugTypes(){
 		return clinicTrailMapper.getClinicTrailDrugTypes();
