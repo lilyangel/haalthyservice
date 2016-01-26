@@ -21,6 +21,9 @@ public class SmsSDKClient {
         restAPI.setAccount(configLoader.getConfigProperty("sms.accountSid"),
                 configLoader.getConfigProperty("sms.accountToken"));
         restAPI.setAppId(configLoader.getConfigProperty("sms.appId"));
+
+
+
         smsTempID = configLoader.getConfigProperty("sms.authcodetempId");
     }
 
