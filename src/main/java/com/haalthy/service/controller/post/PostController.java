@@ -88,8 +88,9 @@ public class PostController {
 		try {
 			List<Post> posts = null;
 			if (request.getCount() == 0) {
-				request.setCount(50);
+				request.setCount(20);
 			}
+			request.setBeginIndex(request.getCount() * request.getPage());
 			if ((request.getTags() == null) || (request.getTags().size() == 0)) {
 				posts = postService.getAllBroadcast(request);
 			} else {
@@ -117,6 +118,7 @@ public class PostController {
 	public GetPostsByTagsCountResponse getPostsByTagsCount(@RequestBody GetPostsByTagsRequest request) {
 		GetPostsByTagsCountResponse getPostsByTagsCountRequest = new GetPostsByTagsCountResponse();
 		try {
+			request.setBeginIndex(request.getCount() * request.getPage());
 			int postCount = 0;
 			if ((request.getTags() == null) || (request.getTags().size() == 0)) {
 				postCount = postService.getAllBroadcastCount(request);

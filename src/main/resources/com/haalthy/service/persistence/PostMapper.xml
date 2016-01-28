@@ -27,7 +27,9 @@
 			highlight,
 			clinicReport,
 			user.imageURL as portraitURL,
-			geneticMutation
+			geneticMutation,
+			user.cancerType,
+			user.pathological
 	    FROM post, user
 	    WHERE POSTID = #{PostID} AND post.InsertUserName = user.username
 	  </select>
@@ -96,9 +98,11 @@
 	      			<foreach item="tag" index="index" collection="tags" open="(" separator="," close=")">
         				#{tag.tagId}
   					</foreach>
-	    	)AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)  OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) )
+	    	)AND (post.InsertUserName = user.Username)) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username)))
+	    	 AND (isActive = 1) AND (IsBroadcast = 1)  
+	    	 AND ((postID &lt; #{max_id}) OR (postID &gt; #{since_id}))
 	    	ORDER BY DateInserted DESC
-	    LIMIT #{count}    	
+	    	LIMIT #{beginIndex}, #{count}
 	</select>
 	
 	<select id = "getPostsByTagsCount" resultType="int">
@@ -114,8 +118,11 @@
         				#{tag.tagId}
   					</foreach>
 	    		
-	    	)AND (post.InsertUserName = user.Username))) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) )
+	    	)AND (post.InsertUserName = user.Username))OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))) 
+	    	AND (isActive = 1) AND (IsBroadcast = 1) 
+	    	AND ((postID &lt; #{max_id}) OR (postID &gt; #{since_id}))
 	    	ORDER BY DateInserted DESC
+	    	LIMIT #{beginIndex}, #{count}
 	</select>
 	
 	<select id = "getFeeds" resultType = "Post">
@@ -201,9 +208,11 @@
 	    		postTag.TagID IN
 	      			(SELECT TagID FROM userTag WHERE Username = #{username})
 	    	)))
-	    	AND (post.InsertUserName = user.Username))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) )
+	    	AND (post.InsertUserName = user.Username)) AND (isActive = 1) 
+	    	OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))
+	    	AND ((postID &lt; #{max_id}) OR (postID &gt; #{since_id}))
 	    	ORDER BY DateInserted DESC
-	    	LIMIT #{count}
+	    	LIMIT #{beginIndex}, #{count}
 	</select>
 	
 	<select id = "getUpdatedPostCount" resultType = "int">
@@ -226,9 +235,12 @@
 	    		postTag.TagID IN
 	      			(SELECT TagID FROM userTag WHERE Username = #{username})
 	    	)))
-	    	AND (post.InsertUserName = user.Username))  AND (DateInserted &gt; #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1)OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) )
+	    	AND (post.InsertUserName = user.Username)) AND (isActive = 1)
+	    	OR ((user.IsSuperUser = 1) AND (post.InsertUserName = user.Username))
+	    	AND ((postID &lt; #{max_id}) OR (postID &gt; #{since_id}))
 	    	ORDER BY DateInserted DESC
-	</select>
+	    	LIMIT #{beginIndex}, #{count}
+	 </select>
 	
 	<update id = "increasePostCountComment" parameterType="int" flushCache="true">
 		UPDATE post SET CountComments = CountComments+1 WHERE PostID = #{postID}
@@ -297,9 +309,10 @@
 			metastasis
 	    FROM post, user
 	    WHERE 
-	    (post.InsertUserName = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
+	    (post.InsertUserName = user.Username) AND (isActive = 1) AND (IsBroadcast = 1)
+	    	AND ((postID &lt; #{max_id}) OR (postID &gt; #{since_id}))
 	    	ORDER BY DateInserted DESC
-	    LIMIT #{count}
+	    	LIMIT #{beginIndex}, #{count}
 	</select>
 	
 	<select id = "getAllBroadcastCount" resultType="int">
@@ -307,8 +320,10 @@
 			count(*)
 	    FROM post, user
 	    WHERE 
-	    (post.InsertUserName = user.Username) AND  (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) AND (IsBroadcast = 1)
-	    	ORDER BY DateInserted DESC 
+	    (post.InsertUserName = user.Username) AND (isActive = 1) AND (IsBroadcast = 1)
+	    	AND ((postID &lt; #{max_id}) OR (postID &gt; #{since_id}))
+	    	ORDER BY DateInserted DESC
+	    	LIMIT #{beginIndex}, #{count}
 	</select>
 	
 	<select id="getUnreadMentionedPostCountByUsername" parameterType="String" resultType="int">
@@ -337,10 +352,10 @@
 	    FROM post, user, UserBeMentionedByPost
 	    WHERE (post.PostID = UserBeMentionedByPost.PostID)
 	    	AND (post.InsertUserName = user.Username)
-	    	AND (UserBeMentionedByPost.Username = #{username})
-	    	AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) AND (isActive = 1) 
+	    	AND (UserBeMentionedByPost.Username = #{username}) AND (isActive = 1) 
+	    	AND ((postID &lt; #{max_id}) OR (postID &gt; #{since_id}))
 	    	ORDER BY DateInserted DESC
-	    	LIMIT #{count}
+	    	LIMIT #{beginIndex}, #{count}
 	</select>
 	  
 	<update id="markMentionedPostAsRead" parameterType="String" flushCache="true">

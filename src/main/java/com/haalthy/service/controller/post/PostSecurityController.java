@@ -177,6 +177,7 @@ public class PostSecurityController {
 			if (getFeedsRequest.getCount() == 0) {
 				getFeedsRequest.setCount(50);
 			}
+			getFeedsRequest.setBeginIndex(getFeedsRequest.getCount() * getFeedsRequest.getPage());
 			List<Post> posts = postService.getPosts(getFeedsRequest);
 			getPostsResponse.setContent(posts);
 			getPostsResponse.setResult(1);
@@ -197,6 +198,7 @@ public class PostSecurityController {
     		getUpdatedPostCountResponse.setResult(1);
     		getUpdatedPostCountResponse.setResultDesp("返回成功");
     		ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+			getFeedsRequest.setBeginIndex(getFeedsRequest.getCount() * getFeedsRequest.getPage());
     		contentIntEapsulate.setCount(postService.getUpdatedPostCount(getFeedsRequest));
     		getUpdatedPostCountResponse.setContent(contentIntEapsulate);
     	}catch(Exception e){
@@ -223,10 +225,11 @@ public class PostSecurityController {
     
     @RequestMapping(value = "/comments", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public GetCommentsResponse getCommentsByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
+    public GetCommentsResponse getCommentsByUsername(@RequestBody GetFeedsRequest getFeedsRequest){
     	GetCommentsResponse getCommentsResponse = new GetCommentsResponse();
     	try{
-    		getCommentsResponse.setContent(postService.getCommentsByUsername(inputUsernameRequest.getUsername()));
+    		getFeedsRequest.setBeginIndex(getFeedsRequest.getCount() * getFeedsRequest.getPage());
+    		getCommentsResponse.setContent(postService.getCommentsByUsername(getFeedsRequest));
     		getCommentsResponse.setResult(1);
     		getCommentsResponse.setResultDesp("返回成功");
     	}catch(Exception e){
@@ -261,6 +264,7 @@ public class PostSecurityController {
 	public GetPostsResponse getMentionedPostsByUsername(@RequestBody GetFeedsRequest request) throws IOException{
 		GetPostsResponse getPostsResponse = new GetPostsResponse();
 		try {
+			request.setBeginIndex(request.getCount() * request.getPage());
 			List<Post> posts = postService.getMentionedPostsByUsername(request);
 			Iterator<Post> postItr = posts.iterator();
 			getPostsResponse.setContent(posts);

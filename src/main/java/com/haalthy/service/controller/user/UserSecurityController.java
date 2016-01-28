@@ -24,6 +24,7 @@ import com.haalthy.service.controller.Interface.tag.GetTagsResponse;
 import com.haalthy.service.controller.Interface.tag.TagList;
 import com.haalthy.service.controller.Interface.user.AddUpdateUserRequest;
 import com.haalthy.service.controller.Interface.user.AddUpdateUserResponse;
+import com.haalthy.service.controller.Interface.user.FollowUsersLists;
 import com.haalthy.service.controller.Interface.user.GetUsersResponse;
 import com.haalthy.service.controller.Interface.user.IsFollowingUserResponse;
 import com.haalthy.service.controller.Interface.user.NewFollowerCountResponse;
@@ -56,6 +57,7 @@ import com.haalthy.service.controller.Interface.InputUsernameRequest;
 import com.haalthy.service.controller.Interface.JpushPair;
 import com.haalthy.service.controller.Interface.OSSFile;
 import com.haalthy.service.controller.Interface.ResetPasswordRequest;
+import com.haalthy.service.controller.Interface.Response;
 
 @Controller
 @RequestMapping("/security/user")
@@ -289,6 +291,72 @@ public class UserSecurityController {
 		return getUsersResponse;
 	}
 	
+	@RequestMapping(value="/followusers", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json" })
+	@ResponseBody
+	public Response getFollowUsers(@RequestBody InputUsernameRequest inputUsernameRequest){
+		Response response = new Response();
+		List<User> followingUsers = followService.getFollowingUsersByUsername(inputUsernameRequest.getUsername());
+		List<User> followerUsers = followService.getFollowerUsersByUsername(inputUsernameRequest.getUsername());
+		List<User> newFollowingUsers = new ArrayList();
+		List<User> friends = new ArrayList();
+		
+		List<Integer> followingUserIDList = new ArrayList();
+		List<Integer> followerUserIDList =  new ArrayList();
+		List<Integer> newfollowingUserIDList = new ArrayList();
+		List<Integer> newfollowerUserIDList =  new ArrayList();
+		List<Integer> friendIDList = new ArrayList();
+		for( User followingUser : followingUsers){
+			followingUserIDList.add(followingUser.getUserID());
+		}
+		
+		for( User followerUser : followerUsers){
+			followerUserIDList.add(followerUser.getUserID());
+		}
+		
+		for( Integer followingUserID : followingUserIDList){
+			if (followerUserIDList.contains(followingUserID)){
+				friendIDList.add(followingUserID);
+				followerUserIDList.remove(followingUserID);
+			}else{
+				newfollowingUserIDList.add(followingUserID);
+			}
+		}
+		
+		for( User followingUser : followingUsers){
+//			followingUserIDList.add(followingUser.getUserID());
+			if (newfollowingUserIDList.contains(followingUser.getUserID())){
+				newFollowingUsers.add(followingUser);
+			}
+			if (friendIDList.contains(followingUser.getUserID())){
+				friends.add(followingUser);
+			}
+		}
+		List<User> newFollowerUsers = new ArrayList();
+		for( User followerUser : followerUsers){
+//			followerUserIDList.add(followerUser.getUserID());
+			if (followerUserIDList.contains(followerUser.getUserID())){
+				newFollowerUsers.add(followerUser);
+			}
+		}
+		
+//		for( User followingUser : followingUsers){
+//			if (followerUsers.contains(followingUser)){
+//				friends.add(followingUser);
+//				followerUsers.remove(followingUser);
+//			}else{
+//				newFollowingUsers.add(followingUser);
+//			}
+//		}
+//		followerUsers;
+		FollowUsersLists followUsersLists = new FollowUsersLists();
+		followUsersLists.setFollowerUsers(newFollowerUsers);
+		followUsersLists.setFollowingUsers(newFollowingUsers);
+		followUsersLists.setFriends(friends);
+		response.setContent(followUsersLists);
+		response.setResult(1);
+		response.setResultDesp("返回成功");
+		return response;
+	}
 	
 	@RequestMapping(value="/followerusers", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json" })
 	@ResponseBody

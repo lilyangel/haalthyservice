@@ -23,10 +23,11 @@ public class CommentController {
 	
     @RequestMapping(value = "/post", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public GetCommentsByPostIdResponse getCommentsByPostId(@RequestBody IntRequest postid){
+    public GetCommentsByPostIdResponse getCommentsByPostId(@RequestBody IntRequest intRequest){
     	GetCommentsByPostIdResponse getCommentsByPostIdResponse = new GetCommentsByPostIdResponse();
     	try{
-    		List<Comment> comments = commentService.getCommentsByPostId(postid);
+    		intRequest.setBeginIndex(intRequest.getCount() * intRequest.getPage());
+    		List<Comment> comments = commentService.getCommentsByPostId(intRequest);
     		if (comments.size() > 0){
         		getCommentsByPostIdResponse.setResult(1);
         		getCommentsByPostIdResponse.setResultDesp("返回成功");

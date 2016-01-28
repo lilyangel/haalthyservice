@@ -18,8 +18,10 @@
 			isActive,
 			imageURL
 	    FROM Comment, user
-	    WHERE POSTID = #{id} AND IsActive = 1 AND (Comment.InsertUsername = user.Username) AND (DateInserted &gt;= #{begin}) AND (DateInserted &lt;= #{end}) 
-	    ORDER BY DateInserted DESC    
+	    WHERE POSTID = #{id} AND IsActive = 1 AND (Comment.InsertUsername = user.Username)
+	    	AND ((CommentID &lt; #{max_id}) OR (CommentID &gt; #{since_id}))
+	    	ORDER BY DateInserted DESC
+	    	LIMIT #{beginIndex}, #{count}    
 	  </select>
 	  
 	<insert id="addComment" useGeneratedKeys="true"
@@ -52,7 +54,10 @@
 			isActive,
 			imageURL
 			FROM Comment, user
-		WHERE Comment.PostID in (select postID from post where insertUserName=#{username}) AND IsActive = 1 AND (Comment.InsertUsername = user.Username) order by dateInserted desc;
+		WHERE Comment.PostID in (select postID from post where insertUserName=#{username}) AND IsActive = 1 AND (Comment.InsertUsername = user.Username) 
+			AND ((CommentID &lt; #{max_id}) OR (CommentID &gt; #{since_id}))
+			order by dateInserted desc
+			LIMIT #{beginIndex}, #{count}
 	</select>
 	
 	<update id="markCommentsAsReadByUsername" parameterType="String" flushCache="true">

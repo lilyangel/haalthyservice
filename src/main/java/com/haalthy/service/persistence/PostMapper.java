@@ -31,7 +31,7 @@ public interface PostMapper {
 	
 	List<Post> getPostsByUsername(String username);
 	
-	List<Comment> getCommentsByUsername(String username);
+	List<Comment> getCommentsByUsername(GetFeedsRequest request);
 	
 	int addMention(List<Mention> mention);
 	

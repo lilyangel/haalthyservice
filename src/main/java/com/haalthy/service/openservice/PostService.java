@@ -56,8 +56,8 @@ public class PostService {
 		return postMapper.getPostsByUsername(username);
 	}
 	
-	public List<Comment> getCommentsByUsername(String username){
-		return postMapper.getCommentsByUsername(username);
+	public List<Comment> getCommentsByUsername(GetFeedsRequest request){
+		return postMapper.getCommentsByUsername(request);
 	}
 	
 	public int addMention(List<Mention> mention){
