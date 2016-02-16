@@ -106,10 +106,12 @@ public class CommentSecurityController {
     public GetCommentsResponse getCommentsByUsername(@RequestBody UnreadCommentRequest unreadCommentReqest){
     	GetCommentsResponse getCommentsByUsernameResponse = new GetCommentsResponse();
     	try{
+    		unreadCommentReqest.setBeginIndex(unreadCommentReqest.getCount() * unreadCommentReqest.getPage());
     		getCommentsByUsernameResponse.setResult(1);
     		getCommentsByUsernameResponse.setResultDesp("返回成功");
-    		getCommentsByUsernameResponse.setContent(commentService.getCommentsByUsername(unreadCommentReqest.getUsername()));
+    		getCommentsByUsernameResponse.setContent(commentService.getCommentsByUsername(unreadCommentReqest));
     	}catch(Exception e){
+    		e.printStackTrace();
     		getCommentsByUsernameResponse.setResult(-1);
     		getCommentsByUsernameResponse.setResultDesp("数据库连接错误");
     	}

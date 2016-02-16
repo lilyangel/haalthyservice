@@ -1,25 +1,5 @@
 package com.haalthy.service.controller.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import com.haalthy.service.JPush.JPushService;
-import com.haalthy.service.controller.Interface.ContentStringEapsulate;
-import com.haalthy.service.controller.Interface.GetSuggestUsersByTagsRequest;
-import com.haalthy.service.controller.Interface.InputUsernameRequest;
-import com.haalthy.service.controller.Interface.OSSFile;
-import com.haalthy.service.controller.Interface.user.AddUpdateUserRequest;
-import com.haalthy.service.controller.Interface.user.AddUpdateUserResponse;
-import com.haalthy.service.controller.Interface.user.GetUsersResponse;
-import com.haalthy.service.domain.ClinicTrailInfo;
-import com.haalthy.service.domain.Follow;
-import com.haalthy.service.domain.SelectUserByTagRange;
-import com.haalthy.service.domain.User;
-import com.haalthy.service.openservice.ClinicTrailService;
-import com.haalthy.service.openservice.OssService;
-import com.haalthy.service.openservice.UserService;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -28,10 +8,35 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.haalthy.service.JPush.JPushService;
+import com.haalthy.service.controller.Interface.ContentStringEapsulate;
+import com.haalthy.service.controller.Interface.EmailAuthCodeRequest;
+import com.haalthy.service.controller.Interface.GetSuggestUsersByTagsRequest;
+import com.haalthy.service.controller.Interface.InputUsernameRequest;
+import com.haalthy.service.controller.Interface.OSSFile;
+import com.haalthy.service.controller.Interface.PostResponse;
+import com.haalthy.service.controller.Interface.ResetPasswordRequest;
+import com.haalthy.service.controller.Interface.user.AddUpdateUserResponse;
+import com.haalthy.service.controller.Interface.user.GetUsersResponse;
+import com.haalthy.service.domain.SelectUserByTagRange;
+import com.haalthy.service.domain.User;
+import com.haalthy.service.openservice.AuthCodeService;
+import com.haalthy.service.openservice.OssService;
+import com.haalthy.service.openservice.UserService;
+
+import com.haalthy.service.common.CheckUserType;
+import com.haalthy.service.openservice.AuthCodeService;
 
 @Controller
 @RequestMapping("/open/user")
@@ -56,6 +61,9 @@ public class UserController {
 	
     @Autowired
     private transient JPushService jPushService;
+    
+    @Autowired
+    private transient AuthCodeService authCodeService;
 
     @RequestMapping(value = "/add",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
@@ -63,7 +71,10 @@ public class UserController {
 		AddUpdateUserResponse addUserResponse = new AddUpdateUserResponse();
 		try {
 			user.setPassword(decodePassword(user.getPassword()));
-			user.setUsername(generateUsername(user));
+			if (user.getUserType().equals("AY")){
+				String username = generateUsername("AY");
+				user.setUsername(username);
+			}
 			// set encoded password
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 			String hashedPassword = passwordEncoder.encode(user.getPassword());
@@ -76,10 +87,15 @@ public class UserController {
 			user.setCreateDate(currentDt);
 			user.setUpdateDate(currentDt);
 			user.setFollowCount(0);
-			if ((userService.getUserByEmail(user.getEmail()) != null) || (userService.getUserByEmail(user.getEmail()) != null)) {
+			if (user.getEmail() == "")
+				user.setEmail(null);
+			if (user.getPhone() == "")
+				user.setPhone(null);
+			
+			if (((userService.getUserByEmail(user.getEmail()) != null) && (user.getEmail()) != "") ||
+					((userService.getUserByPhone(user.getPhone()) != null) && (user.getPhone()) != "")) {
 				addUserResponse.setResultDesp("该邮箱/手机已被注册");
 				addUserResponse.setResult(-2);
-				
 			}else if (userService.addUser(user) == 1) {
 //				String username = userService.getUserByEmail(user.getEmail()).getUsername();
 				String username = user.getUsername();
@@ -89,7 +105,9 @@ public class UserController {
 				contentStringEapsulate.setResult(username);
 				addUserResponse.setContent(contentStringEapsulate);
 				//
-	            jPushService.Login(username,user.getDeviceToken());
+				if (user.getDeviceToken() != null){
+					jPushService.Login(username,user.getDeviceToken());
+				}
 
 				//upload image
 				List<OSSFile> ossFileList = new ArrayList();
@@ -127,10 +145,10 @@ public class UserController {
 		return s;
 	}
     
-    private String generateUsername(User user){
+    private String generateUsername(String prefix){
     	String timestamp = String.valueOf(System.currentTimeMillis());
     	String randomInt = String.valueOf(getRandom());
-    	return user.getUserType()+timestamp+"."+randomInt;
+    	return prefix+timestamp+"."+randomInt;
     }
     
     @RequestMapping(value = "/suggestedusers",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
@@ -181,5 +199,56 @@ public class UserController {
 			getUsersResponse.setResultDesp("数据库连接错误");
 		}
 		return getUsersResponse;
+	}
+    
+    @RequestMapping(value = "/resetpasswordwithauthcode",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
+    @ResponseBody
+	public AddUpdateUserResponse resetPasswordWithAuthCode(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+    	AddUpdateUserResponse addUpdateUserResponse = new AddUpdateUserResponse();
+		try {
+			String password = resetPasswordRequest.getPassword();
+			String id = resetPasswordRequest.getId();
+			String authCode = resetPasswordRequest.getAuthCode();
+			CheckUserType checkUserType = new CheckUserType();
+			int userType = checkUserType.checkUserType(id);
+			String username;
+			User user = new User();
+//			AuthCodeController authCodeController = new AuthCodeController();
+//			EmailAuthCodeRequest emailAuthCodeRequest = new EmailAuthCodeRequest();
+//			emailAuthCodeRequest.setAuthCode(authCode);
+//			emailAuthCodeRequest.seteMail(id);
+			if ( userType == 0){
+				int postResponse = authCodeService.authEmailAuthCode(id, authCode);
+				if (postResponse == 0)
+					user = userService.getUserByEmail(id);
+			}else if (userType == 1){
+				int postResponse = authCodeService.authMobileAuthCode(id, authCode);
+				if (postResponse == 0)
+					user = userService.getUserByPhone(id);
+			}
+			username = user.getUsername();
+			System.out.println(username);
+			if (password != null && password != "") {
+				password = decodePassword(password);
+				BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+				String hashedPassword = passwordEncoder.encode(password);
+				user.setPassword(hashedPassword);
+			}
+			if(userService.resetPassword(user)>0){
+				addUpdateUserResponse.setResult(1);
+				addUpdateUserResponse.setResultDesp("返回成功");
+				ContentStringEapsulate result = new ContentStringEapsulate();
+				result.setResult(user.getUsername());
+				addUpdateUserResponse.setContent(result);
+			}else{
+				addUpdateUserResponse.setResult(-2);
+				addUpdateUserResponse.setResultDesp("更新失败");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			addUpdateUserResponse.setResult(-1);
+			addUpdateUserResponse.setResultDesp("数据库连接错误");
+		}
+		return addUpdateUserResponse;
 	}
 }

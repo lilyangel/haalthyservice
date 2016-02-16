@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haalthy.service.controller.Interface.tag.GetTagTypesResponse;
+import com.haalthy.service.controller.Interface.tag.GetTagsResponse;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.domain.TagType;
 import com.haalthy.service.openservice.TagService;
@@ -66,4 +67,22 @@ public class TagContoller {
 		}
 		return getTagTypesResponse;
 	}
+    
+    @RequestMapping(value = "/toplist", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+	public GetTagsResponse getTopTagList() {
+    	GetTagsResponse getTagsResponse = new GetTagsResponse();
+		try {
+			List<Tag> tags = tagService.getTagList();
+			getTagsResponse.setContent(tags);
+			getTagsResponse.setResult(1);
+			getTagsResponse.setResultDesp("返回成功");
+		} catch (Exception e) {
+			e.printStackTrace();
+			getTagsResponse.setResult(-1);
+			getTagsResponse.setResultDesp("数据库连接错误");
+		}
+		return getTagsResponse;
+    }
+
 }

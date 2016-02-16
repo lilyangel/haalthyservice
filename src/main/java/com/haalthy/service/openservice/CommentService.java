@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.haalthy.service.controller.Interface.IntRequest;
+import com.haalthy.service.controller.Interface.UnreadCommentRequest;
 import com.haalthy.service.domain.Comment;
 import com.haalthy.service.persistence.CommentMapper;
 
@@ -28,8 +29,8 @@ public class CommentService {
 		return commentMapper.getUnreadCommentsCount(username);
 	}
 	
-	public List<Comment> getCommentsByUsername(String username){
-		return commentMapper.getCommentsByUsername(username);
+	public List<Comment> getCommentsByUsername(UnreadCommentRequest unreadCommentReqest){
+		return commentMapper.getCommentsByUsername(unreadCommentReqest);
 	}
 	
 	public int markCommentsAsReadByUsername(String username){

@@ -33,7 +33,7 @@ public class Post implements Serializable{
 	private int age;
 	private String cancerType;
 	private String metastasis;
-	private int stage;
+	private String stage;
 	private int hasImage;
 	private String displayname;
 	private String highlight;
@@ -114,10 +114,10 @@ public class Post implements Serializable{
 	public void setMetastasis(String metastasis) {
 		this.metastasis = metastasis;
 	}
-	public int getStage() {
+	public String getStage() {
 		return stage;
 	}
-	public void setStage(int stage) {
+	public void setStage(String stage) {
 		this.stage = stage;
 	}
 	public int getType() {

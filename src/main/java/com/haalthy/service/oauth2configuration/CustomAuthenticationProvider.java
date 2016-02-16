@@ -26,10 +26,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		password = decodePassword(password);
 		User user = userService.getUserByUsername(name);
 		if (user == null) {
-			System.out.println("user is null");
 			user = userService.getUserByEmail(name);
 			if (user == null) {
-				return null;
+//				return null;
+				user = userService.getUserByPhone(name);
 			}
 		}
 //		User user = userService.getUserByEmail(name);

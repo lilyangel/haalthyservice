@@ -3,6 +3,7 @@ package com.haalthy.service.controller.user;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -163,10 +164,15 @@ public class UserSecurityController {
 				updateUserResponse.setResult(-2);
 				updateUserResponse.setResultDesp("找不到此用户");
 			}
-			if ((currentSessionUsername.equals(username) == false)
-					|| (username.equals(userService.getUserByEmail(currentSessionUsername).getUsername()))) {
-				updateUserResponse.setResult(-3);
-				updateUserResponse.setResultDesp("无权限更新此用户信息");
+			if (currentSessionUsername.equals(username) == false) {
+				User userEdit = userService.getUserByEmail(currentSessionUsername);
+				if (userEdit == null) {
+					userEdit = userService.getUserByPhone(currentSessionUsername);
+				}
+				if (userEdit.getUsername().equals(username) == false) {
+					updateUserResponse.setResult(-3);
+					updateUserResponse.setResultDesp("无权限更新此用户信息");
+				}
 			}
 
 			if (updateUser.getEmail() != null && updateUser.getEmail() != "")
@@ -179,9 +185,9 @@ public class UserSecurityController {
 //				userService.updateUserPhoto("user", photoPath)
 				List<OSSFile> ossFileList = new ArrayList();
 				OSSFile ossFile = new OSSFile();
-				ossFile.setFileType(user.getImageInfo().getType());
+				ossFile.setFileType(updateUser.getImageInfo().getType());
 				ossFile.setFunctionType("user");
-				ossFile.setImg(user.getImageInfo().getData());
+				ossFile.setImg(updateUser.getImageInfo().getData());
 				ossFile.setModifyType("update");
 				ossFile.setId(username);
 				ossFileList.add(ossFile);
@@ -195,9 +201,9 @@ public class UserSecurityController {
 			if (updateUser.getPathological() != null && updateUser.getPathological() != "") {
 				user.setPathological(updateUser.getPathological());
 			}
-			if (updateUser.getStage() != 0) {
+//			if (updateUser.getStage() != 0) {
 				user.setStage(updateUser.getStage());
-			}
+//			}
 			if (updateUser.getCancerType() != null && updateUser.getCancerType() != "") {
 				user.setCancerType(updateUser.getCancerType());
 			}
@@ -220,6 +226,7 @@ public class UserSecurityController {
 				updateUserResponse.setResultDesp("更新失败");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			updateUserResponse.setResult(-1);
 			updateUserResponse.setResultDesp("数据库连接错误");
 		}
@@ -618,7 +625,7 @@ public class UserSecurityController {
     
     @RequestMapping(value = "/getusername",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
-    public AddUpdateUserResponse getUsernameByEmail(@RequestBody InputUsernameRequest inputUsernameReqeust){
+    public AddUpdateUserResponse getUsernameByEmailOrPhone(@RequestBody InputUsernameRequest inputUsernameReqeust){
 		AddUpdateUserResponse addUpdateUserResponse = new AddUpdateUserResponse();
 		try {
 			User user = userService.getUserByEmail(inputUsernameReqeust.getUsername());
@@ -629,8 +636,18 @@ public class UserSecurityController {
 				contentStringEapsulate.setResult(user.getUsername());
 				addUpdateUserResponse.setContent(contentStringEapsulate);
 			}else{
-				addUpdateUserResponse.setResult(-2);
-				addUpdateUserResponse.setResultDesp("找不到该用户");	
+				System.out.println(inputUsernameReqeust.getUsername());
+				user = userService.getUserByPhone(inputUsernameReqeust.getUsername());
+				if (user != null) {
+					addUpdateUserResponse.setResult(1);
+					addUpdateUserResponse.setResultDesp("返回成功");
+					ContentStringEapsulate contentStringEapsulate = new ContentStringEapsulate();
+					contentStringEapsulate.setResult(user.getUsername());
+					addUpdateUserResponse.setContent(contentStringEapsulate);
+				}else{
+					addUpdateUserResponse.setResult(-2);
+					addUpdateUserResponse.setResultDesp("找不到该用户");
+				}
 			}
 		} catch (Exception e) {
 			addUpdateUserResponse.setResult(-1);
@@ -645,7 +662,8 @@ public class UserSecurityController {
     	GetUsersResponse getUsersResponse = new GetUsersResponse();
 		try {
 			List<Follow> followings = followService.getFollowingsByUsername(getMentionedUsernameRequest.getUsername());
-			List<User> users = userService.getUsersByDisplayname(getMentionedUsernameRequest.getMentionedDisplayname());
+			List<User> users  = userService.getUsersByDisplayname(getMentionedUsernameRequest.getMentionedDisplayname());
+			List<User> selectedUsers = new ArrayList();
 			Iterator<Follow> followingItr = followings.iterator();
 			List<String> followingUsernames = new ArrayList();
 			System.out.println(followings.size());
@@ -654,17 +672,25 @@ public class UserSecurityController {
 				followingUsernames.add(following.getFollowingUser());
 				System.out.println(following.getFollowingUser());
 			}
-			Iterator<User> userItr = users.iterator();
-			while (userItr.hasNext()) {
-				User user = userItr.next();
+			for (User user: users) {
 				if (!followingUsernames.contains(user.getUsername())) {
-					users.remove(user);
+					selectedUsers.add(user);
 				}
+			}
+//			Iterator<User> userItr = users.iterator();
+//			while (userItr.hasNext()) {
+//				User user = userItr.next();
+//
+//			}
+			if (selectedUsers.size() == 0) {
+				getUsersResponse.setContent(users);
+			} else {
+				getUsersResponse.setContent(selectedUsers);
 			}
 			getUsersResponse.setResult(1);
 			getUsersResponse.setResultDesp("返回成功");
-			getUsersResponse.setContent(users);
 		} catch (Exception e) {
+			e.printStackTrace();
 			getUsersResponse.setResult(-1);
 			getUsersResponse.setResultDesp("数据库连接错误");
 		}

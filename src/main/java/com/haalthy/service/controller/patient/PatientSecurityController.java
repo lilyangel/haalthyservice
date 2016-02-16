@@ -200,17 +200,18 @@ public class PatientSecurityController {
 				postService.addPost(post);
 			}
 			List<OSSFile> ossFileList = new ArrayList();
-			for(ImageInfo imageInfo: addPatientStatusRequest.getImageInfos()){
-				OSSFile ossFile = new OSSFile();
-				ossFile.setFileType(imageInfo.getType());
-				ossFile.setFunctionType("patient");
-				ossFile.setId(String.valueOf(patientStatus.getStatusID()));
-				ossFile.setImg(imageInfo.getData());
-				ossFile.setModifyType("append");
-				ossFileList.add(ossFile);
+			if (addPatientStatusRequest.getImageInfos() != null) {
+				for (ImageInfo imageInfo : addPatientStatusRequest.getImageInfos()) {
+					OSSFile ossFile = new OSSFile();
+					ossFile.setFileType(imageInfo.getType());
+					ossFile.setFunctionType("patient");
+					ossFile.setId(String.valueOf(patientStatus.getStatusID()));
+					ossFile.setImg(imageInfo.getData());
+					ossFile.setModifyType("append");
+					ossFileList.add(ossFile);
+				}
+				ossService.ossUploadFile(ossFileList);
 			}
-			ossService.ossUploadFile(ossFileList);
-			
 			addPatientStatusResponse.setResult(1);
 			addPatientStatusResponse.setResultDesp("返回成功");
 			ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();

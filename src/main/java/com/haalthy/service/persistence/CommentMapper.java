@@ -2,6 +2,7 @@ package com.haalthy.service.persistence;
 import java.util.List;
 
 import com.haalthy.service.controller.Interface.IntRequest;
+import com.haalthy.service.controller.Interface.UnreadCommentRequest;
 import com.haalthy.service.domain.Comment;
 
 public interface CommentMapper {
@@ -13,7 +14,7 @@ public interface CommentMapper {
 	
 	int getUnreadCommentsCount(String username);
 	
-	List<Comment> getCommentsByUsername(String username);
+	List<Comment> getCommentsByUsername(UnreadCommentRequest unreadCommentReqest);
 	
 	int markCommentsAsReadByUsername(String username);
 }

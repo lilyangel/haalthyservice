@@ -49,7 +49,6 @@ public class OssService {
             id = oss.getId();
             result.append(setting.getUrl(oss.getFunctionType(),fileName));
         }
-
         client.shutdown();
         return refreshImgPath.refreshImg(functionType,"update",id,result.toString());
     }

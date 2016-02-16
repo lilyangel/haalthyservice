@@ -28,7 +28,7 @@ public class UserService {
     }
     
     public User getUserByPhone(String phone) {
-    	return userMapper.getUserByEmail(phone);
+    	return userMapper.getUserByPhone(phone);
     }
 
     public int addUser(User user){
@@ -79,6 +79,9 @@ public class UserService {
 	{
 		User user = new User();
 		user.setUsername(id);
+		if(photoPath.charAt(photoPath.length() - 1) == ';'){
+			photoPath = photoPath.substring(0, photoPath.length() - 1);
+		}
 		user.setImageURL(photoPath);
 		return userMapper.updateUserPhoto(user);
 	}

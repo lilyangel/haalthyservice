@@ -105,6 +105,7 @@ public class PostController {
 			getPostsResponse.setResultDesp("返回成功");
 			getPostsResponse.setContent(posts);
 		} catch (Exception e) {
+			e.printStackTrace();
 			getPostsResponse.setResult(-1);
 			getPostsResponse.setResultDesp("数据库连接错误");
 		}
