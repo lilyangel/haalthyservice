@@ -29,7 +29,7 @@ public interface PostMapper {
 	
 	List<Post> getPosts(GetFeedsRequest request);
 	
-	List<Post> getPostsByUsername(String username);
+	List<Post> getPostsByUsername(GetFeedsRequest getFeedsRequest);
 	
 	List<Comment> getCommentsByUsername(GetFeedsRequest request);
 	
@@ -50,6 +50,8 @@ public interface PostMapper {
 	int markMentionedPostAsRead(String username);
 	int updatePostImg(Post post);
 	int appendPostImg(Post post);
+	
+	Post getPostByStatusId(int statusId);
 
 //	int updatePostImg(@Param(value = "postID") int postId, @Param(value = "filename") String fileName);
 //	int appendPostImg(@Param(value = "postID") int postId,@Param(value = "filename") String fileName);

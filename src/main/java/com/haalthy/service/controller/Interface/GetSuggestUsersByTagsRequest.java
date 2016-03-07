@@ -2,8 +2,9 @@ package com.haalthy.service.controller.Interface;
 
 public class GetSuggestUsersByTagsRequest {
 	int[] tags;
-	int rangeBegin;
-	int rangeEnd;
+	int page;
+	int count;
+	int beginIndex;
 
 	public int[] getTags() {
 		return tags;
@@ -11,17 +12,22 @@ public class GetSuggestUsersByTagsRequest {
 	public void setTags(int[] tags) {
 		this.tags = tags;
 	}
-	public int getRangeBegin() {
-		return rangeBegin;
+	public int getPage() {
+		return page;
 	}
-	public void setRangeBegin(int rangeBegin) {
-		this.rangeBegin = rangeBegin;
+	public void setPage(int page) {
+		this.page = page;
 	}
-	public int getRangeEnd() {
-		return rangeEnd;
+	public int getCount() {
+		return count;
 	}
-	public void setRangeEnd(int rangeEnd) {
-		this.rangeEnd = rangeEnd;
+	public void setCount(int count) {
+		this.count = count;
 	}
-	
+	public int getBeginIndex() {
+		return beginIndex;
+	}
+	public void setBeginIndex(int beginIndex) {
+		this.beginIndex = beginIndex;
+	}
 }

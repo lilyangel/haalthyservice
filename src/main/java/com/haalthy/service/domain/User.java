@@ -28,7 +28,14 @@ public class User implements Serializable {
 	private String deviceToken;
 	private String imageURL;
 	private String phone;
+	private int isSuperUser;
 	
+	public int getIsSuperUser() {
+		return isSuperUser;
+	}
+	public void setIsSuperUser(int isSuperUser) {
+		this.isSuperUser = isSuperUser;
+	}
 	public String getPhone() {
 		return phone;
 	}

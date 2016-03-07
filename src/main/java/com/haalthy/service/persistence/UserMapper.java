@@ -44,6 +44,8 @@ public interface UserMapper {
 	  
 	  List<User> getUsersByDisplayname(String displayname);
 	  
+	  List<User> getSuperUserList();
+	  
 	  int resetDeviceToken(User user);
 
 	  int updateUserPhoto(User user);

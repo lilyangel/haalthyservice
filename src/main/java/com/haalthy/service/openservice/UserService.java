@@ -100,4 +100,8 @@ public class UserService {
 	public List<User> getUsersByDisplayname(String mentionedDisplayname) {
 		return userMapper.getUsersByDisplayname(mentionedDisplayname);
 	}
+	
+	public List<User> getSuperUserList(){
+		return userMapper.getSuperUserList();
+	}
 }

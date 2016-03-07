@@ -29,17 +29,11 @@ public interface PatientMapper {
 	List<PatientStatus> getPatientStatusByUser(String username);
 	
 	List<ClinicReportFormat> getClinicReportFormat();
-	
-	int insertClinicReport(ClinicReport clinicReport);
-	
-	List<ClinicReport> getClinicReportByUser(String username);
-	
+			
 	List<Treatment> getPostedTreatmentsByUser(String username);
 
 	List<PatientStatus> getPostedPatientStatusByUser(String username);
-	
-	List<ClinicReport> getPostedClinicReportByUser(String username);
-	
+		
 	int updateTreatmentById(Treatment treatment);
 	
 	int deleteTreatmentById(int treatmentId);
@@ -54,4 +48,6 @@ public interface PatientMapper {
 	int appendPatientImg(PatientStatus patientStatus);
 
 	List<TreatmentContent> getAllPostedTreatmentList(GetPostedTreatmentListRequest getPostedTreatmentListRequest);
+	
+	PatientStatus getPatientStatusById(int statusId);
 }

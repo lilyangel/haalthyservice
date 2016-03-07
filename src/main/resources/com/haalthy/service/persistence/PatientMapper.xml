@@ -69,23 +69,6 @@
 			WHERE username = #{username} and (((StatusDesc is not null) and (StatusDesc != "")) or ((scanData is not null) and scanData != ""))
 		ORDER BY InsertedDate DESC
    </select>
-   
-   <select id = "getClinicReportByUser" parameterType="String" resultType="ClinicReport">
-   		SELECT 
-   			username,
-   			CEA,
-   			CT,
-   			SCC,
-   			CYFRA21,
-   			NSE,
-   			ProGRP,
-			clinicReport,
-			dateInserted,
-			isPosted
-		FROM ClinicReport
-			WHERE username = #{username}
-		ORDER BY dateInserted DESC
-   </select>
 
    <select id = "getPostedTreatmentsByUser" parameterType="String" resultType="Treatment">
    		SELECT 
@@ -115,19 +98,6 @@
 			WHERE username = #{username}  AND IsPosted = 1
 		ORDER BY InsertedDate DESC
    </select>
-   
-   <select id = "getPostedClinicReportByUser" parameterType="String" resultType="ClinicReport">
-   		SELECT 
-   			username,
-			clinicReport,
-			dateInserted,
-			cea,
-			ct,
-			isPosted
-		FROM ClinicReport
-			WHERE username = #{username}
-		ORDER BY dateInserted DESC
-   </select>
 
   <insert id = "insertTreatment" useGeneratedKeys="true"
     	keyProperty="treatmentID" keyColumn = "treatmentID" flushCache="true">
@@ -144,18 +114,6 @@
 			IsPosted,
 			scanData) VALUES(
   		#{username}, #{statusDesc}, #{insertedDate}, #{isPosted}, #{scanData}
-  	)
-  </insert>
-  
-  <insert id = "insertClinicReport" useGeneratedKeys="true"
-    	keyProperty="ClinicReportID" keyColumn = "ClinicReportID" flushCache="true">
-  	INSERT INTO ClinicReport(Username,
-  			clinicReport,
-			cea,
-			ct,
-			DateInserted,
-			IsPosted) VALUES(
-  		#{username},#{clinicReport}, #{CEAValue}, #{CTDesc}, #{dateInserted}, #{isPosted}
   	)
   </insert>
   
@@ -211,7 +169,22 @@
 	<!--追加图片-->
 	<update id="appendPatientImg" parameterType="PatientStatus" flushCache="true">
 		update patientstatus SET
-		imageURL = #{imageURL}
+		imageURL = concat(imageURL, #{imageURL})
 		where statusID=#{statusID}
 	</update>
+	
+	<select id = "getPatientStatusById" resultType="PatientStatus">
+   		SELECT 
+   			StatusID,
+			Username,
+			StatusDesc,
+			InsertedDate,
+			IsPosted,
+			scanData,
+			imageURL
+		FROM patientstatus
+			WHERE StatusID = #{statusId}
+		ORDER BY InsertedDate DESC
+   </select>
+   
 </mapper>

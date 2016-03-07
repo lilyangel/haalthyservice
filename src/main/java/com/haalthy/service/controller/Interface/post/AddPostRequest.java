@@ -12,10 +12,18 @@ public class AddPostRequest {
 	private int closed;
 	private int isBroadcast;
 	private String type;
+	private int hasImage;
 	private List<Tag> tags;
 	private List<String> mentionUsers;
 	private List<ImageInfo> imageInfos;
 	
+	
+	public int getHasImage() {
+		return hasImage;
+	}
+	public void setHasImage(int hasImage) {
+		this.hasImage = hasImage;
+	}
 	public String getInsertUsername() {
 		return insertUsername;
 	}

@@ -52,8 +52,8 @@ public class PostService {
 		return postMapper.getPosts(request);
 	}
 	
-	public 	List<Post> getPostsByUsername(String username){
-		return postMapper.getPostsByUsername(username);
+	public 	List<Post> getPostsByUsername(GetFeedsRequest getFeedsRequest){
+		return postMapper.getPostsByUsername(getFeedsRequest);
 	}
 	
 	public List<Comment> getCommentsByUsername(GetFeedsRequest request){
@@ -105,4 +105,9 @@ public class PostService {
 		post.setImageURL(filePath);
 		return postMapper.appendPostImg(post);
 	}
+	
+	public Post getPostByStatusId(int statusId){
+		return postMapper.getPostByStatusId(statusId);
+	}
+
 }

@@ -109,7 +109,6 @@ public class UserSecurityController {
 			List<ClinicDataType> clinicReport = new ArrayList();
 			treatments = patientService.getTreatmentsByUser(username);
 			patientStatus = patientService.getPatientStatusByUser(username);
-			// clinicReport = patientService.getClinicReportByUser(username);
 			List<ClinicData> clinicDataList = patientService.getClinicDataByUsername(username);
 			Iterator<ClinicData> clinicDataItr = clinicDataList.iterator();
 			while (clinicDataItr.hasNext()) {
@@ -515,10 +514,12 @@ public class UserSecurityController {
     public GetUsersResponse getSuggestUsersByProfile(@RequestBody GetSuggestUsersByProfileRequest getSuggestUsersByProfileRequest) {
     	GetUsersResponse getUsersResponse = new GetUsersResponse();
     	try{
+    		getSuggestUsersByProfileRequest.setBeginIndex(getSuggestUsersByProfileRequest.getCount() * getSuggestUsersByProfileRequest.getPage());
     		getUsersResponse.setContent(userService.selectSuggestUsersByProfile(getSuggestUsersByProfileRequest));
     		getUsersResponse.setResult(1);
     		getUsersResponse.setResultDesp("返回成功");
     	}catch(Exception e){
+    		e.printStackTrace();
     		getUsersResponse.setResult(-1);
     		getUsersResponse.setResultDesp("数据库连接错误");
     	}
@@ -559,15 +560,19 @@ public class UserSecurityController {
     @ResponseBody
 	public AddUpdateUserResponse resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
     	AddUpdateUserResponse addUpdateUserResponse = new AddUpdateUserResponse();
+		ContentStringEapsulate contentStringEapsulate = new ContentStringEapsulate();
 		try {
 			String password = resetPasswordRequest.getPassword();
 			User user = new User();
 			Authentication a = SecurityContextHolder.getContext().getAuthentication();
 			String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest()
 					.getAuthorizationParameters().get("username");
+			System.out.println(currentSessionUsername);
 			if (userService.getUserByUsername(currentSessionUsername) == null)
-				currentSessionUsername = userService.getUserByEmail(currentSessionUsername).getUsername();
-			user.setUsername(currentSessionUsername);
+				user = userService.getUserByEmail(currentSessionUsername);
+			if (user == null){
+				user = userService.getUserByPhone(currentSessionUsername);
+			}
 			if (password != null && password != "") {
 				password = decodePassword(password);
 				BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -577,9 +582,53 @@ public class UserSecurityController {
 			if(userService.resetPassword(user)>0){
 				addUpdateUserResponse.setResult(1);
 				addUpdateUserResponse.setResultDesp("返回成功");
+				contentStringEapsulate.setResult("1");
 			}else{
 				addUpdateUserResponse.setResult(-2);
 				addUpdateUserResponse.setResultDesp("更新失败");
+				contentStringEapsulate.setResult("-2");
+			}
+		} catch (Exception e) {
+			addUpdateUserResponse.setResult(-1);
+			addUpdateUserResponse.setResultDesp("数据库连接错误");
+			contentStringEapsulate.setResult("-1");
+		}
+		addUpdateUserResponse.setContent(contentStringEapsulate);
+		return addUpdateUserResponse;
+	}
+    
+    @RequestMapping(value = "/resetpasswordbysuperUser",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
+    @ResponseBody
+	public AddUpdateUserResponse resetpasswordBySuperUser(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+    	AddUpdateUserResponse addUpdateUserResponse = new AddUpdateUserResponse();
+		try {
+			String password = resetPasswordRequest.getPassword();
+			User user = new User();
+			Authentication a = SecurityContextHolder.getContext().getAuthentication();
+			String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest()
+					.getAuthorizationParameters().get("username");
+			if (userService.getUserByUsername(currentSessionUsername) == null)
+				user = userService.getUserByEmail(currentSessionUsername);
+			if (user == null){
+				user = userService.getUserByPhone(currentSessionUsername);
+			}
+			if (user.getIsSuperUser() == 1) {
+				User updateUser = new User();
+				updateUser.setUsername(resetPasswordRequest.getId());
+
+				if (password != null && password != "") {
+					password = decodePassword(password);
+					BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+					String hashedPassword = passwordEncoder.encode(password);
+					updateUser.setPassword(hashedPassword);
+				}
+				if (userService.resetPassword(updateUser) > 0) {
+					addUpdateUserResponse.setResult(1);
+					addUpdateUserResponse.setResultDesp("返回成功");
+				} else {
+					addUpdateUserResponse.setResult(-2);
+					addUpdateUserResponse.setResultDesp("更新失败");
+				}
 			}
 		} catch (Exception e) {
 			addUpdateUserResponse.setResult(-1);
@@ -587,41 +636,6 @@ public class UserSecurityController {
 		}
 		return addUpdateUserResponse;
 	}
-    
-//    @RequestMapping(value = "/deletesuggesteduser",method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
-//    @ResponseBody
-//    public int deleteSuggestUsersByProfile(@RequestBody SuggestedUserPair suggestedUserPair) {
-//    	
-//    	return userService.deleteFromSuggestUserByProfile(suggestedUserPair);
-//    }
-//    public int resetPassword(@RequestBody String password){
-// 	   User user = new User();
-// 	   Authentication a = SecurityContextHolder.getContext().getAuthentication();
-// 	   String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username");
-// 	   if (userService.getUserByUsername(currentSessionUsername) == null)
-// 		  currentSessionUsername = userService.getUserByEmail(currentSessionUsername).getUsername();
-// 	   user.setUsername(currentSessionUsername);
-// 	   if(password!=null && password!=""){
-// 		   password = decodePassword(password);
-// 		   BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-// 		   String hashedPassword = passwordEncoder.encode(password);
-// 		   user.setPassword(hashedPassword);
-// 	   }
-// 	   int result  = userService.resetPassword(user);
-// 	   return result;
-//    }
-    
-//    @RequestMapping(value = "/deletesuggesteduser/{username}",method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
-//    @ResponseBody
-//    public int getSuggestUsersByProfile(@RequestBody SuggestedUserPair suggestedUserPair) {
-//    	SuggestedUserPair suggestedUserPair = new SuggestedUserPair();
-//    	Authentication a = SecurityContextHolder.getContext().getAuthentication();
-//    	suggestedUserPair.setSuggestedUsername(((OAuth2Authentication) a).getAuthorizationRequest().getAuthorizationParameters().get("username"));
-//    	suggestedUserPair.setUsername(username);
-//    	System.out.println(suggestedUserPair.getSuggestedUsername());
-//    	System.out.println(suggestedUserPair.getUsername());
-//    	return userService.deleteFromSuggestUserByProfile(suggestedUserPair);
-//    }
     
     @RequestMapping(value = "/getusername",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
@@ -695,5 +709,20 @@ public class UserSecurityController {
 			getUsersResponse.setResultDesp("数据库连接错误");
 		}
     	return getUsersResponse;
+    }
+    
+    @RequestMapping(value = "/list",method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+    public GetUsersResponse getSuperUserList(){
+		GetUsersResponse getUsersResponse = new GetUsersResponse();
+		try {
+			getUsersResponse.setContent(userService.getSuperUserList());
+			getUsersResponse.setResult(1);
+			getUsersResponse.setResultDesp("返回成功");
+		} catch (Exception e) {
+			getUsersResponse.setResult(-1);
+			getUsersResponse.setResultDesp("数据库连接错误");
+		}
+		return getUsersResponse;
     }
 }

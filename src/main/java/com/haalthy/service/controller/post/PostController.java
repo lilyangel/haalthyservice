@@ -23,14 +23,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostTag;
 import com.haalthy.service.domain.Tag;
+import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.PostService;
+import com.haalthy.service.common.ProcessImageURL;
 import com.haalthy.service.controller.Interface.ContentIntEapsulate;
 import com.haalthy.service.controller.Interface.IntRequest;
 import com.haalthy.service.controller.Interface.post.AddPostRequest;
 import com.haalthy.service.controller.Interface.post.AddUpdatePostResponse;
+import com.haalthy.service.controller.Interface.post.GetFeedsRequest;
 import com.haalthy.service.controller.Interface.post.GetPostResponse;
 import com.haalthy.service.controller.Interface.post.GetPostsByTagsCountResponse;
 import com.haalthy.service.controller.Interface.post.GetPostsByTagsRequest;
@@ -42,7 +46,10 @@ public class PostController {
 	@Autowired
 	private transient PostService postService;
 	private static final String imageLocation = "/Users/lily/haalthyServer/post/";
-
+	
+	@Autowired
+	private transient PatientService patientService;
+	
     @RequestMapping(value = "/getpost", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public GetPostResponse getPostById(@RequestBody IntRequest postid){
@@ -51,12 +58,25 @@ public class PostController {
 			ImageService imageService = new ImageService();
 			Post post = postService.getPostById(postid.getId());
 			if (post != null) {
+				if (post.getType() == 2) {
+					System.out.println(post.getPatientStatusID());
+					PatientStatus patientStatus = patientService.getPatientStatusById(post.getPatientStatusID());
+					System.out.println(patientStatus.getImageURL());
+					if ((patientStatus != null) && (patientStatus.getImageURL() != null)){
+						post.setImageURL(patientStatus.getImageURL());
+					}
+				}
+				if (post.getImageURL() != null){
+					
+					ProcessImageURL processImageURL = new ProcessImageURL();
+					post.setImageURL(processImageURL.processImageURL(post.getImageURL()));
+				}
 				getPostResponse.setContent(post);
 				getPostResponse.setResult(1);
 				getPostResponse.setResultDesp("返回成功");
 			} else {
 				getPostResponse.setResult(-3);
-				getPostResponse.setResultDesp("改post不存在");
+				getPostResponse.setResultDesp("post不存在");
 			}
 		} catch(NullPointerException nullPE){
 			getPostResponse.setResult(-2);
@@ -64,8 +84,8 @@ public class PostController {
 			getPostResponse.setResultDesp("系统异常");
 		} 
 		catch (Exception e) {
+			e.printStackTrace();
 			getPostResponse.setResult(-1);
-			System.out.println(e);
 			getPostResponse.setResultDesp("数据库连接错误");
 		} 
     	return getPostResponse;
@@ -96,10 +116,18 @@ public class PostController {
 			} else {
 				posts = postService.getPostsByTags(request);
 			}
-			Iterator<Post> postItr = posts.iterator();
-			ImageService imageService = new ImageService();
-			while (postItr.hasNext()) {
-				Post post = postItr.next();
+			for (Post post : posts){
+				if (post.getType() == 2) {
+					PatientStatus patientStatus = patientService.getPatientStatusById(post.getPatientStatusID());
+					if ((patientStatus != null) && (patientStatus.getImageURL() != null)){
+						post.setImageURL(patientStatus.getImageURL());
+					}
+				}
+				if (post.getImageURL() != null){
+					
+					ProcessImageURL processImageURL = new ProcessImageURL();
+					post.setImageURL(processImageURL.processImageURL(post.getImageURL()));
+				}
 			}
 			getPostsResponse.setResult(1);
 			getPostsResponse.setResultDesp("返回成功");
@@ -132,6 +160,7 @@ public class PostController {
 			contentIntEapsulate.setCount(postCount);
 			getPostsByTagsCountRequest.setContent(contentIntEapsulate);
 		} catch (Exception e) {
+			e.printStackTrace();
 			getPostsByTagsCountRequest.setResult(-1);
 			getPostsByTagsCountRequest.setResultDesp("数据库连接错误");
 		}

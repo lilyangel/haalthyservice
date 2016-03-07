@@ -50,6 +50,36 @@ public class OssService {
             result.append(setting.getUrl(oss.getFunctionType(),fileName));
         }
         client.shutdown();
-        return refreshImgPath.refreshImg(functionType,"update",id,result.toString());
+        return refreshImgPath.refreshImg(functionType,"update",id,result.toString(), -1);
     }
+    
+	public int ossUploadSingleFile(OSSFile oss, int index, String modifyType) throws Exception {
+
+		// get file type
+		setting = OSSSetting.getInstance();
+		// get file name
+
+		OSSClient client = new OSSClient(setting.getEndpoint(), setting.getAccess_ID(), setting.getSecret_ID());
+
+		if (!client.doesBucketExist(setting.getBucket()))
+			client.createBucket(setting.getBucket());
+		String functionType = "";
+		String id = "";
+		StringBuilder result = new StringBuilder();
+		String fileName = setting.getFileName(oss.getFileType());
+
+		ByteArrayInputStream in = new ByteArrayInputStream(oss.getImg());
+		ObjectMetadata objectMeta = new ObjectMetadata();
+		objectMeta.setContentLength(in.available());
+		objectMeta.setContentType(setting.getContentType(oss.getFileType()));
+		OSSFileOperate simple = new OSSFileOperate();
+		simple.putSimpleObject(client, setting.getBucket(), setting.getOSSKey(oss.getFunctionType(), fileName), in,
+				objectMeta);
+		in.close();
+		functionType = oss.getFunctionType();
+		id = oss.getId();
+		result.append(setting.getUrl(oss.getFunctionType(), fileName));
+		client.shutdown();
+		return refreshImgPath.refreshImg(functionType, modifyType, id, result.toString(), index);
+	}
 }

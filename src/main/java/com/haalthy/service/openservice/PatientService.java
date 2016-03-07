@@ -53,24 +53,12 @@ public class PatientService {
 		return patientMapper.getClinicReportFormat();
 	}
 	
-	public int insertClinicReport(ClinicReport clinicReport){
-		return patientMapper.insertClinicReport(clinicReport);
-	}
-	
-	public List<ClinicReport> getClinicReportByUser(String username){
-		return patientMapper.getClinicReportByUser(username);
-	}
-	
 	public List<Treatment> getPostedTreatmentsByUser(String username){
 		return patientMapper.getPostedTreatmentsByUser(username);
 	}
 
 	public List<PatientStatus> getPostedPatientStatusByUser(String username){
 		return patientMapper.getPostedPatientStatusByUser(username);
-	}
-	
-	public List<ClinicReport> getPostedClinicReportByUser(String username){
-		return patientMapper.getPostedClinicReportByUser(username);
 	}
 	
 	public int updateTreatmentById(Treatment treatment){
@@ -109,4 +97,9 @@ public class PatientService {
 		patientStatus.setImageURL(filePath);
 		return patientMapper.appendPatientImg(patientStatus);
 	}
+	
+	public PatientStatus getPatientStatusById(int statusId){
+		return patientMapper.getPatientStatusById(statusId);
+	}
+
 }

@@ -19,6 +19,7 @@
 			CountViews,
 			Closed,
 			IsBroadcast,
+			hasImage,
 			DateInserted,
 			DateUpdated,
 			isActive,
@@ -29,15 +30,48 @@
 			user.imageURL as portraitURL,
 			geneticMutation,
 			user.cancerType,
-			user.pathological
+			user.pathological,
+			user.age,
+			user.gender,
+			patientStatusID
 	    FROM post, user
 	    WHERE POSTID = #{PostID} AND post.InsertUserName = user.username
+	  </select>
+	  <select id="getPostByStatusId" parameterType="int" resultType="Post">
+	    SELECT
+			PostID,
+			Type,
+			InsertUserName,
+			body,
+			Tags,
+			CountComments,
+			CountBookmarks,
+			CountViews,
+			Closed,
+			IsBroadcast,
+			hasImage,
+			DateInserted,
+			DateUpdated,
+			isActive,
+			post.imageURL as imageURL,
+			displayname,
+			highlight,
+			clinicReport,
+			user.imageURL as portraitURL,
+			geneticMutation,
+			user.cancerType,
+			user.pathological,
+			user.age,
+			user.gender,
+			patientStatusID
+	    FROM post, user
+	    WHERE POSTID = #{statusId} AND post.InsertUserName = user.username
 	  </select>
 	  
 	<insert id="addPost" useGeneratedKeys="true"
     	keyProperty="postID" keyColumn = "PostID">
-  		INSERT into post (InsertUserName, body, Tags, CountComments, CountBookmarks, CountViews, Closed, IsBroadcast, DateInserted,DateUpdated, isActive, Type, HasImage, highlight, clinicReport)
- 			 VALUES (#{insertUsername},#{body},#{tags}, #{countComments}, #{countBookmarks}, #{countViews}, #{closed},#{isBroadcast}, #{dateInserted}, #{dateUpdated}, #{isActive}, #{type}, #{hasImage}, #{highlight}, #{clinicReport})
+  		INSERT into post (InsertUserName, body, Tags, CountComments, CountBookmarks, CountViews, Closed, IsBroadcast, DateInserted,DateUpdated, isActive, Type, HasImage, highlight, clinicReport, treatmentID, patientStatusID)
+ 			 VALUES (#{insertUsername},#{body},#{tags}, #{countComments}, #{countBookmarks}, #{countViews}, #{closed},#{isBroadcast}, #{dateInserted}, #{dateUpdated}, #{isActive}, #{type}, #{hasImage}, #{highlight}, #{clinicReport}, #{treatmentID}, #{patientStatusID})
 	</insert>
 	
 	<insert id="addMention" parameterType="java.util.List" flushCache="true">
@@ -88,7 +122,8 @@
 			pathological,
 			age,
 			gender,
-			metastasis
+			metastasis,
+			patientStatusID
 	    FROM post, user
 	    WHERE ((PostID IN(
 	    	SELECT PostID 
@@ -151,7 +186,8 @@
 			pathological,
 			age,
 			gender,
-			metastasis
+			metastasis,
+			patientStatusID
 	    FROM post, user
 	    WHERE post.InsertUserName IN(
 	    	SELECT FollowingUser 
@@ -181,7 +217,7 @@
 			Gender,
 			IsSmoking,
 			Pathological,
-			Age,
+			user.age,
 			CancerType,
 			Metastasis,
 			Stage,
@@ -190,7 +226,8 @@
 			highlight,
 			clinicReport,
 			post.imageURL as imageURL,
-			geneticMutation
+			geneticMutation,
+			patientStatusID
 	FROM post, user
 	    WHERE (((post.InsertUserName IN(
 	    	SELECT FollowingUser 
@@ -262,9 +299,15 @@
 			DateUpdated,
 			isActive,
 			highlight,
-			clinicReport
+			clinicReport,
+			imageURL,
+			hasImage,
+			patientStatusID
 		FROM post
 		WHERE insertUserName = #{username} AND type = 0
+		AND ((postID &lt; #{max_id}) OR (postID &gt; #{since_id}))
+		ORDER BY DateInserted DESC
+	    LIMIT #{beginIndex}, #{count}
 	</select>
 	
 	<select id = "getCommentsByUsername" resultType = "COMMENT">
@@ -277,7 +320,9 @@
 			DateInserted
 		FROM Comment
 		WHERE InsertUsername = #{username} AND IsActive = 1
-		ORDER BY DateInserted DESC    
+		AND ((postID &lt; #{max_id}) OR (postID &gt; #{since_id}))
+		ORDER BY DateInserted DESC
+	    LIMIT #{beginIndex}, #{count}
 	</select>
 	
 	<select id = "getAllBroadcast" resultType="POST">
@@ -306,7 +351,8 @@
 			pathological,
 			age,
 			gender,
-			metastasis
+			metastasis,
+			patientStatusID
 	    FROM post, user
 	    WHERE 
 	    ((post.InsertUserName = user.Username) AND (isActive = 1) AND (IsBroadcast = 1))
@@ -335,7 +381,7 @@
 	
 	<select id="getMentionedPostsByUsername" resultType="POST">
 		SELECT DISTINCT
-			post.PostID,
+			post.PostID as postID,
 			Type,
 			InsertUserName,
 			body,
@@ -350,12 +396,13 @@
 			isActive,
 			post.imageURL as imageURL,
 			user.imageURL as portraitURL,
-			displayname
+			displayname,
+			patientStatusID
 	    FROM post, user, UserBeMentionedByPost
 	    WHERE (post.PostID = UserBeMentionedByPost.PostID)
 	    	AND (post.InsertUserName = user.Username)
 	    	AND (UserBeMentionedByPost.Username = #{username}) AND (isActive = 1) 
-	    	AND ((postID &lt; #{max_id}) OR (postID &gt; #{since_id}))
+	    	AND ((post.postID &lt; #{max_id}) OR (post.postID &gt; #{since_id}))
 	    	ORDER BY DateInserted DESC
 	    	LIMIT #{beginIndex}, #{count}
 	</select>
@@ -375,7 +422,7 @@
 	<!--追加图片-->
 	<update id="appendPostImg" parameterType="Post" flushCache="true">
 		update post SET
-		imageURL = #{imageURL}
+		imageURL = concat(imageURL, #{imageURL})
 		where PostID=#{postID}
 	</update>
 </mapper>

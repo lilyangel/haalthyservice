@@ -8,6 +8,7 @@ public class Comment  implements Serializable{
 	private int commentID;
 	private int postID;
 	private String insertUsername;
+	private String displayname;
 	private String body;
 	private int countBookmarks;
 	private Timestamp dateInserted;
@@ -15,6 +16,12 @@ public class Comment  implements Serializable{
 //	private byte[] image;
 	private String imageURL;
 	
+	public String getDisplayname() {
+		return displayname;
+	}
+	public void setDisplayname(String displayname) {
+		this.displayname = displayname;
+	}
 	public String getImageURL() {
 		return imageURL;
 	}

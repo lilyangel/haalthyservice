@@ -56,7 +56,7 @@ public class OssController {
         client.shutdown();
 
         return refreshImgPath.refreshImg(oss.getFunctionType(),oss.getModifyType(),oss.getId(),
-                setting.getUrl(oss.getFunctionType(),fileName));
+                setting.getUrl(oss.getFunctionType(),fileName), -1);
     }
 
     @RequestMapping(value = "/uploadimgs", method = RequestMethod.POST, headers = "Accept=application/json",
@@ -95,7 +95,7 @@ public class OssController {
         client.shutdown();
 
         try {
-            refreshImgPath.refreshImg(functionType,"update",id,result.toString());
+            refreshImgPath.refreshImg(functionType,"update",id,result.toString(), -1);
         } catch (Exception e) {
             e.printStackTrace();
             return e.getMessage()+"functionType:"+functionType+";id:"+id+";filePath:"+result.toString();

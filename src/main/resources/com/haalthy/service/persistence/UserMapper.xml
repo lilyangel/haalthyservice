@@ -53,7 +53,8 @@
 		Age,
 		geneticMutation,
 		deviceToken,
-		phone
+		phone,
+		IsSuperUser
 	FROM user
     WHERE user.phone = #{phone}
   </select>
@@ -78,7 +79,8 @@
 		Age,
 		geneticMutation,
 		deviceToken,
-		phone
+		phone,
+		IsSuperUser
     FROM user
     WHERE user.Email = #{email}
   </select>
@@ -131,7 +133,7 @@
 	</select>
 	
 	<update id = "addUserFollowCount" parameterType = "String" flushCache="true">
-	Update User SET
+	Update user SET
 		FollowCount = FollowCount+1
 	WHERE Username = #{username}
 	</update>
@@ -158,13 +160,12 @@
 		FollowCount,
 		CancerType,
 		geneticMutation,
-		deviceToken,
 		imageURL,
 		phone
     FROM suggestUserByTags
-    WHERE (TagID = #{tagID}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
+    WHERE (TagID = #{tagID}) 
+	AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
 	</select>
-	
 	<select id = "searchUsers" resultType = "User">
 	SELECT
 		UserID,
@@ -209,10 +210,11 @@
 		FollowCount,
 		CancerType,
 		geneticMutation,
-		deviceToken,
 		phone
     FROM SuggestUserByProfile
-    WHERE (SuggestedUsername = #{username}) AND (RankID BETWEEN #{beginIndex} AND #{endIndex})
+    WHERE (SuggestedUsername = #{username})  
+    Order By RankID asc
+    LIMIT #{beginIndex}, #{count}
 	</select>
 	
 	<update id="resetPassword" parameterType="User" flushCache="true">
@@ -250,6 +252,14 @@
  		Displayname,
 		Username
 	FROM user WHERE (user.Displayname=#{displayname})
+ 	</select>
+ 	
+ 	<select id = "getSuperUserList" parameterType="String" resultType="User">
+  	SELECT
+ 		UserID,
+ 		Displayname,
+		Username
+	FROM user WHERE IsSuperUser=1
  	</select>
 </mapper>
 

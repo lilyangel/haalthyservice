@@ -46,17 +46,24 @@ public class CommentSecurityController {
     	comment.setDateInserted(ts_now);
     	comment.setIsActive(1);
     	comment.setPostID(addCommentRequest.getPostID());
+    	comment.setInsertUsername(addCommentRequest.getInsertUsername());
+		ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
 		try {
-			ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
 			contentIntEapsulate.setCount(postService.increasePostCountComment(addCommentRequest.getPostID()));
 			addCommentResponse.setContent(contentIntEapsulate);
 			if (commentService.addComment(comment) > 0){
 				addCommentResponse.setResult(1);
 				addCommentResponse.setResultDesp("返回成功");
+			}else{
+				addCommentResponse.setResult(-2);
+				addCommentResponse.setResultDesp("插入失败");
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
+			contentIntEapsulate.setCount(0);
 			addCommentResponse.setResult(-1);
 			addCommentResponse.setResultDesp("数据库连接错误");
+			addCommentResponse.setContent(contentIntEapsulate);
 		}
     	return addCommentResponse;
     }

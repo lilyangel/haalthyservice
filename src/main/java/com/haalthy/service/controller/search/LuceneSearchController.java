@@ -27,14 +27,14 @@ import net.sf.json.JSONObject;
 @Controller
 @RequestMapping("/open/search")
 public class LuceneSearchController {
-	private String searchServerURL = "http://54.223.70.160:8984/solr/";
+	private String searchServerURL = "http://service.haalthy.com:8984/solr/";
 	
     @RequestMapping(value = "/treatment", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public Response searchTreatment(@RequestBody SearchRequest searchRequest){
     	Response response = new Response();
         try {
-            String[] searchColumns = new String[]{"treatmentName", "Dosage", "CancerType", "Pathological"};
+            String[] searchColumns = new String[]{"treatmentName", "dosage", "cancerType", "pathological"};
         	response.setContent(searchObject(searchRequest, "aiyoutreatment", searchColumns));
         	response.setResult(1);
         	response.setResultDesp("返回成功");
@@ -52,7 +52,7 @@ public class LuceneSearchController {
     	Response response = new Response();
         try {
             String[] searchColumns = new String[]{"subgroup", "drugtype", "drugname","stage"};
-        	response.setContent(searchObject(searchRequest, "aiyouclinictrail", searchColumns));
+        	response.setContent(searchObject(searchRequest, "aiyouclinictrial", searchColumns));
         	response.setResult(1);
         	response.setResultDesp("返回成功");
         } catch (Exception e) {
@@ -69,7 +69,7 @@ public class LuceneSearchController {
     public Response searchUser(@RequestBody SearchRequest searchRequest){
     	Response response = new Response();
         try {
-            String[] searchColumns = new String[]{"Displayname", "Pathological", "CancerType"};
+            String[] searchColumns = new String[]{"displayname", "pathological", "cancerType"};
         	response.setContent(searchObject(searchRequest, "aiyouuser", searchColumns));
         	response.setResult(1);
         	response.setResultDesp("返回成功");
@@ -102,11 +102,17 @@ public class LuceneSearchController {
 					searchURL.append(searchColumn).append(":*").append(URLEncoder.encode(keyword)).append("*+OR+");
 				}
 			}
+			for (String keyword : keywords) {
+				for (String searchColumn : searchColumns) {
+					searchURL.append(searchColumn).append(":").append(URLEncoder.encode(keyword)).append("+OR+");
+				}
+			}
 			searchURLStr = searchURL.substring(0, searchURL.length() - 4);
 		}else{
 			searchURL.append("*:*");	
 			searchURLStr = searchURL.toString();
 		}
+        System.out.println(searchURLStr);
         URL restServiceURL = new URL(searchServerURL + searchURLStr + searchParameter);
         HttpURLConnection httpConnection = (HttpURLConnection) restServiceURL.openConnection();
         httpConnection.setRequestMethod("GET");

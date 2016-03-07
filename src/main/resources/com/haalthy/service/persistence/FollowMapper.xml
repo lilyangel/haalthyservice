@@ -38,7 +38,7 @@
 		ORDER BY Displayname ASC;
 	</select>
 	
-	<select id="getFollowingUsersByUsername" parameterType="string" resultType="User">
+	<select id="getFollowingUsersByUsername" resultType="User">
 		SELECT
 			UserID,
 			Email,
@@ -57,7 +57,6 @@
 			Age
 		FROM Follow, user WHERE Follow.Username = #{username} AND IsActive = 1 AND user.username = Follow.followingUser 
 		ORDER BY Displayname ASC;
-		
 	</select>
 	
 	<select id="getFollowingsByUsernameAndFollowingname" parameterType="Follow" resultType="Follow">

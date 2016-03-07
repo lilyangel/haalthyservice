@@ -16,7 +16,8 @@
 			CountBookmarks,
 			DateInserted,
 			isActive,
-			imageURL
+			imageURL,
+			displayname
 	    FROM Comment, user
 	    WHERE POSTID = #{id} AND IsActive = 1 AND (Comment.InsertUsername = user.Username)
 	    	AND ((CommentID &lt; #{max_id}) OR (CommentID &gt; #{since_id}))
@@ -26,8 +27,8 @@
 	  
 	<insert id="addComment" useGeneratedKeys="true"
     	keyProperty="commentID" keyColumn = "CommentID" flushCache="true">
-  		INSERT into Comment (InsertUserName, body, CountBookmarks,DateInserted, IsActive, PostID)
- 			 VALUES (#{insertUsername},#{body}, #{countBookmarks},  #{dateInserted}, #{isActive}, #{postID})
+  		INSERT into Comment (InsertUserName, body, CountBookmarks,DateInserted, IsActive, PostID, IsPostOwnerRead)
+ 			 VALUES (#{insertUsername},#{body}, #{countBookmarks},  #{dateInserted}, #{isActive}, #{postID}, 0)
 	</insert>
 	
 	<update id = "inactiveComment" parameterType="Comment" flushCache="true">
@@ -52,7 +53,8 @@
 			CountBookmarks,
 			DateInserted,
 			isActive,
-			imageURL
+			imageURL,
+			displayname
 			FROM Comment, user
 		WHERE Comment.PostID in (select postID from post where insertUserName=#{username}) AND IsActive = 1 AND (Comment.InsertUsername = user.Username) 
 			AND ((CommentID &lt; #{max_id}) OR (CommentID &gt; #{since_id}))

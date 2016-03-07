@@ -157,8 +157,8 @@ public class UserController {
 		GetUsersResponse getUsersResponse = new GetUsersResponse();
 		try {
 			int[] tags = getSuggestUsersByTagsRequest.getTags();
-			int rangeBegin = getSuggestUsersByTagsRequest.getRangeBegin();
-			int rangeEnd = getSuggestUsersByTagsRequest.getRangeEnd();
+			int rangeBegin = getSuggestUsersByTagsRequest.getPage() * getSuggestUsersByTagsRequest.getCount();
+			int rangeEnd = (getSuggestUsersByTagsRequest.getPage() + 1) * getSuggestUsersByTagsRequest.getCount();
 			List<User> users = new ArrayList<User>();
 			Set<String> set = new HashSet<String>();
 			for (int i = 0; i < tags.length; i++) {
@@ -179,6 +179,7 @@ public class UserController {
 			getUsersResponse.setResultDesp("返回成功");
 			getUsersResponse.setContent(users);
 		} catch (Exception e) {
+			e.printStackTrace();
 			getUsersResponse.setResult(-1);
 			getUsersResponse.setResultDesp("数据库连接错误");
 		}

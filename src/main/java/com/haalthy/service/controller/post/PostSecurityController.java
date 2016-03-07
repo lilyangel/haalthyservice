@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haalthy.service.common.ProcessImageURL;
 import com.haalthy.service.controller.Interface.ContentIntEapsulate;
 import com.haalthy.service.controller.Interface.GetCountResponse;
 import com.haalthy.service.controller.Interface.ImageInfo;
@@ -24,15 +25,18 @@ import com.haalthy.service.controller.Interface.OSSFile;
 import com.haalthy.service.controller.Interface.comment.GetCommentsResponse;
 import com.haalthy.service.controller.Interface.post.AddPostRequest;
 import com.haalthy.service.controller.Interface.post.AddUpdatePostResponse;
+import com.haalthy.service.controller.Interface.post.AppendImageRequest;
 import com.haalthy.service.controller.Interface.post.GetFeedsRequest;
 import com.haalthy.service.controller.Interface.post.GetPostsResponse;
 import com.haalthy.service.controller.Interface.post.GetUpdatedPostCountResponse;
 import com.haalthy.service.controller.Interface.post.MarkAllMessageAsReadResponse;
 import com.haalthy.service.domain.Mention;
+import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.Post;
 import com.haalthy.service.domain.PostTag;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.openservice.OssService;
+import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.PostService;
 
 
@@ -45,6 +49,9 @@ public class PostSecurityController {
 	@Autowired
 	private transient OssService ossService;
 	
+	@Autowired
+	private transient PatientService patientService;
+
     @RequestMapping(value = "/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public AddUpdatePostResponse addPost(@RequestBody AddPostRequest addPostRequest) throws IOException{
@@ -72,12 +79,14 @@ public class PostSecurityController {
 
 			post.setInsertUsername(addPostRequest.getInsertUsername());
 			post.setIsBroadcast(addPostRequest.getIsBroadcast());
-
-			if (addPostRequest.getImageInfos() != null) {
-				post.setHasImage(addPostRequest.getImageInfos().size());
-			} else {
-				post.setHasImage(0);
-			}
+			post.setHasImage(addPostRequest.getHasImage());
+			System.out.println(post.getHasImage());
+//
+//			if (addPostRequest.getImageInfos() != null) {
+//				post.setHasImage(addPostRequest.getImageInfos().size());
+//			} else {
+//				post.setHasImage(0);
+//			}
 
 			String tagString = null;
 			if (addPostRequest.getTags() != null) {
@@ -141,9 +150,9 @@ public class PostSecurityController {
 				addPostResponse.setContent(contentIntEapsulate);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			addPostResponse.setResult(-1);
 			addPostResponse.setResultDesp("数据库连接错误");
-			System.out.println(e.getMessage());
 		}
         return addPostResponse;
     }
@@ -179,11 +188,23 @@ public class PostSecurityController {
 			}
 			getFeedsRequest.setBeginIndex(getFeedsRequest.getCount() * getFeedsRequest.getPage());
 			List<Post> posts = postService.getPosts(getFeedsRequest);
+			for (Post post : posts){
+				if (post.getType() == 2) {
+					PatientStatus patientStatus = patientService.getPatientStatusById(post.getPatientStatusID());
+					if ((patientStatus != null) && (patientStatus.getImageURL() != null)){
+						post.setImageURL(patientStatus.getImageURL());
+					}
+				}
+				if (post.getImageURL() != null){
+					ProcessImageURL processImageURL = new ProcessImageURL();
+					post.setImageURL(processImageURL.processImageURL(post.getImageURL()));
+				}
+			}
 			getPostsResponse.setContent(posts);
 			getPostsResponse.setResult(1);
 			getPostsResponse.setResultDesp("返回成功");
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 			getPostsResponse.setResult(-1);
 			getPostsResponse.setResultDesp("数据库连接错误");
 		}
@@ -210,13 +231,28 @@ public class PostSecurityController {
     
     @RequestMapping(value = "/posts/username", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
-    public GetPostsResponse getPostsByUsername(@RequestBody InputUsernameRequest username){
+    public GetPostsResponse getPostsByUsername(@RequestBody GetFeedsRequest getFeedsRequest){
     	GetPostsResponse getPostsResponse = new GetPostsResponse();
     	try{
-    		getPostsResponse.setContent(postService.getPostsByUsername(username.getUsername()));
+    		getFeedsRequest.setBeginIndex(getFeedsRequest.getCount() * getFeedsRequest.getPage());
+    		List<Post> posts = postService.getPostsByUsername(getFeedsRequest);
+			for (Post post : posts){
+				if (post.getType() == 2) {
+					PatientStatus patientStatus = patientService.getPatientStatusById(post.getPatientStatusID());
+					if ((patientStatus != null) && (patientStatus.getImageURL() != null)){
+						post.setImageURL(patientStatus.getImageURL());
+					}
+				}
+				if (post.getImageURL() != null){
+					ProcessImageURL processImageURL = new ProcessImageURL();
+					post.setImageURL(processImageURL.processImageURL(post.getImageURL()));
+				}
+			}
+    		getPostsResponse.setContent(posts);
     		getPostsResponse.setResult(1);
     		getPostsResponse.setResultDesp("返回成功");
     	}catch(Exception e){
+    		e.printStackTrace();
     		getPostsResponse.setResult(-1);
     		getPostsResponse.setResultDesp("数据库连接错误");
     	}
@@ -266,11 +302,23 @@ public class PostSecurityController {
 		try {
 			request.setBeginIndex(request.getCount() * request.getPage());
 			List<Post> posts = postService.getMentionedPostsByUsername(request);
-			Iterator<Post> postItr = posts.iterator();
+			for (Post post : posts){
+				if (post.getType() == 2) {
+					PatientStatus patientStatus = patientService.getPatientStatusById(post.getPatientStatusID());
+					if ((patientStatus != null) && (patientStatus.getImageURL() != null)){
+						post.setImageURL(patientStatus.getImageURL());
+					}
+				}
+				if (post.getImageURL() != null){
+					ProcessImageURL processImageURL = new ProcessImageURL();
+					post.setImageURL(processImageURL.processImageURL(post.getImageURL()));
+				}
+			}
 			getPostsResponse.setContent(posts);
 			getPostsResponse.setResult(1);
 			getPostsResponse.setResultDesp("返回成功");
 		} catch (Exception e) {
+			e.printStackTrace();
 			getPostsResponse.setResult(-1);
 			getPostsResponse.setResultDesp("数据库连接错误");
 		}
@@ -291,4 +339,43 @@ public class PostSecurityController {
     	}
     	return markAllMessageAsReadResponse;
 	}
+    
+    @RequestMapping(value = "/appendimage", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+	public AddUpdatePostResponse appendImage(@RequestBody AppendImageRequest appendImageToPostRequest){
+    	AddUpdatePostResponse addUpdatePostResponse = new AddUpdatePostResponse();
+    	ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+    	try{
+    		Post post = postService.getPostById(appendImageToPostRequest.getId());
+    		if (postService == null) {
+    			contentIntEapsulate.setCount(-2);
+    			addUpdatePostResponse.setContent(contentIntEapsulate);
+    			addUpdatePostResponse.setResult(-2);
+    			addUpdatePostResponse.setResultDesp("该postId不存在");
+    		}else{
+				OSSFile ossFile = new OSSFile();
+				ossFile.setFileType(appendImageToPostRequest.getImageInfo().getType());
+				ossFile.setFunctionType("post");
+				ossFile.setImg(appendImageToPostRequest.getImageInfo().getData());
+				ossFile.setModifyType("append");
+				ossFile.setId(String.valueOf(post.getPostID()));
+				if (post.getImageURL() == null){
+					ossService.ossUploadSingleFile(ossFile, appendImageToPostRequest.getImageIndex(), "update");
+				}else{
+					ossService.ossUploadSingleFile(ossFile, appendImageToPostRequest.getImageIndex(), "append");
+				}
+    			contentIntEapsulate.setCount(1);
+    			addUpdatePostResponse.setContent(contentIntEapsulate);
+    			addUpdatePostResponse.setResult(1);
+    			addUpdatePostResponse.setResultDesp("插入成功");
+    		}
+    	}catch(Exception e){
+			contentIntEapsulate.setCount(-1);
+			addUpdatePostResponse.setContent(contentIntEapsulate);
+			addUpdatePostResponse.setResult(-1);
+			addUpdatePostResponse.setResultDesp("系统异常");
+    	}
+    	return addUpdatePostResponse;
+	}
+    
 }

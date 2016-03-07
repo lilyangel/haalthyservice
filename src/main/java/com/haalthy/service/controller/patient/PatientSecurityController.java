@@ -25,6 +25,8 @@ import com.haalthy.service.controller.Interface.patient.AddTreatmentResponse;
 import com.haalthy.service.controller.Interface.patient.AddTreatmentsRequest;
 import com.haalthy.service.controller.Interface.patient.DeleteTreatmentByIdResponse;
 import com.haalthy.service.controller.Interface.patient.UpdateTreatmentResponse;
+import com.haalthy.service.controller.Interface.post.AddUpdatePostResponse;
+import com.haalthy.service.controller.Interface.post.AppendImageRequest;
 import com.haalthy.service.domain.ClinicReport;
 import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.Post;
@@ -188,6 +190,7 @@ public class PatientSecurityController {
 					postStr += "/n" + patientStatus.getScanData();
 				}
 				post.setBody(postStr);
+				System.out.println(patientStatus.getStatusID());
 				post.setPatientStatusID(patientStatus.getStatusID());
 				post.setCountBookmarks(0);
 				post.setCountComments(0);
@@ -239,8 +242,9 @@ public class PatientSecurityController {
 				String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest()
 						.getAuthorizationParameters().get("username");
 				int returnValue = 0;
-				if ((treatment.getUsername().equals(currentSessionUsername)) || (treatment.getUsername()
-						.equals(userService.getUserByEmail(currentSessionUsername).getUsername()))) {
+				if ((treatment.getUsername().equals(currentSessionUsername)) ||
+						(treatment.getUsername().equals(userService.getUserByEmail(currentSessionUsername).getUsername())) ||
+						(treatment.getUsername().equals(userService.getUserByPhone(currentSessionUsername).getUsername()))) {
 					returnValue = patientService.deleteTreatmentById(treatment.getTreatmentID());
 				}
 				deleteTreatmentByIdResponse.setResult(1);
@@ -253,4 +257,44 @@ public class PatientSecurityController {
 		}
 		return deleteTreatmentByIdResponse;
 	}
+    
+    @RequestMapping(value = "/appendimage", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+	public AddUpdatePostResponse appendImage(@RequestBody AppendImageRequest appendImageToPatientStatusRequest){
+    	AddUpdatePostResponse addUpdatePostResponse = new AddUpdatePostResponse();
+    	ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+    	try{
+    		 PatientStatus patientStatus = patientService.getPatientStatusById(appendImageToPatientStatusRequest.getId());
+    		if (patientStatus == null) {
+    			contentIntEapsulate.setCount(-2);
+    			addUpdatePostResponse.setContent(contentIntEapsulate);
+    			addUpdatePostResponse.setResult(-2);
+    			addUpdatePostResponse.setResultDesp("该statusId不存在");
+    		}else{
+				OSSFile ossFile = new OSSFile();
+				ossFile.setFileType(appendImageToPatientStatusRequest.getImageInfo().getType());
+				ossFile.setFunctionType("patient");
+				ossFile.setImg(appendImageToPatientStatusRequest.getImageInfo().getData());
+				ossFile.setId(String.valueOf(patientStatus.getStatusID()));
+				if (patientStatus.getImageURL() == null){
+					ossFile.setModifyType("update");
+					ossService.ossUploadSingleFile(ossFile, appendImageToPatientStatusRequest.getImageIndex(), "update");
+				}else{
+					ossFile.setModifyType("append");
+					ossService.ossUploadSingleFile(ossFile, appendImageToPatientStatusRequest.getImageIndex(), "append");
+				}
+    			contentIntEapsulate.setCount(1);
+    			addUpdatePostResponse.setContent(contentIntEapsulate);
+    			addUpdatePostResponse.setResult(1);
+    			addUpdatePostResponse.setResultDesp("插入成功");
+    		}
+    	}catch(Exception e){
+			contentIntEapsulate.setCount(-1);
+			addUpdatePostResponse.setContent(contentIntEapsulate);
+			addUpdatePostResponse.setResult(-1);
+			addUpdatePostResponse.setResultDesp("系统异常");
+    	}
+    	return addUpdatePostResponse;
+	}
+    
 }
