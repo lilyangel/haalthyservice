@@ -19,18 +19,17 @@ import java.util.UUID;
  */
 
 @Controller
-@RequestMapping("/open/weixin")
-public class WecoController {
+@RequestMapping("/security/weixin")
+public class WeixinSecurityController {
     @Autowired
     private transient WeixinService weixinService;
-
 
     protected Logger logger = Logger.getLogger(this.getClass());
 
     @RequestMapping(value = "/getSign", method = RequestMethod.GET, headers = "Accept=application/json",
             produces = {"application/json"})
     @ResponseBody
-    public Response getSignOpen(@RequestBody StringRequest request)
+    public Response getSignSecurity(@RequestBody StringRequest request)
     {
         Response response = new Response();
         WeixinConfig wx = new WeixinConfig();
