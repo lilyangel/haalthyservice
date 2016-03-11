@@ -1,10 +1,19 @@
 package com.haalthy.service.controller.Interface;
 
 public class ResetPasswordRequest {
+	private String originalPwd;
 	private String password;
 	private String id;
 	private String authCode;
 	
+	public String getOriginalPwd() {
+		return originalPwd;
+	}
+
+	public void setOriginalPwd(String originalPwd) {
+		this.originalPwd = originalPwd;
+	}
+
 	public String getId() {
 		return id;
 	}

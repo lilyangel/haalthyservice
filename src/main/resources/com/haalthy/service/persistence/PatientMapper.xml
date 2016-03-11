@@ -29,7 +29,7 @@
    			clinicItem,
    			CancerType,
    			Pathological
-		FROM clinicReportFormat
+		FROM clinicreportformat
    </select>
    
    <select id = "getTreatmentsByUser" parameterType="String" resultType="Treatment">
@@ -112,13 +112,14 @@
 			statusDesc,
 			InsertedDate,
 			IsPosted,
-			scanData) VALUES(
-  		#{username}, #{statusDesc}, #{insertedDate}, #{isPosted}, #{scanData}
+			scanData,
+			hasImage) VALUES(
+  		#{username}, #{statusDesc}, #{insertedDate}, #{isPosted}, #{scanData}, #{hasImage}
   	)
   </insert>
   
   <insert id = "insertClinicData"  parameterType="java.util.List">
-    	INSERT INTO ClinicData(clinicItemName, clinicItemValue, statusID, insertUsername, insertDate) values
+    	INSERT INTO clinicdata(clinicItemName, clinicItemValue, statusID, insertUsername, insertDate) values
   		<foreach collection="list" item="ClinicData" index="index" separator=",">
   			(#{ClinicData.clinicItemName}, #{ClinicData.clinicItemValue}, #{ClinicData.statusID}, #{ClinicData.insertUsername},  #{ClinicData.insertDate})
   		</foreach>
@@ -133,7 +134,7 @@
   	  	insertUsername,
   	  	insertDate
   	  FROM
-  	    ClinicData WHERE insertUsername=#{insertUsername}
+  	    clinicdata WHERE insertUsername=#{insertUsername}
   	    ORDER BY insertDate Desc
   </select>
   

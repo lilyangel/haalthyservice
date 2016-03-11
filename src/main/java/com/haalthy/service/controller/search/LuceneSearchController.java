@@ -7,19 +7,25 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
 import com.haalthy.service.controller.Interface.Response;
 import com.haalthy.service.controller.Interface.SearchRequest;
 import com.haalthy.service.domain.ClinicTrailInfo;
+import com.haalthy.service.domain.Follow;
 import com.haalthy.service.domain.Treatment;
 import com.haalthy.service.domain.User;
+import com.haalthy.service.openservice.FollowService;
+import com.haalthy.service.openservice.UserService;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -27,6 +33,9 @@ import net.sf.json.JSONObject;
 @Controller
 @RequestMapping("/open/search")
 public class LuceneSearchController {
+	@Autowired
+	private transient FollowService followService;
+	
 	private String searchServerURL = "http://service.haalthy.com:8984/solr/";
 	
     @RequestMapping(value = "/treatment", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
@@ -70,7 +79,22 @@ public class LuceneSearchController {
     	Response response = new Response();
         try {
             String[] searchColumns = new String[]{"displayname", "pathological", "cancerType"};
-        	response.setContent(searchObject(searchRequest, "aiyouuser", searchColumns));
+        	JSONArray  userResult =  (JSONArray) searchObject(searchRequest, "aiyouuser", searchColumns);
+        	String currentUsername = searchRequest.getUsername();
+        	List<Follow> followings = followService.getFollowingsByUsername(currentUsername);
+        	List<String> followingUsernames = new ArrayList();
+        	for (Follow following : followings) {
+        		followingUsernames.add(following.getFollowingUser());
+        	}
+        	for (int i = 0; i < userResult.size(); i++) {  
+        	    JSONObject jo = (JSONObject) userResult.get(i);
+        	    if (followingUsernames.contains(jo.get("username"))){
+        	    	jo.put("isFollowedByCurrentUser", 1);
+        	    }else{
+            	    jo.put("isFollowedByCurrentUser", 0);
+        	    }
+        	}
+        	response.setContent(userResult);
         	response.setResult(1);
         	response.setResultDesp("返回成功");
        } catch (Exception e) {
@@ -131,9 +155,13 @@ public class LuceneSearchController {
         while ((output = responseBuffer.readLine()) != null) {
                builder.append(output);
         }
-        List<Treatment> treatments = (List<Treatment>) analysisJSonData(builder.toString());
         httpConnection.disconnect();
-    	return treatments;
+//        List<Treatment> treatments = (List<Treatment>) analysisJSonData(builder.toString());
+        httpConnection.disconnect();
+        return  analysisJSonData(builder.toString());
+//    	return treatments;
+//        return  builder.toString();
+
     }
     
     public Object analysisJSonData(String jsonStr){

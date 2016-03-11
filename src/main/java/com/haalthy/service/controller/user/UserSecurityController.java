@@ -46,7 +46,7 @@ import com.haalthy.service.openservice.FollowService;
 import com.haalthy.service.openservice.OssService;
 import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.UserService;
-
+import com.haalthy.service.common.ProcessImageURL;
 import com.haalthy.service.configuration.ImageService;
 import com.haalthy.service.controller.Interface.ContentIntEapsulate;
 import com.haalthy.service.controller.Interface.ContentStringEapsulate;
@@ -109,6 +109,12 @@ public class UserSecurityController {
 			List<ClinicDataType> clinicReport = new ArrayList();
 			treatments = patientService.getTreatmentsByUser(username);
 			patientStatus = patientService.getPatientStatusByUser(username);
+			for (PatientStatus patientStatusItem : patientStatus) {
+				if (patientStatusItem.getImageURL() != null) {
+					ProcessImageURL processImageURL = new ProcessImageURL();
+					patientStatusItem.setImageURL(processImageURL.processImageURL(patientStatusItem.getImageURL()));
+				}
+			}
 			List<ClinicData> clinicDataList = patientService.getClinicDataByUsername(username);
 			Iterator<ClinicData> clinicDataItr = clinicDataList.iterator();
 			while (clinicDataItr.hasNext()) {
@@ -142,6 +148,7 @@ public class UserSecurityController {
 			getUserDetailResponse.setResultDesp("返回成功");
 			getUserDetailResponse.setContent(userDetail);
 		} catch (Exception e) {
+			e.printStackTrace();
 			getUserDetailResponse.setResult(-1);
 			getUserDetailResponse.setResultDesp("数据库连接错误");
 		}
@@ -415,6 +422,7 @@ public class UserSecurityController {
 				updateNewFollowerCountResult = followService.insertNewFollowerCount(follow.getFollowingUser());
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			addUpdateUserResponse.setResult(-1);
 			addUpdateUserResponse.setResultDesp("数据库连接错误");
 		}
@@ -527,13 +535,11 @@ public class UserSecurityController {
     }
     
     private String decodePassword(String password){
-		System.out.println(password);
     	String[] codeUnits = password.split("a");
     	String passwordDecode = "";
     	for(int i = 0; i< codeUnits.length; i++){
     		if(!codeUnits[i].equals("")){
         		int intCode = Integer.valueOf(codeUnits[i]).intValue(); 
-        		System.out.println(intCode);
         		char a = (char)intCode;
         		passwordDecode += a;
         	}
@@ -587,6 +593,55 @@ public class UserSecurityController {
 				addUpdateUserResponse.setResult(-2);
 				addUpdateUserResponse.setResultDesp("更新失败");
 				contentStringEapsulate.setResult("-2");
+			}
+		} catch (Exception e) {
+			addUpdateUserResponse.setResult(-1);
+			addUpdateUserResponse.setResultDesp("数据库连接错误");
+			contentStringEapsulate.setResult("-1");
+		}
+		addUpdateUserResponse.setContent(contentStringEapsulate);
+		return addUpdateUserResponse;
+	}
+    
+    @RequestMapping(value = "/resetpasswordwithoriginalpwd",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
+    @ResponseBody
+	public AddUpdateUserResponse resetPasswordWithOriginalPwd(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+		AddUpdateUserResponse addUpdateUserResponse = new AddUpdateUserResponse();
+		ContentStringEapsulate contentStringEapsulate = new ContentStringEapsulate();
+		try {
+			String originalPwd = decodePassword(resetPasswordRequest.getOriginalPwd());
+			String password = resetPasswordRequest.getPassword();
+			User user = new User();
+			Authentication a = SecurityContextHolder.getContext().getAuthentication();
+			String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest()
+					.getAuthorizationParameters().get("username");
+			if (userService.getUserByUsername(currentSessionUsername) == null)
+				user = userService.getUserByEmail(currentSessionUsername);
+			if (user == null) {
+				user = userService.getUserByPhone(currentSessionUsername);
+			}
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			System.out.println(originalPwd);
+			if (passwordEncoder.matches(originalPwd, user.getPassword()) == false) {
+				//
+				addUpdateUserResponse.setResult(-3);
+				addUpdateUserResponse.setResultDesp("原密码错误");
+				contentStringEapsulate.setResult("-3");
+			} else {
+				if (password != null && password != "") {
+					password = decodePassword(password);
+					String hashedPassword = passwordEncoder.encode(password);
+					user.setPassword(hashedPassword);
+				}
+				if (userService.resetPassword(user) > 0) {
+					addUpdateUserResponse.setResult(1);
+					addUpdateUserResponse.setResultDesp("返回成功");
+					contentStringEapsulate.setResult("1");
+				} else {
+					addUpdateUserResponse.setResult(-2);
+					addUpdateUserResponse.setResultDesp("更新失败");
+					contentStringEapsulate.setResult("-2");
+				}
 			}
 		} catch (Exception e) {
 			addUpdateUserResponse.setResult(-1);
@@ -725,4 +780,5 @@ public class UserSecurityController {
 		}
 		return getUsersResponse;
     }
+    
 }

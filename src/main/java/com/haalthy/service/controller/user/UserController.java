@@ -202,48 +202,61 @@ public class UserController {
 		return getUsersResponse;
 	}
     
-    @RequestMapping(value = "/resetpasswordwithauthcode",method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"}, consumes = {"application/json"})
-    @ResponseBody
+	@RequestMapping(value = "/resetpasswordwithauthcode", method = RequestMethod.POST, headers = "Accept=application/json", produces = {
+			"application/json" }, consumes = { "application/json" })
+	@ResponseBody
 	public AddUpdateUserResponse resetPasswordWithAuthCode(@RequestBody ResetPasswordRequest resetPasswordRequest) {
-    	AddUpdateUserResponse addUpdateUserResponse = new AddUpdateUserResponse();
+		AddUpdateUserResponse addUpdateUserResponse = new AddUpdateUserResponse();
 		try {
 			String password = resetPasswordRequest.getPassword();
 			String id = resetPasswordRequest.getId();
 			String authCode = resetPasswordRequest.getAuthCode();
 			CheckUserType checkUserType = new CheckUserType();
 			int userType = checkUserType.checkUserType(id);
-			String username;
+			String username = "";
 			User user = new User();
-//			AuthCodeController authCodeController = new AuthCodeController();
-//			EmailAuthCodeRequest emailAuthCodeRequest = new EmailAuthCodeRequest();
-//			emailAuthCodeRequest.setAuthCode(authCode);
-//			emailAuthCodeRequest.seteMail(id);
-			if ( userType == 0){
-				int postResponse = authCodeService.authEmailAuthCode(id, authCode);
+			// AuthCodeController authCodeController = new AuthCodeController();
+			// EmailAuthCodeRequest emailAuthCodeRequest = new
+			// EmailAuthCodeRequest();
+			// emailAuthCodeRequest.setAuthCode(authCode);
+			// emailAuthCodeRequest.seteMail(id);
+			int postResponse = 1;
+			if (userType == 0) {
+				postResponse = authCodeService.authEmailAuthCode(id, authCode);
 				if (postResponse == 0)
 					user = userService.getUserByEmail(id);
-			}else if (userType == 1){
-				int postResponse = authCodeService.authMobileAuthCode(id, authCode);
+			} else if (userType == 1) {
+				postResponse = authCodeService.authMobileAuthCode(id, authCode);
 				if (postResponse == 0)
 					user = userService.getUserByPhone(id);
 			}
-			username = user.getUsername();
-			System.out.println(username);
-			if (password != null && password != "") {
-				password = decodePassword(password);
-				BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-				String hashedPassword = passwordEncoder.encode(password);
-				user.setPassword(hashedPassword);
-			}
-			if(userService.resetPassword(user)>0){
-				addUpdateUserResponse.setResult(1);
-				addUpdateUserResponse.setResultDesp("返回成功");
-				ContentStringEapsulate result = new ContentStringEapsulate();
-				result.setResult(user.getUsername());
-				addUpdateUserResponse.setContent(result);
-			}else{
-				addUpdateUserResponse.setResult(-2);
-				addUpdateUserResponse.setResultDesp("更新失败");
+			if (postResponse != 0) {
+				addUpdateUserResponse.setResult(-3);
+				addUpdateUserResponse.setResultDesp("验证失败");
+			} else {
+				username = user.getUsername();
+				System.out.println(username);
+				if (username == "") {
+					addUpdateUserResponse.setResult(-4);
+					addUpdateUserResponse.setResultDesp("该用户不存在");
+				} else {
+					if (password != null && password != "") {
+						password = decodePassword(password);
+						BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+						String hashedPassword = passwordEncoder.encode(password);
+						user.setPassword(hashedPassword);
+					}
+					if (userService.resetPassword(user) > 0) {
+						addUpdateUserResponse.setResult(1);
+						addUpdateUserResponse.setResultDesp("返回成功");
+						ContentStringEapsulate result = new ContentStringEapsulate();
+						result.setResult(user.getUsername());
+						addUpdateUserResponse.setContent(result);
+					} else {
+						addUpdateUserResponse.setResult(-2);
+						addUpdateUserResponse.setResultDesp("更新失败");
+					}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

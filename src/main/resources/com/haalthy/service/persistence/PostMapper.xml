@@ -75,7 +75,7 @@
 	</insert>
 	
 	<insert id="addMention" parameterType="java.util.List" flushCache="true">
-		INSERT INTO UserBeMentionedByPost (Username, PostID, IsUnRead) VALUES
+		INSERT INTO userBeMentionedByPost (Username, PostID, IsUnRead) VALUES
 			<foreach collection="list" item="Mention" index="index" separator=",">
 			(#{Mention.username}, #{Mention.postID}, #{Mention.isUnRead})
 			</foreach>
@@ -231,7 +231,7 @@
 	FROM post, user
 	    WHERE (((post.InsertUserName IN(
 	    	SELECT FollowingUser 
-	    	FROM Follow
+	    	FROM follow
 	    	WHERE 
 	    		Username = #{username}
 	    	))OR(
@@ -311,17 +311,23 @@
 	</select>
 	
 	<select id = "getCommentsByUsername" resultType = "COMMENT">
-		SELECT 	
-			CommentID,
-			PostID,
-			InsertUsername,
-			Body,
-			CountBookmarks,
-			DateInserted
-		FROM Comment
-		WHERE InsertUsername = #{username} AND IsActive = 1
-		AND ((postID &lt; #{max_id}) OR (postID &gt; #{since_id}))
-		ORDER BY DateInserted DESC
+		SELECT
+			user.imageURL,
+			commentID,
+			post.PostID,
+			comment.InsertUsername,
+			comment.Body,
+			comment.CountBookmarks,
+			comment.DateInserted,
+			post.imageURL as postImageURL,
+			post.body as postBody,
+			post.type as postType,
+			user.displayname,
+			post.isBroadcast
+		FROM comment, post, user
+		WHERE post.InsertUsername = #{username} AND comment.IsActive = 1 AND post.postID = comment.postID  AND comment.InsertUsername = user.username
+		AND ((commentID &lt; #{max_id}) OR (commentID &gt; #{since_id}))
+		ORDER BY comment.DateInserted DESC
 	    LIMIT #{beginIndex}, #{count}
 	</select>
 	
@@ -398,17 +404,17 @@
 			user.imageURL as portraitURL,
 			displayname,
 			patientStatusID
-	    FROM post, user, UserBeMentionedByPost
-	    WHERE (post.PostID = UserBeMentionedByPost.PostID)
+	    FROM post, user, userBeMentionedByPost
+	    WHERE (post.PostID = userBeMentionedByPost.PostID)
 	    	AND (post.InsertUserName = user.Username)
-	    	AND (UserBeMentionedByPost.Username = #{username}) AND (isActive = 1) 
+	    	AND (userBeMentionedByPost.Username = #{username}) AND (isActive = 1) 
 	    	AND ((post.postID &lt; #{max_id}) OR (post.postID &gt; #{since_id}))
 	    	ORDER BY DateInserted DESC
 	    	LIMIT #{beginIndex}, #{count}
 	</select>
 	  
 	<update id="markMentionedPostAsRead" parameterType="String" flushCache="true">
-	  	UPDATE UserBeMentionedByPost SET IsUnRead = 0
+	  	UPDATE userBeMentionedByPost SET IsUnRead = 0
 	  	WHERE Username = #{username}
 	</update>
 

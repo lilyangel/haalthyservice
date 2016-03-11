@@ -269,6 +269,7 @@ public class PostSecurityController {
     		getCommentsResponse.setResult(1);
     		getCommentsResponse.setResultDesp("返回成功");
     	}catch(Exception e){
+    		e.printStackTrace();
     		getCommentsResponse.setResult(-1);
     		getCommentsResponse.setResultDesp("数据库连接错误");
     	}
@@ -370,6 +371,7 @@ public class PostSecurityController {
     			addUpdatePostResponse.setResultDesp("插入成功");
     		}
     	}catch(Exception e){
+    		e.printStackTrace();
 			contentIntEapsulate.setCount(-1);
 			addUpdatePostResponse.setContent(contentIntEapsulate);
 			addUpdatePostResponse.setResult(-1);

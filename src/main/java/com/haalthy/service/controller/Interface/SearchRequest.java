@@ -1,12 +1,21 @@
 package com.haalthy.service.controller.Interface;
 
 public class SearchRequest {
+	private String username;
 	private String searchString;
 	private int since_id;
 	private int max_id;
 	private int page;
 	private int count;
 	private int beginIndex;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
 	public int getSince_id() {
 		return since_id;

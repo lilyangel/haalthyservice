@@ -18,7 +18,7 @@
 			isActive,
 			imageURL,
 			displayname
-	    FROM Comment, user
+	    FROM comment, user
 	    WHERE POSTID = #{id} AND IsActive = 1 AND (Comment.InsertUsername = user.Username)
 	    	AND ((CommentID &lt; #{max_id}) OR (CommentID &gt; #{since_id}))
 	    	ORDER BY DateInserted DESC
@@ -27,21 +27,21 @@
 	  
 	<insert id="addComment" useGeneratedKeys="true"
     	keyProperty="commentID" keyColumn = "CommentID" flushCache="true">
-  		INSERT into Comment (InsertUserName, body, CountBookmarks,DateInserted, IsActive, PostID, IsPostOwnerRead)
+  		INSERT into comment (InsertUserName, body, CountBookmarks,DateInserted, IsActive, PostID, IsPostOwnerRead)
  			 VALUES (#{insertUsername},#{body}, #{countBookmarks},  #{dateInserted}, #{isActive}, #{postID}, 0)
 	</insert>
 	
 	<update id = "inactiveComment" parameterType="Comment" flushCache="true">
-		UPDATE Comment SET
+		UPDATE comment SET
 			IsActive = "0"
-		WHERE CommentID = #{commentID} AND InsertUserName = #{insertUsername}
+		WHERE commentID = #{commentID} AND InsertUserName = #{insertUsername}
 	</update>
 	
 	<select id="getUnreadCommentsCount" parameterType="String" resultType="int">
 		SELECT Distinct
 			COUNT(*)
-			FROM Comment
-		WHERE Comment.PostID in (select postID from post where insertUserName=#{username}) and IsPostOwnerRead = 0 AND IsActive = 1  order by dateInserted desc;
+			FROM comment
+		WHERE comment.PostID in (select postID from post where insertUserName=#{username}) and IsPostOwnerRead = 0 AND IsActive = 1  order by dateInserted desc;
 	</select>
 	
 	<select id="getCommentsByUsername" resultType="Comment">
@@ -55,16 +55,16 @@
 			isActive,
 			imageURL,
 			displayname
-			FROM Comment, user
-		WHERE Comment.PostID in (select postID from post where insertUserName=#{username}) AND IsActive = 1 AND (Comment.InsertUsername = user.Username) 
+			FROM comment, user
+		WHERE comment.PostID in (select postID from post where insertUserName=#{username}) AND IsActive = 1 AND (Comment.InsertUsername = user.Username) 
 			AND ((CommentID &lt; #{max_id}) OR (CommentID &gt; #{since_id}))
 			order by dateInserted desc
 			LIMIT #{beginIndex}, #{count}
 	</select>
 	
 	<update id="markCommentsAsReadByUsername" parameterType="String" flushCache="true">
-		UPDATE Comment SET
+		UPDATE comment SET
 			IsPostOwnerRead = 1
-		WHERE Comment.PostID in (select postID from post where insertUserName=#{username})
+		WHERE comment.PostID in (select postID from post where insertUserName=#{username})
 	</update>
 </mapper>

@@ -13,7 +13,14 @@ public class PatientStatus implements Serializable{
 	private Timestamp insertedDate;
 	private int isPosted;
 	private String imageURL;
+	private int hasImage;
 	
+	public int getHasImage() {
+		return hasImage;
+	}
+	public void setHasImage(int hasImage) {
+		this.hasImage = hasImage;
+	}
 	public String getImageURL() {
 		return imageURL;
 	}

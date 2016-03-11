@@ -211,7 +211,7 @@
 		CancerType,
 		geneticMutation,
 		phone
-    FROM SuggestUserByProfile
+    FROM suggestUserByProfile
     WHERE (SuggestedUsername = #{username})  
     Order By RankID asc
     LIMIT #{beginIndex}, #{count}
@@ -230,7 +230,7 @@
   </update>
   
   <delete id="deleteFromSuggestUserByProfile" parameterType = "SuggestedUserPair" flushCache="true">
-  	DELETE FROM SuggestUserByProfile where SuggestedUsername = #{suggestedUsername} AND username = #{username}
+  	DELETE FROM suggestuserbyprofile where SuggestedUsername = #{suggestedUsername} AND username = #{username}
   </delete>
 	<!--更新用户头像-->
 	<update id="updateUserPhoto"  parameterType="User" flushCache="true">

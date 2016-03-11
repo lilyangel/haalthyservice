@@ -11,7 +11,15 @@ public class AddPatientStatusRequest {
 	private ClinicReport clinicReport;
 	private String insertUsername;
 	private List<ImageInfo> imageInfos;
+	private int hasImage;
 	
+	
+	public int getHasImage() {
+		return hasImage;
+	}
+	public void setHasImage(int hasImage) {
+		this.hasImage = hasImage;
+	}
 	public List<ImageInfo> getImageInfos() {
 		return imageInfos;
 	}

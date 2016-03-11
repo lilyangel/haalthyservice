@@ -15,7 +15,35 @@ public class Comment  implements Serializable{
 	private int isActive;
 //	private byte[] image;
 	private String imageURL;
+	private String postType;
+	private String postBody;
+	private String postImageURL;
+	private int isBroadcast;
 	
+	public int getIsBroadcast() {
+		return isBroadcast;
+	}
+	public void setIsBroadcast(int isBroadcast) {
+		this.isBroadcast = isBroadcast;
+	}
+	public String getPostType() {
+		return postType;
+	}
+	public void setPostType(String postType) {
+		this.postType = postType;
+	}
+	public String getPostBody() {
+		return postBody;
+	}
+	public void setPostBody(String postBody) {
+		this.postBody = postBody;
+	}
+	public String getPostImageURL() {
+		return postImageURL;
+	}
+	public void setPostImageURL(String postImageURL) {
+		this.postImageURL = postImageURL;
+	}
 	public String getDisplayname() {
 		return displayname;
 	}

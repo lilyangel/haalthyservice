@@ -123,6 +123,7 @@ public class PatientSecurityController {
 			updateTreatmentResponse.setResult(1);
 			updateTreatmentResponse.setResultDesp("返回成功");
 		}catch(Exception e){
+			e.printStackTrace();
 			updateTreatmentResponse.setResult(-1);
 			updateTreatmentResponse.setResultDesp("数据库连接错误");	
 		}
@@ -142,12 +143,15 @@ public class PatientSecurityController {
 			PatientStatus patientStatus = addPatientStatusRequest.getPatientStatus();
 			if(addPatientStatusRequest.getPatientStatus()!=null){
 				patientStatus.setUsername(addPatientStatusRequest.getInsertUsername());
+				patientStatus.setHasImage(addPatientStatusRequest.getHasImage());
 				insertCount = patientService.insertPatientStatus(patientStatus);
 			}
 
 			ClinicReport clinicReport = addPatientStatusRequest.getClinicReport();
 			if (clinicReport != null) {
-				String[] cliniReprotItem = clinicReport.getClinicReport().split("\\]", -1);
+				String clinicReportStr = clinicReport.getClinicReport();
+				clinicReportStr.toUpperCase();
+				String[] cliniReprotItem = clinicReportStr.split("\\]", -1);
 				List<ClinicData> clinicDataList = new ArrayList();
 
 				for (int i = 0; i < cliniReprotItem.length; i++) {
@@ -200,6 +204,7 @@ public class PatientSecurityController {
 				post.setType(2);
 				post.setIsBroadcast(0);
 				post.setIsActive(1);
+				post.setHasImage(addPatientStatusRequest.getHasImage());
 				postService.addPost(post);
 			}
 			List<OSSFile> ossFileList = new ArrayList();
@@ -242,9 +247,13 @@ public class PatientSecurityController {
 				String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest()
 						.getAuthorizationParameters().get("username");
 				int returnValue = 0;
-				if ((treatment.getUsername().equals(currentSessionUsername)) ||
-						(treatment.getUsername().equals(userService.getUserByEmail(currentSessionUsername).getUsername())) ||
-						(treatment.getUsername().equals(userService.getUserByPhone(currentSessionUsername).getUsername()))) {
+				System.out.println(currentSessionUsername);
+				System.out.println(treatment.getUsername());
+				if ((treatment.getUsername().equals(currentSessionUsername)) || 
+						((userService.getUserByEmail(currentSessionUsername) != null) &&
+						(treatment.getUsername().equals(userService.getUserByEmail(currentSessionUsername).getUsername()))) ||
+						((userService.getUserByPhone(currentSessionUsername) != null)
+						 && (treatment.getUsername().equals(userService.getUserByPhone(currentSessionUsername).getUsername())))){
 					returnValue = patientService.deleteTreatmentById(treatment.getTreatmentID());
 				}
 				deleteTreatmentByIdResponse.setResult(1);
@@ -252,6 +261,7 @@ public class PatientSecurityController {
 			}
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			deleteTreatmentByIdResponse.setResult(-1);
 			deleteTreatmentByIdResponse.setResultDesp("数据库连接错误");
 		}

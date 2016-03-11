@@ -14,7 +14,7 @@
 			Username,
 			FollowingUser,
 			DateInserted
-		FROM Follow WHERE Username = #{username} AND IsActive = 1;
+		FROM follow WHERE Username = #{username} AND IsActive = 1;
 	</select>
 	
 	<select id="getFollowerUsersByUsername" parameterType="string" resultType="User">
@@ -34,7 +34,7 @@
 			CancerType,
 			metastasis,
 			Age
-		FROM Follow, user WHERE FollowingUser = #{username} AND IsActive = 1 AND Follow.Username = user.Username 
+		FROM follow, user WHERE FollowingUser = #{username} AND IsActive = 1 AND follow.Username = user.Username 
 		ORDER BY Displayname ASC;
 	</select>
 	
@@ -55,7 +55,7 @@
 			CancerType,
 			metastasis,
 			Age
-		FROM Follow, user WHERE Follow.Username = #{username} AND IsActive = 1 AND user.username = Follow.followingUser 
+		FROM follow, user WHERE Follow.Username = #{username} AND IsActive = 1 AND user.username = follow.followingUser 
 		ORDER BY Displayname ASC;
 	</select>
 	
@@ -65,7 +65,7 @@
 			Username,
 			FollowingUser,
 			DateInserted
-		FROM Follow WHERE Username = #{username} AND FollowingUser = #{followingUser} AND IsActive = 1;
+		FROM follow WHERE Username = #{username} AND FollowingUser = #{followingUser} AND IsActive = 1;
 	</select>
 	
 	<insert id="addFollowing" useGeneratedKeys="true"
@@ -75,32 +75,32 @@
 	</insert>
 	
 	<update id="inactiveFollowship" parameterType="Follow" flushCache="true">
-		UPDATE Follow SET
+		UPDATE follow SET
 			isActive = "0",
 			DateUpdated = #{dateUpdated}
 		WHERE Username = #{username} AND FollowingUser = #{followingUser}
 	</update>
 	
 	<update id="updateNewFollowerCount" parameterType="String" flushCache="true">
-		UPDATE NewFollowerCount SET
+		UPDATE newfollowercount SET
 			Count = Count + 1
 		WHERE Username = #{username}
 	</update>
 	
 	<insert id="insertNewFollowerCount" parameterType="String">
-		INSERT INTO  NewFollowerCount (Username, Count)
+		INSERT INTO  newFollowerCount (Username, Count)
 		VALUES (#{username}, 1)
 	</insert>
 	
 	<select id="selectNewFollowerCount" parameterType="String" resultType="NewFollowerCount">
 		SELECT Count,
 			   Username
-		 FROM NewFollowerCount
+		 FROM newFollowerCount
 		WHERE Username = #{username}
 	</select>
 	
 	<update id="refreshNewFollowerCount" parameterType="String">
-		UPDATE NewFollowerCount SET
+		UPDATE newFollowerCount SET
 			Count = 0
 		WHERE Username = #{username}
 	</update>
