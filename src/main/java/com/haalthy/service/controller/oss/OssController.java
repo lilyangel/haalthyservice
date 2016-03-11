@@ -30,7 +30,7 @@ import java.util.List;
  * Created by Ken on 2015-12-28.
  */
 @Controller
-@RequestMapping("/open/oss/upload")
+@RequestMapping("/open/oss")
 public class OssController {
 
     //private OssFile file;
@@ -206,10 +206,12 @@ public class OssController {
                 "    \"Statement\": [\n" +
                 "        {\n" +
                 "            \"Action\": [\n" +
-                "                \"oss:*\" \n" +
+                "                \"oss:GetObject\", \n" +
+                "                \"oss:PutObject\" \n" +
                 "            ], \n" +
                 "            \"Resource\": [\n" +
-                "                \"acs:*\"\n" +
+                "                \"acs:oss:*:*:haalthy\",\n" +
+                "                \"acs:oss:*:*:haalthy/*\"\n" +
                 "            ], \n" +
                 "            \"Effect\": \"Allow\"\n" +
                 "        }\n" +
@@ -238,4 +240,5 @@ public class OssController {
         }
         return res;
     }
+
 }

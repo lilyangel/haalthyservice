@@ -8,7 +8,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -20,10 +19,10 @@ import java.util.Map;
 @Service
 public class WeixinService {
 
-    @Value("${weixin.appid}")
-    String appid;
-    @Value("${weixin.secret}")
-    String secret;
+
+    String appid = "wxe1ddd7a7d6ab1bf7";
+
+    String secret = "578bff819bc390448e26adb75c43190e";
 
     String token;
     String apiTicket;
@@ -133,13 +132,26 @@ public class WeixinService {
         * &timestamp=1414587457
         * &url=http://mp.weixin.qq.com?params=value
         * */
+//        String ApiTicket = "sM4AOVdWfPE4DxkXGEs8VMCPGGVi4C3VM0P37wVUCFvkVAy_90u5h9nbSlYy3-Sl-HhTdfl2fzFy1AOcHKP7qg";
+
         String srcString = "jsapi_ticket="+getApiTicket()
                           +"&noncestr="+noncestr
                           +"&timestamp="+timestamp
                           +"&url="+strUrl;
 
-        return DigestUtils.sha(srcString).toString();
+        return DigestUtils.shaHex(srcString);
     }
+
+    public String getExampleSignature()
+    {
+        String srcString = "jsapi_ticket="+"sM4AOVdWfPE4DxkXGEs8VMCPGGVi4C3VM0P37wVUCFvkVAy_90u5h9nbSlYy3-Sl-HhTdfl2fzFy1AOcHKP7qg"
+                +"&noncestr=Wm3WZYTPz0wzccnW"
+                +"&timestamp=1414587457"
+                +"&url=http://mp.weixin.qq.com?params=value";
+
+        return  DigestUtils.shaHex(srcString);
+    }
+
     /**
      * 获取用户信息
      * @param accessCode

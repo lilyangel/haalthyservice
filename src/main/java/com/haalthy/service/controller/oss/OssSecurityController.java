@@ -79,7 +79,7 @@ public class OssSecurityController {
         // AssumeRole API 请求参数: RoleArn, RoleSessionName, Polciy, and DurationSeconds
 
         // RoleArn 需要在 RAM 控制台上获取
-        String roleArn = " acs:ram::1453842368624030:role/aliyunosstokengeneratorrole";
+        String roleArn = "acs:ram::1453842368624030:role/aliyunosstokengeneratorrole";
 
         // RoleSessionName 是临时Token的会话名称，自己指定用于标识你的用户，主要用于审计，或者用于区分Token颁发给谁
         // 但是注意RoleSessionName的长度和规则，不要有空格，只能有'-' '_' 字母和数字等字符
@@ -91,10 +91,12 @@ public class OssSecurityController {
                 "    \"Statement\": [\n" +
                 "        {\n" +
                 "            \"Action\": [\n" +
-                "                \"oss:*\" \n" +
+                "                \"oss:GetObject\", \n" +
+                "                \"oss:PutObject\" \n" +
                 "            ], \n" +
                 "            \"Resource\": [\n" +
-                "                \"acs:*\"\n" +
+                "                \"acs:oss:*:*:haalthy\",\n" +
+                "                \"acs:oss:*:*:haalthy/*\"\n" +
                 "            ], \n" +
                 "            \"Effect\": \"Allow\"\n" +
                 "        }\n" +

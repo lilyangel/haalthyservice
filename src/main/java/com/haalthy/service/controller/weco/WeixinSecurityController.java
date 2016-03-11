@@ -26,7 +26,7 @@ public class WeixinSecurityController {
 
     protected Logger logger = Logger.getLogger(this.getClass());
 
-    @RequestMapping(value = "/getSign", method = RequestMethod.GET, headers = "Accept=application/json",
+    @RequestMapping(value = "/getSign", method = RequestMethod.POST, headers = "Accept=application/json",
             produces = {"application/json"})
     @ResponseBody
     public Response getSignSecurity(@RequestBody StringRequest request)

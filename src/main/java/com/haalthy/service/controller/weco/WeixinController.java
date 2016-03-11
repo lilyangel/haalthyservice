@@ -27,7 +27,7 @@ public class WeixinController {
 
     protected Logger logger = Logger.getLogger(this.getClass());
 
-    @RequestMapping(value = "/getSign", method = RequestMethod.GET, headers = "Accept=application/json",
+    @RequestMapping(value = "/getSign", method = RequestMethod.POST, headers = "Accept=application/json",
             produces = {"application/json"})
     @ResponseBody
     public Response getSignOpen(@RequestBody StringRequest request)
@@ -41,6 +41,32 @@ public class WeixinController {
         try {
             wx.setAppId(weixinService.getAppid());
             wx.setSignature(weixinService.getSignature(request.getContent(),timeStamp,nonceStr));
+            response.setResult(1);
+            response.setResultDesp("获取签名成功");
+            response.setContent(wx);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setResult(-1);
+            response.setResultDesp("获取签名失败");
+            response.setContent(null);
+        }
+        return response;
+    }
+
+    @RequestMapping(value = "/getSignExample", method = RequestMethod.POST, headers = "Accept=application/json",
+            produces = {"application/json"})
+    @ResponseBody
+    public Response getSignOpenExample()
+    {
+        Response response = new Response();
+        WeixinConfig wx = new WeixinConfig();
+        String nonceStr = UUID.randomUUID().toString();
+        String timeStamp = Long.toString(System.currentTimeMillis() / 1000);
+        wx.setNonceStr(nonceStr);
+        wx.setTimestamp(timeStamp);
+        try {
+            wx.setAppId(weixinService.getAppid());
+            wx.setSignature(weixinService.getExampleSignature());
             response.setResult(1);
             response.setResultDesp("获取签名成功");
             response.setContent(wx);

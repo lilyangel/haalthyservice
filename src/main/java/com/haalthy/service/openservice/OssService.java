@@ -73,7 +73,8 @@ public class OssService {
 		objectMeta.setContentLength(in.available());
 		objectMeta.setContentType(setting.getContentType(oss.getFileType()));
 		OSSFileOperate simple = new OSSFileOperate();
-		simple.putSimpleObject(client, setting.getBucket(), setting.getOSSKey(oss.getFunctionType(), fileName), in,
+		simple.putSimpleObject(client, setting.getBucket(),
+                setting.getOSSKey(oss.getFunctionType(), fileName), in,
 				objectMeta);
 		in.close();
 		functionType = oss.getFunctionType();
