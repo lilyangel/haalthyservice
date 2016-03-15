@@ -14,7 +14,7 @@
  	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 
 <!--   		<property name="url"
-			value="jdbc:mysql://lilymysql.cjxzgcls0rkx.rds.cn-north-1.amazonaws.com.cn:3306/haalthyTest?useUnicode=true&amp;characterEncoding=utf8">
+			value="jdbc:mysql://lilymysql.cjxzgcls0rkx.rds.cn-north-1.amazonaws.com.cn:3306/haalthyTest?useUnicode=true&amp;characterEncoding=utf8&amp;autoReconnect=true&amp;rewriteBatchedStatements=TRUE">
 		</property>
  		<property name="username" value="lily"></property>
 		<property name="password" value="%TGB3edc"></property> -->
@@ -118,6 +118,7 @@
     </bean>
 
     <!-- scan for mappers and let them be autowired -->
+    <bean class="org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration"/>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.haalthy.service.persistence" />
@@ -133,6 +134,8 @@
     <bean id="patientService" class="com.haalthy.service.openservice.PatientService">
     </bean>
     <bean id="clinicTrailService" class="com.haalthy.service.openservice.ClinicTrailService">
+    </bean>
+    <bean id="EmailLoggerService" class="com.haalthy.service.openservice.EmailLoggerService">
     </bean>
     <bean id="ossService" class="com.haalthy.service.openservice.OssService">
     </bean>

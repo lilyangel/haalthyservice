@@ -8,15 +8,15 @@
     <context:annotation-config />
     <mvc:annotation-driven>
         <!--<mvc:message-converters register-defaults="true">-->
-            <!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
-            <!--<bean id="fastJsonHttpMessageConverter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
-                <property name="supportedMediaTypes">
-                    <list>
-                        <value>application/json;charset=UTF-8</value>
-                    </list>
-                </property>
-            </bean>
-        </mvc:message-converters>-->
+        <!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+        <!--<bean id="fastJsonHttpMessageConverter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+            <property name="supportedMediaTypes">
+                <list>
+                    <value>application/json;charset=UTF-8</value>
+                </list>
+            </property>
+        </bean>
+    </mvc:message-converters>-->
     </mvc:annotation-driven>
 
 

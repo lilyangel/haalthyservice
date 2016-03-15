@@ -11,7 +11,9 @@ import com.aliyuncs.profile.IClientProfile;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
 import com.haalthy.service.controller.Interface.OSSFile;
+import com.haalthy.service.controller.Interface.OssStsToken;
 import com.haalthy.service.controller.Interface.Response;
+import com.haalthy.service.controller.Interface.StringRequest;
 import com.haalthy.service.oss.OSSFileOperate;
 import com.haalthy.service.oss.OSSSetting;
 import com.haalthy.service.oss.RefreshImgPath;
@@ -182,9 +184,11 @@ public class OssController {
     @RequestMapping(value = "/getToken", method = RequestMethod.GET, headers = "Accept=application/json",
             produces = {"application/json"})
     @ResponseBody
-    public Response ossSTSGetToken()
+    public Response ossSTSGetToken(@RequestBody StringRequest request)
     {
         Response res = new Response();
+        setting = OSSSetting.getInstance();
+        String fileName = setting.getFileName("JPG");
         // 只有 RAM用户（子账号）才能调用 AssumeRole 接口
         // 阿里云主账号的AccessKeys不能用于发起AssumeRole请求
         // 请首先在RAM控制台创建一个RAM用户，并为这个用户创建AccessKeys
@@ -229,9 +233,18 @@ public class OssController {
             System.out.println("Access Key Id: " + response.getCredentials().getAccessKeyId());
             System.out.println("Access Key Secret: " + response.getCredentials().getAccessKeySecret());
             System.out.println("Security Token: " + response.getCredentials().getSecurityToken());
+
+            OssStsToken stsToken = new OssStsToken();
+            stsToken.setAccessKeyID(response.getCredentials().getAccessKeyId());
+            stsToken.setAccessKeySecert(response.getCredentials().getAccessKeySecret());
+            stsToken.setSecurityToken(response.getCredentials().getSecurityToken());
+            stsToken.setExpiration(response.getCredentials().getExpiration());
+            stsToken.setEndpoint(setting.getEndpoint());
+            stsToken.setObjectKey(setting.getOSSKey(request.getContent(), fileName));
+            stsToken.setObjectUrl(setting.getUrl(request.getContent(), fileName));
             res.setResult(1);
             res.setResultDesp("获取OSS Token成功");
-            res.setContent(response);
+            res.setContent(stsToken);
         } catch (ClientException e) {
             res.setResult(-1);
             res.setResultDesp("获取OSS Token失败");
