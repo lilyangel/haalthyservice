@@ -60,7 +60,7 @@ public class LuceneSearchController {
     public Response searchClinictrail(@RequestBody SearchRequest searchRequest){
     	Response response = new Response();
         try {
-            String[] searchColumns = new String[]{"subgroup", "drugtype", "drugname","stage"};
+            String[] searchColumns = new String[]{"subGroup", "drugType", "drugName","stage"};
         	response.setContent(searchObject(searchRequest, "aiyouclinictrial", searchColumns));
         	response.setResult(1);
         	response.setResultDesp("返回成功");

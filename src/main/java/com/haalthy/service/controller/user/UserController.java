@@ -30,6 +30,7 @@ import com.haalthy.service.controller.Interface.ResetPasswordRequest;
 import com.haalthy.service.controller.Interface.user.AddUpdateUserResponse;
 import com.haalthy.service.controller.Interface.user.GetUsersResponse;
 import com.haalthy.service.domain.SelectUserByTagRange;
+import com.haalthy.service.domain.Tag;
 import com.haalthy.service.domain.User;
 import com.haalthy.service.openservice.AuthCodeService;
 import com.haalthy.service.openservice.OssService;
@@ -156,16 +157,16 @@ public class UserController {
     public GetUsersResponse getSuggestUsersByTags(@RequestBody GetSuggestUsersByTagsRequest getSuggestUsersByTagsRequest) {
 		GetUsersResponse getUsersResponse = new GetUsersResponse();
 		try {
-			int[] tags = getSuggestUsersByTagsRequest.getTags();
+			List<Tag> tags = getSuggestUsersByTagsRequest.getTags();
 			int rangeBegin = getSuggestUsersByTagsRequest.getPage() * getSuggestUsersByTagsRequest.getCount();
 			int rangeEnd = (getSuggestUsersByTagsRequest.getPage() + 1) * getSuggestUsersByTagsRequest.getCount();
 			List<User> users = new ArrayList<User>();
 			Set<String> set = new HashSet<String>();
-			for (int i = 0; i < tags.length; i++) {
+//			for (int i = 0; i < tags.length; i++) {
 				SelectUserByTagRange selectUserByTagRange = new SelectUserByTagRange();
-				selectUserByTagRange.setBeginIndex(rangeBegin / tags.length);
-				selectUserByTagRange.setEndIndex(rangeEnd / tags.length + 1);
-				selectUserByTagRange.setTagID(tags[i]);
+				selectUserByTagRange.setBeginIndex(rangeBegin);
+				selectUserByTagRange.setEndIndex(rangeEnd);
+				selectUserByTagRange.setTags(tags);
 				List<User> suggestUsers = userService.selectSuggestUsersByTags(selectUserByTagRange);
 				Iterator<User> userItr = suggestUsers.iterator();
 				while (userItr.hasNext()) {
@@ -174,7 +175,7 @@ public class UserController {
 						users.add(newSuggestUser);
 					}
 				}
-			}
+//			}
 			getUsersResponse.setResult(1);
 			getUsersResponse.setResultDesp("返回成功");
 			getUsersResponse.setContent(users);

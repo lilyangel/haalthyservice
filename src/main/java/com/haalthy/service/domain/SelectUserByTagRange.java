@@ -1,14 +1,18 @@
 package com.haalthy.service.domain;
 
+import java.util.List;
+
 public class SelectUserByTagRange {
-	private int tagID;
+	private List<Tag> tags;
 	private int beginIndex;
 	private int endIndex;
-	public int getTagID() {
-		return tagID;
+
+	
+	public List<Tag> getTags() {
+		return tags;
 	}
-	public void setTagID(int tagID) {
-		this.tagID = tagID;
+	public void setTags(List<Tag> tags) {
+		this.tags = tags;
 	}
 	public int getBeginIndex() {
 		return beginIndex;

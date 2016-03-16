@@ -19,7 +19,7 @@
 			imageURL,
 			displayname
 	    FROM comment, user
-	    WHERE POSTID = #{id} AND IsActive = 1 AND (Comment.InsertUsername = user.Username)
+	    WHERE POSTID = #{id} AND IsActive = 1 AND (comment.InsertUsername = user.Username)
 	    	AND ((CommentID &lt; #{max_id}) OR (CommentID &gt; #{since_id}))
 	    	ORDER BY DateInserted DESC
 	    	LIMIT #{beginIndex}, #{count}    
@@ -56,7 +56,7 @@
 			imageURL,
 			displayname
 			FROM comment, user
-		WHERE comment.PostID in (select postID from post where insertUserName=#{username}) AND IsActive = 1 AND (Comment.InsertUsername = user.Username) 
+		WHERE comment.PostID in (select postID from post where insertUserName=#{username}) AND IsActive = 1 AND (comment.InsertUsername = user.Username) 
 			AND ((CommentID &lt; #{max_id}) OR (CommentID &gt; #{since_id}))
 			order by dateInserted desc
 			LIMIT #{beginIndex}, #{count}

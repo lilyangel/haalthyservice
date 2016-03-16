@@ -17,7 +17,6 @@ public class AddPostRequest {
 	private List<String> mentionUsers;
 	private List<ImageInfo> imageInfos;
 	
-	
 	public int getHasImage() {
 		return hasImage;
 	}

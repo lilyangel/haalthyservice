@@ -1,15 +1,19 @@
 package com.haalthy.service.controller.Interface;
 
+import java.util.List;
+
+import com.haalthy.service.domain.Tag;
+
 public class GetSuggestUsersByTagsRequest {
-	int[] tags;
+	List<Tag> tags;
 	int page;
 	int count;
 	int beginIndex;
 
-	public int[] getTags() {
+	public List<Tag> getTags() {
 		return tags;
 	}
-	public void setTags(int[] tags) {
+	public void setTags(List<Tag> tags) {
 		this.tags = tags;
 	}
 	public int getPage() {

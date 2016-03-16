@@ -4,9 +4,9 @@
 
 <mapper namespace="com.haalthy.service.persistence.PatientMapper">
 
-<!-- 	<cache eviction="LRU"
+ 	<cache eviction="LRU"
 		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="8640000"
-		   size="1000" readOnly="true" /> -->
+		   size="1000" readOnly="true" />
   
   <select id="getTreatmentFormat" resultType="TreatmentFormat">
      	SELECT 
@@ -20,7 +20,7 @@
      	SELECT 
    			statusFormatID,
    			statusName
-		FROM patientStatusFormat
+		FROM patientstatusformat
    </select>
    
    <select id="getClinicReportFormat" resultType="ClinicReportFormat">
