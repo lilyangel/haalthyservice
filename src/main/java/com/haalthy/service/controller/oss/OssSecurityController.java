@@ -8,10 +8,13 @@ import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleRequest;
 import com.aliyuncs.sts.model.v20150401.AssumeRoleResponse;
+import com.haalthy.service.controller.Interface.OssStsToken;
 import com.haalthy.service.controller.Interface.Response;
+import com.haalthy.service.controller.Interface.StringRequest;
 import com.haalthy.service.oss.OSSSetting;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -66,10 +69,11 @@ public class OssSecurityController {
     @RequestMapping(value = "/getToken", method = RequestMethod.POST, headers = "Accept=application/json",
             produces = {"application/json"})
     @ResponseBody
-    public Response ossSTSGetToken()
+    public Response ossSTSGetToken(@RequestBody StringRequest request)
     {
         Response res = new Response();
         setting = OSSSetting.getInstance();
+        String fileName = setting.getFileName("JPG");
         // 只有 RAM用户（子账号）才能调用 AssumeRole 接口
         // 阿里云主账号的AccessKeys不能用于发起AssumeRole请求
         // 请首先在RAM控制台创建一个RAM用户，并为这个用户创建AccessKeys
@@ -114,9 +118,18 @@ public class OssSecurityController {
             System.out.println("Access Key Id: " + response.getCredentials().getAccessKeyId());
             System.out.println("Access Key Secret: " + response.getCredentials().getAccessKeySecret());
             System.out.println("Security Token: " + response.getCredentials().getSecurityToken());
+
+            OssStsToken stsToken = new OssStsToken();
+            stsToken.setAccessKeyID(response.getCredentials().getAccessKeyId());
+            stsToken.setAccessKeySecert(response.getCredentials().getAccessKeySecret());
+            stsToken.setSecurityToken(response.getCredentials().getSecurityToken());
+            stsToken.setExpiration(response.getCredentials().getExpiration());
+            stsToken.setEndpoint(setting.getEndpoint());
+            stsToken.setObjectKey(setting.getOSSKey(request.getContent(), fileName));
+            stsToken.setObjectUrl(setting.getUrl(request.getContent(),fileName));
             res.setResult(1);
             res.setResultDesp("获取OSS Token成功");
-            res.setContent(response);
+            res.setContent(stsToken);
         } catch (ClientException e) {
             res.setResult(-1);
             res.setResultDesp("获取OSS Token失败");
@@ -126,3 +139,5 @@ public class OssSecurityController {
         return res;
     }
 }
+
+

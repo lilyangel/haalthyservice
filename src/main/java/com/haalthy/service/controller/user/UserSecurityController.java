@@ -1,9 +1,7 @@
 package com.haalthy.service.controller.user;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -14,16 +12,24 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haalthy.service.common.ProcessImageURL;
+import com.haalthy.service.configuration.ImageService;
+import com.haalthy.service.controller.Interface.ContentIntEapsulate;
+import com.haalthy.service.controller.Interface.ContentStringEapsulate;
+import com.haalthy.service.controller.Interface.GetMentionedUsernameRequest;
+import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
+import com.haalthy.service.controller.Interface.GetUserDetailResponse;
+import com.haalthy.service.controller.Interface.InputUsernameRequest;
+import com.haalthy.service.controller.Interface.OSSFile;
+import com.haalthy.service.controller.Interface.ResetPasswordRequest;
+import com.haalthy.service.controller.Interface.Response;
 import com.haalthy.service.controller.Interface.patient.ClinicDataType;
 import com.haalthy.service.controller.Interface.tag.GetTagsResponse;
-import com.haalthy.service.controller.Interface.tag.TagList;
-import com.haalthy.service.controller.Interface.user.AddUpdateUserRequest;
 import com.haalthy.service.controller.Interface.user.AddUpdateUserResponse;
 import com.haalthy.service.controller.Interface.user.FollowUsersLists;
 import com.haalthy.service.controller.Interface.user.GetUsersResponse;
@@ -33,9 +39,7 @@ import com.haalthy.service.controller.Interface.user.UpdateNewFollowerResponse;
 import com.haalthy.service.controller.Interface.user.UpdateUserTagsRequest;
 import com.haalthy.service.controller.Interface.user.UserDetail;
 import com.haalthy.service.domain.ClinicData;
-import com.haalthy.service.domain.ClinicReport;
 import com.haalthy.service.domain.Follow;
-import com.haalthy.service.domain.NewFollowerCount;
 import com.haalthy.service.domain.PatientStatus;
 import com.haalthy.service.domain.SuggestedUserPair;
 import com.haalthy.service.domain.Tag;
@@ -46,19 +50,6 @@ import com.haalthy.service.openservice.FollowService;
 import com.haalthy.service.openservice.OssService;
 import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.UserService;
-import com.haalthy.service.common.ProcessImageURL;
-import com.haalthy.service.configuration.ImageService;
-import com.haalthy.service.controller.Interface.ContentIntEapsulate;
-import com.haalthy.service.controller.Interface.ContentStringEapsulate;
-import com.haalthy.service.controller.Interface.FollowUserRequest;
-import com.haalthy.service.controller.Interface.GetMentionedUsernameRequest;
-import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
-import com.haalthy.service.controller.Interface.GetUserDetailResponse;
-import com.haalthy.service.controller.Interface.InputUsernameRequest;
-import com.haalthy.service.controller.Interface.JpushPair;
-import com.haalthy.service.controller.Interface.OSSFile;
-import com.haalthy.service.controller.Interface.ResetPasswordRequest;
-import com.haalthy.service.controller.Interface.Response;
 
 @Controller
 @RequestMapping("/security/user")
@@ -207,9 +198,9 @@ public class UserSecurityController {
 			if (updateUser.getPathological() != null && updateUser.getPathological() != "") {
 				user.setPathological(updateUser.getPathological());
 			}
-//			if (updateUser.getStage() != 0) {
+			if (updateUser.getStage() != null) {
 				user.setStage(updateUser.getStage());
-//			}
+			}
 			if (updateUser.getCancerType() != null && updateUser.getCancerType() != "") {
 				user.setCancerType(updateUser.getCancerType());
 			}
@@ -219,7 +210,13 @@ public class UserSecurityController {
 			if (updateUser.getGeneticMutation() != null && updateUser.getGeneticMutation() != "") {
 				user.setGeneticMutation(updateUser.getGeneticMutation());
 			}
-			user.setAge(updateUser.getAge());
+			/*
+			20160316 原来未判断age是否为空，改为如果有传大于0的值则修改
+			* */
+			if(updateUser.getAge() > 0)
+			{
+				user.setAge(updateUser.getAge());
+			}
 			if (userService.updateUser(user) == 1) {
 				updateUserResponse.setResult(1);
 				updateUserResponse.setResultDesp("返回成功");

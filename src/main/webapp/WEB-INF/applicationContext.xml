@@ -13,36 +13,20 @@
    <!-- in-memory database and a datasource -->
  	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 
-     		<property name="url"
-			value="jdbc:mysql://lilymysql.cjxzgcls0rkx.rds.cn-north-1.amazonaws.com.cn:3306/haalthy?useUnicode=true&amp;characterEncoding=utf8">
+<!--   		<property name="url"
+			value="jdbc:mysql://lilymysql.cjxzgcls0rkx.rds.cn-north-1.amazonaws.com.cn:3306/haalthyTest?useUnicode=true&amp;characterEncoding=utf8&amp;autoReconnect=true&amp;rewriteBatchedStatements=TRUE">
 		</property>
  		<property name="username" value="lily"></property>
-		<property name="password" value="%TGB3edc"></property>
-<!--      <property name="url"
+		<property name="password" value="%TGB3edc"></property> -->
+      <property name="url"
  			value="jdbc:mysql://rdsh7cvdrpvk635j2d2g.mysql.rds.aliyuncs.com:3306/haalthy?useUnicode=true&amp;characterEncoding=utf8">
 		</property>
 		<property name="username" value="haalthy"></property>
-		<property name="password" value="183200a"></property>  -->
+		<property name="password" value="183200a"></property>  
 		<property name="driverClassName"
 			value="com.mysql.jdbc.Driver">
 		</property>
 	</bean>
-<!--     <property name="url"
-              value="jdbc:mysql://rdsh7cvdrpvk635j2d2g.mysql.rds.aliyuncs.com:3306/haalthy?useUnicode=true&amp;characterEncoding=utf8&amp;allowMultiQueries=true&amp;zeroDateTimeBehavior=convertToNull">
-    </property> -->
-<!--     		<property name="username" value="lily"></property>
-            <property name="password" value="%TGB3edc"></property> 
-    <property name="username" value="lily"></property>
-    <property name="password" value="%TGB3edc"></property> -->
-
-<!--     <property name="username" value="haalthy"></property>
-    <property name="password" value="183200a"></property> -->
-<!--     <property name="driverClassName"
-              value="com.mysql.jdbc.Driver">
-    </property>
-
-
-    </bean> -->
 
     <!-- transaction manager, use JtaTransactionManager for global tx -->
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -118,6 +102,7 @@
     </bean>
 
     <!-- scan for mappers and let them be autowired -->
+    <bean class="org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration"/>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.haalthy.service.persistence" />
@@ -133,6 +118,8 @@
     <bean id="patientService" class="com.haalthy.service.openservice.PatientService">
     </bean>
     <bean id="clinicTrailService" class="com.haalthy.service.openservice.ClinicTrailService">
+    </bean>
+    <bean id="EmailLoggerService" class="com.haalthy.service.openservice.EmailLoggerService">
     </bean>
     <bean id="ossService" class="com.haalthy.service.openservice.OssService">
     </bean>

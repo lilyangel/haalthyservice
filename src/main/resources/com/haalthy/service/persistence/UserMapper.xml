@@ -196,7 +196,7 @@
  	</select>
  	
 	<!-- parameterType = "GetSuggestUsersByProfileRequest" --> 
-	<select id = "selectSuggestUsersByProfile"  resultType = "User">
+<!-- 	<select id = "selectSuggestUsersByProfile"  resultType = "User">
 	SELECT
 		UserID,
 		Email,
@@ -217,6 +217,30 @@
     FROM suggestuserbyprofile
     WHERE (SuggestedUsername = #{username})  
     Order By RankID asc
+    LIMIT #{beginIndex}, #{count}
+	</select> -->
+	<select id = "selectSuggestUsersByProfile"  resultType = "User">
+	SELECT
+		UserID,
+		Email,
+		CreateDate,
+		UpdateDate,
+		Displayname,
+		Username,
+		ImageURL,
+		Gender,
+		IsSmoking,
+		Pathological,
+		Stage,
+		Age,
+		FollowCount,
+		CancerType,
+		geneticMutation,
+		phone
+     FROM user WHERE cancerType = 
+     (SELECT cancerType FROM user WHERE username = #{username}) 
+     AND username != #{username}
+     ORDER BY FollowCount 
     LIMIT #{beginIndex}, #{count}
 	</select>
 	
