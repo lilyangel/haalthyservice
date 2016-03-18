@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haalthy.service.JPush.JPushService;
 import com.haalthy.service.common.ProcessImageURL;
 import com.haalthy.service.configuration.ImageService;
 import com.haalthy.service.controller.Interface.ContentIntEapsulate;
@@ -66,6 +67,9 @@ public class UserSecurityController {
 	
 	@Autowired
 	private transient OssService ossService;
+	
+    @Autowired
+    private transient JPushService jPushService;
 	
 //	@RequestMapping(value = "/{username}", method = RequestMethod.GET, headers = "Accept=application/json", produces = {"application/json" })
 //	@ResponseBody
@@ -412,6 +416,9 @@ public class UserSecurityController {
 			suggestedUserPair.setSuggestedUsername(follow.getUsername());
 			suggestedUserPair.setUsername(follow.getFollowingUser());
 			userService.deleteFromSuggestUserByProfile(suggestedUserPair);
+			
+			jPushService.SendMessageToUser(follow.getFollowingUser(), follow.getUsername(), "{\"type\":\"followed\",\"username\":\""+follow.getUsername()+", \"title\": \"科利\", \"content\":\"您被新用户关注\"}");
+			System.out.println("send jpush message from " + follow.getUsername() + " to " + follow.getFollowingUser());
 
 			// increase
 			int updateNewFollowerCountResult = followService.updateNewFollowerCount(follow.getFollowingUser());

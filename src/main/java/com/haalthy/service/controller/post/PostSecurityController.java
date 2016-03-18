@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haalthy.service.JPush.JPushService;
 import com.haalthy.service.common.ProcessImageURL;
 import com.haalthy.service.controller.Interface.ContentIntEapsulate;
 import com.haalthy.service.controller.Interface.GetCountResponse;
@@ -51,7 +52,10 @@ public class PostSecurityController {
 	
 	@Autowired
 	private transient PatientService patientService;
-
+	
+    @Autowired
+    private transient JPushService jPushService;
+    
     @RequestMapping(value = "/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public AddUpdatePostResponse addPost(@RequestBody AddPostRequest addPostRequest) throws IOException{
@@ -124,6 +128,9 @@ public class PostSecurityController {
 					mention.setUsername(mUsername);
 
 					mentionList.add(mention);
+					jPushService.SendMessageToUser(mUsername, addPostRequest.getInsertUsername(), "{\"type\":\"mentioned\",\"id\":"+post.getPostID()+", \"title\": \"科利\", \"content\":\"您被@\"}");
+					System.out.println("send jpush message from " + addPostRequest.getInsertUsername() + " to " + mUsername);
+
 				}
 				postService.addMention(mentionList);
 			}

@@ -4,7 +4,7 @@
 
 <mapper namespace="com.haalthy.service.persistence.FollowMapper">
 
-	<cache eviction="LRU"
+  	<cache eviction="LRU"
 		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="8640000"
 		   size="1000" readOnly="true" />
 

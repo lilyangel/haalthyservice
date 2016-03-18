@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.haalthy.service.JPush.JPushService;
 import com.haalthy.service.controller.Interface.ContentIntEapsulate;
 import com.haalthy.service.controller.Interface.UnreadCommentRequest;
 import com.haalthy.service.controller.Interface.comment.AddCommentRequest;
@@ -23,6 +24,7 @@ import com.haalthy.service.controller.Interface.comment.GetCommentsResponse;
 import com.haalthy.service.controller.Interface.comment.GetUnreadCommentCountResponse;
 import com.haalthy.service.controller.Interface.comment.MarkCommentsAsReadByUsernameResponse;
 import com.haalthy.service.domain.Comment;
+import com.haalthy.service.domain.Post;
 import com.haalthy.service.openservice.CommentService;
 import com.haalthy.service.openservice.PostService;
 
@@ -34,7 +36,10 @@ public class CommentSecurityController {
 	
 	@Autowired
 	private transient PostService postService;
-		
+	
+    @Autowired
+    private transient JPushService jPushService;
+    
     @RequestMapping(value = "/add", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
     @ResponseBody
     public AddUpdateCommentResponse addComment(@RequestBody AddCommentRequest addCommentRequest){
@@ -49,6 +54,9 @@ public class CommentSecurityController {
     	comment.setInsertUsername(addCommentRequest.getInsertUsername());
 		ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
 		try {
+			Post post = postService.getPostById(addCommentRequest.getPostID());
+			jPushService.SendMessageToUser(post.getInsertUsername(), addCommentRequest.getInsertUsername(), "{\"type\":\"commented\",\"id\":"+ addCommentRequest.getPostID() +", \"title\": \"科利\", \"content\":\"您有一条新评论\"}");
+			System.out.println("send jpush message from " + addCommentRequest.getInsertUsername() + " to " + post.getInsertUsername());
 			contentIntEapsulate.setCount(postService.increasePostCountComment(addCommentRequest.getPostID()));
 			addCommentResponse.setContent(contentIntEapsulate);
 			if (commentService.addComment(comment) > 0){
