@@ -1,17 +1,12 @@
 package com.haalthy.service.openservice;
 
 import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
-import com.haalthy.service.domain.SelectUserByTagRange;
-import com.haalthy.service.domain.SuggestedUserPair;
-import com.haalthy.service.domain.Tag;
-import com.haalthy.service.domain.User;
-import com.haalthy.service.domain.UserTag;
+import com.haalthy.service.domain.*;
 import com.haalthy.service.persistence.UserMapper;
-
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -30,6 +25,9 @@ public class UserService {
     public User getUserByPhone(String phone) {
     	return userMapper.getUserByPhone(phone);
     }
+	public User getUserByOpenid(String openid) {
+		return userMapper.getUserByOpenid(openid);
+	}
 
     public int addUser(User user){
     	return userMapper.addUser(user);

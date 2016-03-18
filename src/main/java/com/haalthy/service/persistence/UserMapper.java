@@ -1,14 +1,9 @@
 package com.haalthy.service.persistence;
 
-import java.util.List;
-
 import com.haalthy.service.controller.Interface.GetSuggestUsersByProfileRequest;
-import com.haalthy.service.domain.SelectUserByTagRange;
-import com.haalthy.service.domain.SuggestedUserPair;
-import com.haalthy.service.domain.Tag;
-import com.haalthy.service.domain.User;
-import com.haalthy.service.domain.UserTag;
-import org.apache.ibatis.annotations.Param;
+import com.haalthy.service.domain.*;
+
+import java.util.List;
 
 
 public interface UserMapper {
@@ -17,7 +12,9 @@ public interface UserMapper {
 	  User getUserByEmail(String email);
 	  
 	  User getUserByPhone(String phone);
-	  
+
+	  User getUserByOpenid(String Openid);
+
 	  int addUser(User user);
 	  
 	  int updateUser(User user);

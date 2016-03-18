@@ -84,12 +84,37 @@
     FROM user
     WHERE user.Email = #{email}
   </select>
-  
+
+	<select id="getUserByOpenid" parameterType="string" resultType="User">
+		SELECT
+		UserID,
+		password,
+		Email,
+		CreateDate,
+		UpdateDate,
+		Displayname,
+		Username,
+		ImageURL,
+		Gender,
+		IsSmoking,
+		Pathological,
+		Stage,
+		FollowCount,
+		CancerType,
+		metastasis,
+		Age,
+		geneticMutation,
+		deviceToken,
+		phone,
+		IsSuperUser
+		FROM user
+		WHERE user.openid = #{openid}
+	</select>
   
 	<insert id="addUser" useGeneratedKeys="true"
     	keyProperty="UserID" keyColumn="UserID" flushCache="true">
-  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age, userType, geneticMutation, deviceToken, phone)
- 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age}, #{userType}, #{geneticMutation}, #{deviceToken}, #{phone})
+  		INSERT INTO user (Username,Displayname,Password,Email, CreateDate, UpdateDate, FollowCount, CancerType, Pathological, Stage, IsSmoking, metastasis, Gender, Age, userType, geneticMutation, deviceToken, phone,openid)
+ 			 VALUES (#{username},#{displayname},#{password},#{email},#{createDate}, #{updateDate}, #{followCount}, #{cancerType}, #{pathological}, #{stage}, #{isSmoking}, #{metastasis}, #{gender}, #{age}, #{userType}, #{geneticMutation}, #{deviceToken}, #{phone},#{openid})
 	</insert>
 	
 	<update id="updateUser" parameterType="User" flushCache="true">

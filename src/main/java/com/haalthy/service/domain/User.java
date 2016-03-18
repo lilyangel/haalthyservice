@@ -1,8 +1,8 @@
 package com.haalthy.service.domain;
 
-import java.io.Serializable;
-
 import com.haalthy.service.controller.Interface.ImageInfo;
+
+import java.io.Serializable;
 
 public class User implements Serializable {
 	private static final long serialVersionUID = 8751282105532159742L;
@@ -29,7 +29,16 @@ public class User implements Serializable {
 	private String imageURL;
 	private String phone;
 	private int isSuperUser;
-	
+	private String openid;
+
+	public String getOpenid() {
+		return openid;
+	}
+
+	public void setOpenid(String openid) {
+		this.openid = openid;
+	}
+
 	public int getIsSuperUser() {
 		return isSuperUser;
 	}
