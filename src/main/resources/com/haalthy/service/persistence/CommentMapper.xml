@@ -5,7 +5,7 @@
 <mapper namespace="com.haalthy.service.persistence.CommentMapper">
 
 	<cache eviction="LRU"
-		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="8640000"
+		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="300"
 		   size="1000" readOnly="true" />
 	<select id="getCommentsByPostId" resultType="Comment">
 	    SELECT
@@ -44,22 +44,25 @@
 		WHERE comment.PostID in (select postID from post where insertUserName=#{username}) and IsPostOwnerRead = 0 AND IsActive = 1  order by dateInserted desc;
 	</select>
 	
-	<select id="getCommentsByUsername" resultType="Comment">
+	<select id = "getCommentsByUsername" resultType = "COMMENT">
 		SELECT
- 	    	CommentID,
-			PostID,
-			InsertUsername,
-			body,
-			CountBookmarks,
-			DateInserted,
-			isActive,
-			imageURL,
-			displayname
-			FROM comment, user
-		WHERE comment.PostID in (select postID from post where insertUserName=#{username}) AND IsActive = 1 AND (comment.InsertUsername = user.Username) 
-			AND ((CommentID &lt; #{max_id}) AND (CommentID &gt; #{since_id}))
-			order by dateInserted desc
-			LIMIT #{beginIndex}, #{count}
+			user.imageURL,
+			commentID,
+			post.PostID,
+			comment.InsertUsername,
+			comment.Body,
+			comment.CountBookmarks,
+			comment.DateInserted,
+			post.imageURL as postImageURL,
+			post.body as postBody,
+			post.type as postType,
+			user.displayname,
+			post.isBroadcast
+		FROM comment, post, user
+		WHERE post.InsertUsername = #{username} AND comment.IsActive = 1 AND post.postID = comment.postID  AND comment.InsertUsername = user.username
+		AND ((commentID &lt; #{max_id}) AND (commentID &gt; #{since_id}))
+		ORDER BY comment.DateInserted DESC
+	    LIMIT #{beginIndex}, #{count}
 	</select>
 	
 	<update id="markCommentsAsReadByUsername" parameterType="String" flushCache="true">

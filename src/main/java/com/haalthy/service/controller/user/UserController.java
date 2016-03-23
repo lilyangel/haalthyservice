@@ -76,6 +76,10 @@ public class UserController {
 				String username = generateUsername("AY");
 				user.setUsername(username);
 			}
+			if (user.getUserType().equals("WC")) {
+				String username = generateUsername("WC");
+				user.setUsername(username);
+			}
 			// set encoded password
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 			String hashedPassword = passwordEncoder.encode(user.getPassword());

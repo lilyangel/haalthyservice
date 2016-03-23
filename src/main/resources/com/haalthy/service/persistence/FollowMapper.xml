@@ -4,7 +4,7 @@
 
 <mapper namespace="com.haalthy.service.persistence.FollowMapper">
 
-  	<cache eviction="LRU"
+    	<cache eviction="LRU"
 		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="8640000"
 		   size="1000" readOnly="true" />
 
@@ -55,7 +55,7 @@
 			CancerType,
 			metastasis,
 			Age
-		FROM follow, user WHERE Follow.Username = #{username} AND IsActive = 1 AND user.username = follow.followingUser 
+		FROM follow, user WHERE follow.Username = #{username} AND IsActive = 1 AND user.username = follow.followingUser 
 		ORDER BY Displayname ASC;
 	</select>
 	
