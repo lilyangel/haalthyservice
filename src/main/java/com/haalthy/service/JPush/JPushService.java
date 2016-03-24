@@ -4,7 +4,6 @@ import cn.jpush.api.JPushClient;
 import cn.jpush.api.common.resp.APIConnectionException;
 import cn.jpush.api.common.resp.APIRequestException;
 import cn.jpush.api.push.PushResult;
-import cn.jpush.api.push.model.Options;
 import cn.jpush.api.push.model.Platform;
 import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,13 +30,12 @@ public class JPushService {
 
 //    private static String JPushAPPKEY ="659e4023ae5d594b3ab2cf81";
 //    private static String JPushSECRETKEY = "6f766c0cfdfae04f3c29f8ed";
-
     @Autowired
     private JPushRegister jPushRegister;
     @Autowired
     private JPushMessageCache jPushMessageCache;
 
-    protected static JPushClient jpushClient;
+    protected static JPushClient jpushClient = null;
 
 //    private static JPushService jPushService;
 //
@@ -54,15 +53,23 @@ public class JPushService {
 //        JPushSECRETKEY = configLoader.getProperty("JPush.SECRETKEY");
 //    }
 
+    private JPushService()
+    {
+        if(jpushClient == null ) {
+            ConfigLoader configLoader = ConfigLoader.getInstance();
+            jpushClient = new JPushClient(configLoader.getConfigProperty("JPush.SECRETKEY"),
+                    configLoader.getConfigProperty("JPush.APPKEY"));
+        }
+    }
     /**
      *发送系统消息
      *
      * */
     public void SendSystemMessage(String msg)
     {
-        PushPayload pushPayload = PushPayload.alertAll(msg);
+        //PushPayload pushPayload = PushPayload.alertAll(msg);
 
-        PushResult result = push(pushPayload);
+        PushResult result = push(PushPayload.alertAll(msg));
     }
 
     /*
@@ -73,17 +80,22 @@ public class JPushService {
         try {
             String pushID = GetJPushID(userName);
             logger.info("pushID:"+pushID);
+            logger.info("jpushClient:"+jpushClient);
             ArrayList<String> registrationIds =new ArrayList<String>();
             registrationIds.add(pushID);
+            logger.info("registrationIds:"+registrationIds);
+            logger.info("Message:"+Message);
             if(!StringUtils.IsEmpty(pushID))
             {
+                logger.info("SendSystemMessageToUser logger before new PushPayload");
                 PushPayload pushPayload =
                 PushPayload.newBuilder()
                         .setPlatform(Platform.all())
                         .setAudience(Audience.registrationId(registrationIds))
                         .setNotification(Notification.alert(Message))
-                        .setOptions(Options.newBuilder().setTimeToLive(0L).build())
                         .build();
+
+                logger.info("SendSystemMessageToUser logger after new PushPayload");
 
                 logger.info("pushPayload:"+pushPayload);
                 PushResult result = push(pushPayload);
@@ -101,7 +113,7 @@ public class JPushService {
                 logger.info("指定用户没有注册!username:"+userName);
 
         } catch (Exception e) {
-            logger.info("Exception" + e.getMessage());
+            logger.info("SendSystemMessageToUser Exception :" + e + e.getMessage());
         }
     }
 
@@ -117,32 +129,28 @@ public class JPushService {
             logger.info("pushID:"+pushID);
             ArrayList<String> registrationIds =new ArrayList<String>();
             registrationIds.add(pushID);
-            if(!StringUtils.IsEmpty(pushID))
-            {
-                PushPayload pushPayload =
-                        PushPayload.newBuilder()
-                                .setPlatform(Platform.all())
-                                .setAudience(Audience.registrationId(registrationIds))
-                                .setNotification(Notification.alert(Message))
-                                .setOptions(Options.newBuilder().setTimeToLive(0L).build())
-                                .build();
-                logger.info("pushPayload:"+pushPayload);
-                PushResult result = push(pushPayload);
-                if(result != null) {
-                    ReceivedsResult reportResult = jpushClient.getReportReceiveds(Long.toString(result.msg_id));
-                    ReceivedsResult.Received reportReceived = reportResult.received_list.get(0);
-                    if (reportReceived.android_received == 0 &&
-                            reportReceived.ios_apns_sent == 0 &&
-                            reportReceived.wp_mpns_sent == 0) {
-                        SavaMassge(userName, fromUserName, Message);
-                    }
+
+            PushPayload pushPayload =
+                    PushPayload.newBuilder()
+                            .setPlatform(Platform.all())
+                            .setAudience(Audience.registrationId(registrationIds))
+                            //.setAudience(Audience.alias("Test"))
+                            .setNotification(Notification.alert(Message))
+                            /*.setOptions(Options.newBuilder().setTimeToLive(0L).build())*/
+                            .build();
+            logger.info("pushPayload:"+pushPayload);
+            PushResult result = push(pushPayload);
+            if(result != null) {
+                ReceivedsResult reportResult = jpushClient.getReportReceiveds(Long.toString(result.msg_id));
+                ReceivedsResult.Received reportReceived = reportResult.received_list.get(0);
+                if (reportReceived.android_received == 0 &&
+                        reportReceived.ios_apns_sent == 0 &&
+                        reportReceived.wp_mpns_sent == 0) {
+                    SavaMassge(userName, fromUserName, Message);
                 }
             }
-            else
-                logger.info("指定用户没有注册!username:"+userName);
-
         } catch (Exception e) {
-            logger.info("Exception" + e.getMessage());
+            logger.info("SendMessageToUser Exception: " + e.getMessage());
         }
     }
 
@@ -157,34 +165,33 @@ public class JPushService {
 
             ArrayList<String> registrationIds =new ArrayList<String>();
             registrationIds.add(jPushID);
-            for (Map.Entry<String,JPushMessageContent> entry:map.entrySet()
-                 ) {
+            if(map != null)
+            {
+                for (Map.Entry<String,JPushMessageContent> entry:map.entrySet()
+                     ) {
 
-                PushPayload pushPayload =
-                        PushPayload.newBuilder()
-                                .setPlatform(Platform.all())
-                                .setAudience(Audience.registrationId(registrationIds))
-                                .setNotification(Notification.alert(entry.getValue().getContent().toString()))
-                                .setOptions(Options.newBuilder().setTimeToLive(0L).build())
-                                .build();
-                PushResult result = push(pushPayload);
+                    PushPayload pushPayload =
+                            PushPayload.newBuilder()
+                                    .setPlatform(Platform.all())
+                                    .setAudience(Audience.registrationId(registrationIds))
+                                    .setNotification(Notification.alert(entry.getValue().getContent().toString()))
+                                    /*.setOptions(Options.newBuilder().setTimeToLive(0L).build())*/
+                                    .build();
+                    PushResult result = push(pushPayload);
+                }
             }
-
         } catch (Exception e) {
         	e.printStackTrace();
             logger.info("Exception" + e.getMessage());
         }
     }
-
     /*
     *
     * */
     private PushResult push(PushPayload payload)
     {
         try {
-            ConfigLoader configLoader = ConfigLoader.getInstance();
-            jpushClient = new JPushClient(configLoader.getConfigProperty("JPush.SECRETKEY"),
-                    configLoader.getConfigProperty("JPush.APPKEY"));
+
             PushResult result = jpushClient.sendPush(payload);
             logger.info("Got result - " + result);
             return result;

@@ -6,14 +6,14 @@ package com.haalthy.service.controller.Interface;
 public class JPushMassageRequest {
     private String userName;
     private String fromUserName;
-    private String MessageContent;
+    private String content;
 
-    public String getMessageContent() {
-        return MessageContent;
+    public String getContent() {
+        return content;
     }
 
-    public void setMessageContent(String messageContent) {
-        MessageContent = messageContent;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getFromUserName() {

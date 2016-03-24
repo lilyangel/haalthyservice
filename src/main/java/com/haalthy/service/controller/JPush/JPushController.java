@@ -53,7 +53,7 @@ public class JPushController {
     {
         PostResponse postResponse = new PostResponse();
         try {
-            jPushService.SendSystemMessage(request.getMessageContent());
+            jPushService.SendSystemMessage(request.getContent());
             postResponse.setResult(1);
             postResponse.setResultDesp("推送成功");
         } catch (Exception e) {
@@ -76,7 +76,7 @@ public class JPushController {
 
         PostResponse postResponse = new PostResponse();
         try {
-            jPushService.SendSystemMessageToUser(request.getUserName(),request.getMessageContent());
+            jPushService.SendSystemMessageToUser(request.getUserName(),request.getContent());
             postResponse.setResult(1);
             postResponse.setResultDesp("推送成功");
         } catch (Exception e) {
@@ -102,7 +102,7 @@ public class JPushController {
         PostResponse postResponse = new PostResponse();
         StandardResultMessage standardResultMessage = new StandardResultMessage();
         try {
-            jPushService.SendMessageToUser(request.getUserName(),request.getFromUserName(),request.getMessageContent());
+            jPushService.SendMessageToUser(request.getUserName(),request.getFromUserName(),request.getContent());
             postResponse.setResult(1);
             postResponse.setResultDesp("推送成功");
         } catch (Exception e) {
