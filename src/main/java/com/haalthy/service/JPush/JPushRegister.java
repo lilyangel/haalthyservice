@@ -30,7 +30,7 @@ public class JPushRegister {
                 byte[] btyKey = redisTemplate.getStringSerializer().serialize(namespace + userName);
                 byte[] btyField =  redisTemplate.getStringSerializer().serialize("pushID");
                 byte[] btyBody = redisTemplate.getStringSerializer().serialize(jPushID);
-                connection.hSetNX(btyKey,btyField,btyBody);
+                connection.hSet(btyKey,btyField,btyBody);
                 connection.expire(btyKey,6048000);
                 return null;
             }

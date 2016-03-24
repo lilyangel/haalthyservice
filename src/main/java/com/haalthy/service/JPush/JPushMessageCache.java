@@ -36,7 +36,7 @@ public class JPushMessageCache {
                 byte[] btyKey = redisTemplate.getStringSerializer().serialize(namespace + msg.getToUserName());
                 byte[] btyField =  redisTemplate.getStringSerializer().serialize(StringUtils.DateToString(new Date(),"yyyyMMddHHmmssSSS"));
                 byte[] btyBody = redisTemplate.getStringSerializer().serialize(StringUtils.getJson(msg.getPushMessageContent()));
-                connection.hSetNX(btyKey,btyField,btyBody);
+                connection.hSet(btyKey,btyField,btyBody);
                 //connection.expire(btyKey,604800);
                 return null;
             }
