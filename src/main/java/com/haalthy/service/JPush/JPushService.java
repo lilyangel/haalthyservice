@@ -27,8 +27,8 @@ public class JPushService {
 
     protected Logger logger=Logger.getLogger(this.getClass());
 
-    private static String JPushAPPKEY ="399fbda4ffa9d6acf43c53b0";
-    private static String JPushSECRETKEY = "45e3f39ece70295fb0808a0a";
+    private static String JPushAPPKEY ="659e4023ae5d594b3ab2cf81";
+    private static String JPushSECRETKEY = "6f766c0cfdfae04f3c29f8ed";
 
     @Autowired
     private JPushRegister jPushRegister;
