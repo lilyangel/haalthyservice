@@ -71,15 +71,18 @@ public class JPushService {
     {
         try {
             String pushID = GetJPushID(userName);
+            logger.info("pushID:"+pushID);
             if(!StringUtils.IsEmpty(pushID))
             {
                 PushPayload pushPayload =
                 PushPayload.newBuilder()
                         .setPlatform(Platform.all())
-                        .setAudience(Audience.alias(pushID))
+                        .setAudience(Audience.registrationId(pushID))
                         .setNotification(Notification.alert(Message))
                         .setOptions(Options.newBuilder().setTimeToLive(0L).build())
                         .build();
+
+                logger.info("pushPayload:"+pushPayload);
                 PushResult result = push(pushPayload);
                 if(result != null) {
                     ReceivedsResult reportResult = jpushClient.getReportReceiveds(Long.toString(result.msg_id));
@@ -108,15 +111,17 @@ public class JPushService {
     {
         try {
             String pushID = GetJPushID(userName);
+            logger.info("pushID:"+pushID);
             if(!StringUtils.IsEmpty(pushID))
             {
                 PushPayload pushPayload =
                         PushPayload.newBuilder()
                                 .setPlatform(Platform.all())
-                                .setAudience(Audience.alias(pushID))
+                                .setAudience(Audience.registrationId(pushID))
                                 .setNotification(Notification.alert(Message))
                                 .setOptions(Options.newBuilder().setTimeToLive(0L).build())
                                 .build();
+                logger.info("pushPayload:"+pushPayload);
                 PushResult result = push(pushPayload);
                 if(result != null) {
                     ReceivedsResult reportResult = jpushClient.getReportReceiveds(Long.toString(result.msg_id));
@@ -150,7 +155,7 @@ public class JPushService {
                 PushPayload pushPayload =
                         PushPayload.newBuilder()
                                 .setPlatform(Platform.all())
-                                .setAudience(Audience.alias(jPushID))
+                                .setAudience(Audience.registrationId(jPushID))
                                 .setNotification(Notification.alert(entry.getValue().getContent().toString()))
                                 .setOptions(Options.newBuilder().setTimeToLive(0L).build())
                                 .build();
