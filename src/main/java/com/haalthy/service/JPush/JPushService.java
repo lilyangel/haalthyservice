@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -72,12 +73,14 @@ public class JPushService {
         try {
             String pushID = GetJPushID(userName);
             logger.info("pushID:"+pushID);
+            ArrayList<String> registrationIds =new ArrayList<String>();
+            registrationIds.add(pushID);
             if(!StringUtils.IsEmpty(pushID))
             {
                 PushPayload pushPayload =
                 PushPayload.newBuilder()
                         .setPlatform(Platform.all())
-                        .setAudience(Audience.registrationId(pushID))
+                        .setAudience(Audience.registrationId(registrationIds))
                         .setNotification(Notification.alert(Message))
                         .setOptions(Options.newBuilder().setTimeToLive(0L).build())
                         .build();
@@ -112,12 +115,14 @@ public class JPushService {
         try {
             String pushID = GetJPushID(userName);
             logger.info("pushID:"+pushID);
+            ArrayList<String> registrationIds =new ArrayList<String>();
+            registrationIds.add(pushID);
             if(!StringUtils.IsEmpty(pushID))
             {
                 PushPayload pushPayload =
                         PushPayload.newBuilder()
                                 .setPlatform(Platform.all())
-                                .setAudience(Audience.registrationId(pushID))
+                                .setAudience(Audience.registrationId(registrationIds))
                                 .setNotification(Notification.alert(Message))
                                 .setOptions(Options.newBuilder().setTimeToLive(0L).build())
                                 .build();
@@ -149,13 +154,16 @@ public class JPushService {
         try {
             //String pushID = GetJPushID(userName);
             Map<String,JPushMessageContent> map = Regersiter(userName, jPushID);
+
+            ArrayList<String> registrationIds =new ArrayList<String>();
+            registrationIds.add(jPushID);
             for (Map.Entry<String,JPushMessageContent> entry:map.entrySet()
                  ) {
 
                 PushPayload pushPayload =
                         PushPayload.newBuilder()
                                 .setPlatform(Platform.all())
-                                .setAudience(Audience.registrationId(jPushID))
+                                .setAudience(Audience.registrationId(registrationIds))
                                 .setNotification(Notification.alert(entry.getValue().getContent().toString()))
                                 .setOptions(Options.newBuilder().setTimeToLive(0L).build())
                                 .build();
