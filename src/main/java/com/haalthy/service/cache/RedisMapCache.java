@@ -34,7 +34,7 @@ public class RedisMapCache {
                 byte[] btyKey = redisTemplate.getStringSerializer().serialize(namespace + key);
                 byte[] btyField = redisTemplate.getStringSerializer().serialize(field);
                 byte[] btyValue = redisTemplate.getStringSerializer().serialize(value);
-                connection.hSetNX(btyKey,btyField,btyValue);
+                connection.hSet(btyKey,btyField,btyValue);
                 if(expire > 0)
                     connection.expire(btyKey,expire);
                 return null;
