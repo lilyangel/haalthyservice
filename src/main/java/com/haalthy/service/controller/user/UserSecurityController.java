@@ -417,7 +417,7 @@ public class UserSecurityController {
 			suggestedUserPair.setUsername(follow.getFollowingUser());
 			userService.deleteFromSuggestUserByProfile(suggestedUserPair);
 			
-			jPushService.SendMessageToUser(follow.getFollowingUser(), follow.getUsername(), "{\"type\":\"followed\",\"username\":\""+follow.getUsername()+", \"title\": \"科利\", \"content\":\"您被新用户关注\"}");
+			jPushService.SendMessageToUser(follow.getFollowingUser(), follow.getUsername(), "{\"type\":\"followed\",\"username\":\""+follow.getUsername()+", \"title\": \"科利\", \"content\":\"您被新用户关注\"}",null);
 			System.out.println("send jpush message from " + follow.getUsername() + " to " + follow.getFollowingUser());
 
 			// increase

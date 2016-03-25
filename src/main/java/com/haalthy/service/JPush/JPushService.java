@@ -7,6 +7,8 @@ import cn.jpush.api.push.PushResult;
 import cn.jpush.api.push.model.Platform;
 import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
+import cn.jpush.api.push.model.notification.AndroidNotification;
+import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
 import cn.jpush.api.report.ReceivedsResult;
 import com.haalthy.service.common.ConfigLoader;
@@ -17,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -72,10 +73,14 @@ public class JPushService {
         PushResult result = push(PushPayload.alertAll(msg));
     }
 
+//    private PushPayload BuilderPushPayload(ArrayList<String> registrationIds,String message,Map<String,String> extras)
+//    {
+//
+//    }
     /*
     * 给指定用户发送系统消息
     * */
-    public void SendSystemMessageToUser(String userName,String Message)
+    public void SendSystemMessageToUser(String userName,String Message,Map<String,String> extras)
     {
         try {
             String pushID = GetJPushID(userName);
@@ -92,7 +97,12 @@ public class JPushService {
                 PushPayload.newBuilder()
                         .setPlatform(Platform.all())
                         .setAudience(Audience.registrationId(registrationIds))
-                        .setNotification(Notification.alert(Message))
+                        .setNotification(
+                                Notification.newBuilder()
+                                        .addPlatformNotification(IosNotification.newBuilder().setAlert(Message).addExtras(extras).build())
+                                        .addPlatformNotification(AndroidNotification.newBuilder().setAlert(Message).addExtras(extras).build()
+                                        ).build()
+                        )
                         .build();
 
                 logger.info("SendSystemMessageToUser logger after new PushPayload");
@@ -105,7 +115,7 @@ public class JPushService {
                     if (reportReceived.android_received == 0 &&
                             reportReceived.ios_apns_sent == 0 &&
                             reportReceived.wp_mpns_sent == 0) {
-                        SavaMassge(userName, null, Message);
+                        SavaMassge(userName, null, Message,extras);
                     }
                 }
             }
@@ -122,7 +132,7 @@ public class JPushService {
     /*
     * 给指定用户发送系统消息
     * */
-    public void SendMessageToUser(String userName,String fromUserName,String Message)
+    public void SendMessageToUser(String userName,String fromUserName,String Message,Map<String,String> extras)
     {
         try {
             String pushID = GetJPushID(userName);
@@ -135,7 +145,12 @@ public class JPushService {
                             .setPlatform(Platform.all())
                             .setAudience(Audience.registrationId(registrationIds))
                             //.setAudience(Audience.alias("Test"))
-                            .setNotification(Notification.alert(Message))
+                            .setNotification(Notification.alert(
+                                    Notification.newBuilder()
+                                            .addPlatformNotification(IosNotification.newBuilder().setAlert(Message).addExtras(extras).build())
+                                            .addPlatformNotification(AndroidNotification.newBuilder().setAlert(Message).addExtras(extras).build()
+                                            ).build()
+                            ))
                             /*.setOptions(Options.newBuilder().setTimeToLive(0L).build())*/
                             .build();
             logger.info("pushPayload:"+pushPayload);
@@ -146,7 +161,7 @@ public class JPushService {
                 if (reportReceived.android_received == 0 &&
                         reportReceived.ios_apns_sent == 0 &&
                         reportReceived.wp_mpns_sent == 0) {
-                    SavaMassge(userName, fromUserName, Message);
+                    SavaMassge(userName, fromUserName, Message,extras);
                 }
             }
         } catch (Exception e) {
@@ -174,8 +189,11 @@ public class JPushService {
                             PushPayload.newBuilder()
                                     .setPlatform(Platform.all())
                                     .setAudience(Audience.registrationId(registrationIds))
-                                    .setNotification(Notification.alert(entry.getValue().getContent().toString()))
-                                    /*.setOptions(Options.newBuilder().setTimeToLive(0L).build())*/
+                                    .setNotification(Notification.alert(
+                                            Notification.newBuilder()
+                                                    .addPlatformNotification(IosNotification.newBuilder().setAlert(entry.getValue().getContent().toString()).addExtras(entry.getValue().getExtras()).build())
+                                                    .addPlatformNotification(AndroidNotification.newBuilder().setAlert(entry.getValue().getContent().toString()).addExtras(entry.getValue().getExtras()).build()
+                                                    ).build()))
                                     .build();
                     PushResult result = push(pushPayload);
                 }
@@ -235,12 +253,13 @@ public class JPushService {
     * 用户离线时保存该用户的消息
     *
     * */
-    private void SavaMassge(String userName,String fromUserName,String msg)
+    private void SavaMassge(String userName,String fromUserName,String msg,Map<String,String>extras)
     {
         JPushMessage pushMessage = new JPushMessage();
         JPushMessageContent messageContent= new JPushMessageContent();
         messageContent.setFromUserName(fromUserName);
         messageContent.setContent(SerializeUtil.serialize(msg));
+        messageContent.setExtras(extras);
         pushMessage.setToUserName(userName);
         pushMessage.setPushMessageContent(messageContent);
         jPushMessageCache.saveMessage(pushMessage);

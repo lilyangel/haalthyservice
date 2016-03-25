@@ -1,5 +1,7 @@
 package com.haalthy.service.controller.Interface;
 
+import java.util.Map;
+
 /**
  * Created by Ken on 2016-01-08.
  */
@@ -7,6 +9,7 @@ public class JPushMassageRequest {
     private String userName;
     private String fromUserName;
     private String content;
+    private Map<String,String> extras;
 
     public String getContent() {
         return content;
@@ -30,5 +33,13 @@ public class JPushMassageRequest {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Map<String, String> getExtras() {
+        return extras;
+    }
+
+    public void setExtras(Map<String, String> extras) {
+        this.extras = extras;
     }
 }
