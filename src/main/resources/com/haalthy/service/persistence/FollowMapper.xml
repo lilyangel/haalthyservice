@@ -4,10 +4,10 @@
 
 <mapper namespace="com.haalthy.service.persistence.FollowMapper">
 
-    	<cache eviction="LRU"
+<!--     	<cache eviction="LRU"
 		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="8640000"
 		   size="1000" readOnly="true" />
-
+ -->
 	<select id="getFollowingsByUsername" parameterType="string" resultType="Follow">
 		SELECT
 			FollowID,
@@ -70,7 +70,7 @@
 	
 	<insert id="addFollowing" useGeneratedKeys="true"
     	keyProperty="FollowID" keyColumn="FollowID" flushCache="true">
-  		INSERT into Follow (Username,FollowingUser,DateInserted, DateUpdated, IsActive)
+  		INSERT into follow (Username,FollowingUser,DateInserted, DateUpdated, IsActive)
  			 values (#{username},#{followingUser},#{dateInserted}, #{dateUpdated}, #{isActive})
 	</insert>
 	
@@ -107,7 +107,7 @@
 	
 	<select id="isFollowingUser" parameterType="Follow" resultType="int">
 		SELECT count(*) 
-		FROM Follow
+		FROM follow
 		WHERE Username = #{username} AND FollowingUser = #{followingUser}
 	</select>
 </mapper>
