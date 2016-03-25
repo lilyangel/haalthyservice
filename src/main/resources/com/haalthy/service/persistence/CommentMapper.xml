@@ -4,9 +4,9 @@
 
 <mapper namespace="com.haalthy.service.persistence.CommentMapper">
 
-	<cache eviction="LRU"
+<!--	<cache eviction="LRU"
 		   type="com.haalthy.service.cache.MybatisRedisCache" flushInterval="300"
-		   size="1000" readOnly="true" />
+		   size="1000" readOnly="true" /> -->
 	<select id="getCommentsByPostId" resultType="Comment">
 	    SELECT
 	    	CommentID,
