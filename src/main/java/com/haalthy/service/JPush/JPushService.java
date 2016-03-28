@@ -66,11 +66,18 @@ public class JPushService {
      *发送系统消息
      *
      * */
-    public void SendSystemMessage(String msg)
+    public void SendSystemMessage(String msg,Map<String,String> extras)
     {
-        //PushPayload pushPayload = PushPayload.alertAll(msg);
-
-        PushResult result = push(PushPayload.alertAll(msg));
+        PushResult result = push(
+                PushPayload.newBuilder()
+                .setPlatform(Platform.android_ios())
+                .setAudience(Audience.all())
+                .setNotification(Notification.newBuilder()
+                        .addPlatformNotification(IosNotification.newBuilder().setAlert(msg).addExtras(extras).build())
+                                .addPlatformNotification(AndroidNotification.newBuilder().setAlert(msg).addExtras(extras).build()
+                                ).build()
+                    ).build()
+                );
     }
 
 //    private PushPayload BuilderPushPayload(ArrayList<String> registrationIds,String message,Map<String,String> extras)
@@ -95,7 +102,7 @@ public class JPushService {
                 logger.info("SendSystemMessageToUser logger before new PushPayload");
                 PushPayload pushPayload =
                 PushPayload.newBuilder()
-                        .setPlatform(Platform.all())
+                        .setPlatform(Platform.android_ios())
                         .setAudience(Audience.registrationId(registrationIds))
                         .setNotification(
                                 Notification.newBuilder()
@@ -142,7 +149,7 @@ public class JPushService {
 
             PushPayload pushPayload =
                     PushPayload.newBuilder()
-                            .setPlatform(Platform.all())
+                            .setPlatform(Platform.android_ios())
                             .setAudience(Audience.registrationId(registrationIds))
                             //.setAudience(Audience.alias("Test"))
                             .setNotification(Notification.alert(
@@ -187,7 +194,7 @@ public class JPushService {
 
                     PushPayload pushPayload =
                             PushPayload.newBuilder()
-                                    .setPlatform(Platform.all())
+                                    .setPlatform(Platform.android_ios())
                                     .setAudience(Audience.registrationId(registrationIds))
                                     .setNotification(Notification.alert(
                                             Notification.newBuilder()

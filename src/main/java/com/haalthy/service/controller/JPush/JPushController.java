@@ -53,7 +53,7 @@ public class JPushController {
     {
         PostResponse postResponse = new PostResponse();
         try {
-            jPushService.SendSystemMessage(request.getContent());
+            jPushService.SendSystemMessage(request.getContent(),request.getExtras());
             postResponse.setResult(1);
             postResponse.setResultDesp("推送成功");
         } catch (Exception e) {
