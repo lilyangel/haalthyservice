@@ -194,7 +194,6 @@ public class PatientSecurityController {
 					postStr += "/n" + patientStatus.getScanData();
 				}
 				post.setBody(postStr);
-				System.out.println(patientStatus.getStatusID());
 				post.setPatientStatusID(patientStatus.getStatusID());
 				post.setCountBookmarks(0);
 				post.setCountComments(0);
@@ -247,8 +246,6 @@ public class PatientSecurityController {
 				String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest()
 						.getAuthorizationParameters().get("username");
 				int returnValue = 0;
-				System.out.println(currentSessionUsername);
-				System.out.println(treatment.getUsername());
 				if ((treatment.getUsername().equals(currentSessionUsername)) || 
 						((userService.getUserByEmail(currentSessionUsername) != null) &&
 						(treatment.getUsername().equals(userService.getUserByEmail(currentSessionUsername).getUsername()))) ||

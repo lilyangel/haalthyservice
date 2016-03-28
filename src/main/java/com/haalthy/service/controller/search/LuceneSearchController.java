@@ -136,7 +136,6 @@ public class LuceneSearchController {
 			searchURL.append("*:*");	
 			searchURLStr = searchURL.toString();
 		}
-        System.out.println(searchURLStr);
         URL restServiceURL = new URL(searchServerURL + searchURLStr + searchParameter);
         HttpURLConnection httpConnection = (HttpURLConnection) restServiceURL.openConnection();
         httpConnection.setRequestMethod("GET");

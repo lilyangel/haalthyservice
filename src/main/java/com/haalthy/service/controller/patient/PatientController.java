@@ -83,10 +83,8 @@ public class PatientController {
 				getClinicReportFormatResponse.setResult(-2);
 				getClinicReportFormatResponse.setResultDesp("用户名不能为空");
 			} else {
-				System.out.println(inputUsernameRequest.getUsername());
 				User user = userService.getUserByUsername(inputUsernameRequest.getUsername());
 				Iterator<ClinicReportFormat> clinicReportFormatItr = clinicReportFormatList.iterator();
-				System.out.println(clinicReportFormatList.size());
 				List<ClinicReportFormat> newClinicReprotFormatList = new ArrayList();
 				while (clinicReportFormatItr.hasNext()) {
 					ClinicReportFormat clinicReportFormat = clinicReportFormatItr.next();

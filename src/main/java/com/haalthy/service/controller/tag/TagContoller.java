@@ -61,8 +61,8 @@ public class TagContoller {
 			getTagTypesResponse.setResult(1);
 			getTagTypesResponse.setResultDesp("返回成功");
 		} catch (Exception e) {
+			e.printStackTrace();
 			getTagTypesResponse.setResult(-1);
-			System.out.println(e.getMessage());
 			getTagTypesResponse.setResultDesp("数据库连接错误");
 		}
 		return getTagTypesResponse;

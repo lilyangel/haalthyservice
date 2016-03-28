@@ -32,13 +32,6 @@ public class DateUtils {
     private static final String ONE_DAY_AGO = "天前";
     private static final String ONE_MONTH_AGO = "月前";
     private static final String ONE_YEAR_AGO = "年前";
-//
-//    public static void main(String[] args) throws ParseException {
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:m:s");
-//        Date date = format.parse("2013-11-11 18:35:35");
-//        System.out.println(format(date));
-//    }
-
 
     public static long getLongDate(String date) {
         String str = date;

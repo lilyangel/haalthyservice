@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.haalthy.service.JPush.JPushService;
+import com.haalthy.service.controller.Interface.ContentIntEapsulate;
 import com.haalthy.service.controller.Interface.ContentStringEapsulate;
 import com.haalthy.service.controller.Interface.EmailAuthCodeRequest;
 import com.haalthy.service.controller.Interface.GetSuggestUsersByTagsRequest;
@@ -29,10 +30,12 @@ import com.haalthy.service.controller.Interface.PostResponse;
 import com.haalthy.service.controller.Interface.ResetPasswordRequest;
 import com.haalthy.service.controller.Interface.user.AddUpdateUserResponse;
 import com.haalthy.service.controller.Interface.user.GetUsersResponse;
+import com.haalthy.service.controller.Interface.user.NewFollowerCountResponse;
 import com.haalthy.service.domain.SelectUserByTagRange;
 import com.haalthy.service.domain.Tag;
 import com.haalthy.service.domain.User;
 import com.haalthy.service.openservice.AuthCodeService;
+import com.haalthy.service.openservice.FollowService;
 import com.haalthy.service.openservice.OssService;
 import com.haalthy.service.openservice.UserService;
 
@@ -54,6 +57,9 @@ public class UserController {
     	}
     	return passwordDecode;
     }
+	@Autowired
+	private transient FollowService followService;
+    
 	@Autowired
 	private transient UserService userService;
 	
@@ -136,7 +142,6 @@ public class UserController {
 			}
 		} catch (Exception e) {
 			addUserResponse.setResult(-1);
-			System.out.println(e.getMessage());
 			addUserResponse.setResultDesp("数据库连接错误");
 		}
 		return addUserResponse;
@@ -240,7 +245,6 @@ public class UserController {
 				addUpdateUserResponse.setResultDesp("验证失败");
 			} else {
 				username = user.getUsername();
-				System.out.println(username);
 				if (username == "") {
 					addUpdateUserResponse.setResult(-4);
 					addUpdateUserResponse.setResultDesp("该用户不存在");
@@ -269,5 +273,23 @@ public class UserController {
 			addUpdateUserResponse.setResultDesp("数据库连接错误");
 		}
 		return addUpdateUserResponse;
+	}
+	
+	@RequestMapping(value="/newfollow/count", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json" })
+	@ResponseBody
+	public NewFollowerCountResponse selectNewFollowerCount(@RequestBody InputUsernameRequest inputUsernameRequest){
+		NewFollowerCountResponse newFollowerCountResponse = new NewFollowerCountResponse();
+		try{
+			ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+			contentIntEapsulate.setCount(followService.selectNewFollowerCount(inputUsernameRequest.getUsername()).getCount());
+			newFollowerCountResponse.setContent(contentIntEapsulate);
+			newFollowerCountResponse.setResult(1);
+			newFollowerCountResponse.setResultDesp("返回成功");
+		}catch(Exception e){
+			e.printStackTrace();
+			newFollowerCountResponse.setResult(-1);
+			newFollowerCountResponse.setResultDesp("数据库连接错误");
+		}
+		return newFollowerCountResponse;
 	}
 }

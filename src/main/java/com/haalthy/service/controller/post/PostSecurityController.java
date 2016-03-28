@@ -86,13 +86,6 @@ public class PostSecurityController {
 			post.setInsertUsername(addPostRequest.getInsertUsername());
 			post.setIsBroadcast(addPostRequest.getIsBroadcast());
 			post.setHasImage(addPostRequest.getHasImage());
-			System.out.println(post.getHasImage());
-//
-//			if (addPostRequest.getImageInfos() != null) {
-//				post.setHasImage(addPostRequest.getImageInfos().size());
-//			} else {
-//				post.setHasImage(0);
-//			}
 
 			String tagString = null;
 			if (addPostRequest.getTags() != null) {
@@ -132,8 +125,9 @@ public class PostSecurityController {
 					Map<String,String> extras = new HashMap<String, String>();
 					extras.put("type", "mentioned");
 					extras.put("id", String.valueOf(post.getPostID()));
+					int unreadMentionedPostCount = postService.getUnreadMentionedPostCountByUsername(mUsername);
+					extras.put("count", String.valueOf(unreadMentionedPostCount));
 					jPushService.SendMessageToUser(mUsername, addPostRequest.getInsertUsername(), "您一条新消息@", extras);
-					System.out.println("send jpush message from " + addPostRequest.getInsertUsername() + " to " + mUsername);
 
 				}
 				postService.addMention(mentionList);
@@ -299,7 +293,7 @@ public class PostSecurityController {
     		getCountResponse.setResult(1);
     		getCountResponse.setResultDesp("返回成功");
     	}catch(Exception e){
-    		System.out.println(e.getMessage());
+    		e.printStackTrace();
     		getCountResponse.setResult(-1);
     		getCountResponse.setResultDesp("数据库连接错误");
     	}

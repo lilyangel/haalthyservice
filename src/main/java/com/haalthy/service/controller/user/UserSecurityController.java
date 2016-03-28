@@ -421,6 +421,8 @@ public class UserSecurityController {
 			Map<String,String> extras = new HashMap();
 			extras.put("type", "followed");
 			extras.put("username", follow.getUsername());
+			int newFollowerCount = followService.selectNewFollowerCount(follow.getFollowingUser()).getCount();
+			extras.put("count", String.valueOf(newFollowerCount));
 			jPushService.SendMessageToUser(follow.getFollowingUser(), follow.getUsername(), "您被用户关注",extras);
 
 			// increase
@@ -580,7 +582,6 @@ public class UserSecurityController {
 			Authentication a = SecurityContextHolder.getContext().getAuthentication();
 			String currentSessionUsername = ((OAuth2Authentication) a).getAuthorizationRequest()
 					.getAuthorizationParameters().get("username");
-			System.out.println(currentSessionUsername);
 			if (userService.getUserByUsername(currentSessionUsername) == null)
 				user = userService.getUserByEmail(currentSessionUsername);
 			if (user == null){
@@ -628,7 +629,6 @@ public class UserSecurityController {
 				user = userService.getUserByPhone(currentSessionUsername);
 			}
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-			System.out.println(originalPwd);
 			if (passwordEncoder.matches(originalPwd, user.getPassword()) == false) {
 				//
 				addUpdateUserResponse.setResult(-3);
@@ -712,7 +712,6 @@ public class UserSecurityController {
 				contentStringEapsulate.setResult(user.getUsername());
 				addUpdateUserResponse.setContent(contentStringEapsulate);
 			}else{
-				System.out.println(inputUsernameReqeust.getUsername());
 				user = userService.getUserByPhone(inputUsernameReqeust.getUsername());
 				if (user != null) {
 					addUpdateUserResponse.setResult(1);
@@ -742,11 +741,9 @@ public class UserSecurityController {
 			List<User> selectedUsers = new ArrayList();
 			Iterator<Follow> followingItr = followings.iterator();
 			List<String> followingUsernames = new ArrayList();
-			System.out.println(followings.size());
 			while (followingItr.hasNext()) {
 				Follow following = followingItr.next();
 				followingUsernames.add(following.getFollowingUser());
-				System.out.println(following.getFollowingUser());
 			}
 			for (User user: users) {
 				if (!followingUsernames.contains(user.getUsername())) {

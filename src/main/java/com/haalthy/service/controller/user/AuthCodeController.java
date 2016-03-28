@@ -51,7 +51,6 @@ public class AuthCodeController {
             produces = {"application/json"},consumes = {"application/json"})
     @ResponseBody
     public PostResponse checkEmailAuthCode(@RequestBody EmailAuthCodeRequest emailAuthCodeRequest) throws Exception {
-    	System.out.println(emailAuthCodeRequest.geteMail());
         PostResponse postResponse = new PostResponse();
         try {
             if(authCodeService.authEmailAuthCode(emailAuthCodeRequest.geteMail(), emailAuthCodeRequest.getAuthCode())==0)
@@ -82,7 +81,6 @@ public class AuthCodeController {
             produces = {"application/json"},consumes = {"application/json"})
     @ResponseBody
     public PostResponse sendSmsAuthCode(@RequestBody EmailAuthCodeRequest emailAuthCodeRequest) throws Exception {
-    	System.out.println(emailAuthCodeRequest.geteMail());
         PostResponse postResponse = new PostResponse();
         try {
             String addAuthCode = authCodeService.addMobileAuthCode(emailAuthCodeRequest.geteMail());

@@ -60,8 +60,9 @@ public class CommentSecurityController {
 			Map<String,String> extras = new HashMap();
 			extras.put("type", "commented");
 			extras.put("id", String.valueOf(addCommentRequest.getPostID()));
+			int unreadCommentsCount = commentService.getUnreadCommentsCount(post.getInsertUsername());
+			extras.put("count", String.valueOf(unreadCommentsCount));
 			jPushService.SendMessageToUser(post.getInsertUsername(), addCommentRequest.getInsertUsername(), "您有一条新评论", extras);
-			System.out.println("send jpush message from " + addCommentRequest.getInsertUsername() + " to " + post.getInsertUsername());
 			contentIntEapsulate.setCount(postService.increasePostCountComment(addCommentRequest.getPostID()));
 			addCommentResponse.setContent(contentIntEapsulate);
 			if (commentService.addComment(comment) > 0){

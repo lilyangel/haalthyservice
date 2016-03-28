@@ -3,12 +3,14 @@ package com.haalthy.service.openservice;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.haalthy.service.domain.Follow;
 import com.haalthy.service.domain.NewFollowerCount;
 import com.haalthy.service.domain.User;
 import com.haalthy.service.persistence.FollowMapper;
 
+@Service
 public class FollowService {
 	@Autowired
 	private FollowMapper followMapper;

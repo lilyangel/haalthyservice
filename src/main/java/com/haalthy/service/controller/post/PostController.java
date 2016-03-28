@@ -31,6 +31,8 @@ import com.haalthy.service.openservice.PatientService;
 import com.haalthy.service.openservice.PostService;
 import com.haalthy.service.common.ProcessImageURL;
 import com.haalthy.service.controller.Interface.ContentIntEapsulate;
+import com.haalthy.service.controller.Interface.GetCountResponse;
+import com.haalthy.service.controller.Interface.InputUsernameRequest;
 import com.haalthy.service.controller.Interface.IntRequest;
 import com.haalthy.service.controller.Interface.post.AddPostRequest;
 import com.haalthy.service.controller.Interface.post.AddUpdatePostResponse;
@@ -59,9 +61,7 @@ public class PostController {
 			Post post = postService.getPostById(postid.getId());
 			if (post != null) {
 				if (post.getType() == 2) {
-					System.out.println(post.getPatientStatusID());
 					PatientStatus patientStatus = patientService.getPatientStatusById(post.getPatientStatusID());
-					System.out.println(patientStatus.getImageURL());
 					if ((patientStatus != null) && (patientStatus.getImageURL() != null)){
 						post.setImageURL(patientStatus.getImageURL());
 					}
@@ -79,8 +79,8 @@ public class PostController {
 				getPostResponse.setResultDesp("post不存在");
 			}
 		} catch(NullPointerException nullPE){
+			nullPE.printStackTrace();
 			getPostResponse.setResult(-2);
-			System.out.println(nullPE);
 			getPostResponse.setResultDesp("系统异常");
 		} 
 		catch (Exception e) {
@@ -165,5 +165,24 @@ public class PostController {
 			getPostsByTagsCountRequest.setResultDesp("数据库连接错误");
 		}
 		return getPostsByTagsCountRequest;
+	}
+	
+    @RequestMapping(value = "/mentionedpost/unreadcount", method = RequestMethod.POST, headers = "Accept=application/json", produces = {"application/json"})
+    @ResponseBody
+	public GetCountResponse getUnreadMentionedPostCountByUsername(@RequestBody InputUsernameRequest inputUsernameRequest){
+    	GetCountResponse getCountResponse = new GetCountResponse();
+    	try{
+    		ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
+    		contentIntEapsulate.setCount(postService.getUnreadMentionedPostCountByUsername(inputUsernameRequest.getUsername()));
+    		getCountResponse.setContent(contentIntEapsulate);
+    		getCountResponse.setResult(1);
+    		getCountResponse.setResultDesp("返回成功");
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		getCountResponse.setResult(-1);
+    		getCountResponse.setResultDesp("数据库连接错误");
+    	}
+		return getCountResponse;
+
 	}
 }
