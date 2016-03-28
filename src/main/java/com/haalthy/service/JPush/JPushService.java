@@ -139,18 +139,19 @@ public class JPushService {
             logger.info("pushID:"+pushID);
             ArrayList<String> registrationIds =new ArrayList<String>();
             registrationIds.add(pushID);
-
+            System.out.println(Message);
+            
             PushPayload pushPayload =
                     PushPayload.newBuilder()
                             .setPlatform(Platform.all())
                             .setAudience(Audience.registrationId(registrationIds))
                             //.setAudience(Audience.alias("Test"))
-                            .setNotification(Notification.alert(
+                            .setNotification(
                                     Notification.newBuilder()
                                             .addPlatformNotification(IosNotification.newBuilder().setAlert(Message).addExtras(extras).build())
                                             .addPlatformNotification(AndroidNotification.newBuilder().setAlert(Message).addExtras(extras).build()
                                             ).build()
-                            ))
+                            )
                             /*.setOptions(Options.newBuilder().setTimeToLive(0L).build())*/
                             .build();
             logger.info("pushPayload:"+pushPayload);

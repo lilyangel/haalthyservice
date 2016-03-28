@@ -2,7 +2,9 @@ package com.haalthy.service.controller.comment;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -55,7 +57,10 @@ public class CommentSecurityController {
 		ContentIntEapsulate contentIntEapsulate = new ContentIntEapsulate();
 		try {
 			Post post = postService.getPostById(addCommentRequest.getPostID());
-			jPushService.SendMessageToUser(post.getInsertUsername(), addCommentRequest.getInsertUsername(), "{\"type\":\"commented\",\"id\":"+ addCommentRequest.getPostID() +", \"title\": \"科利\", \"content\":\"您有一条新评论\"}");
+			Map<String,String> extras = new HashMap();
+			extras.put("type", "commented");
+			extras.put("id", String.valueOf(addCommentRequest.getPostID()));
+			jPushService.SendMessageToUser(post.getInsertUsername(), addCommentRequest.getInsertUsername(), "您有一条新评论", extras);
 			System.out.println("send jpush message from " + addCommentRequest.getInsertUsername() + " to " + post.getInsertUsername());
 			contentIntEapsulate.setCount(postService.increasePostCountComment(addCommentRequest.getPostID()));
 			addCommentResponse.setContent(contentIntEapsulate);

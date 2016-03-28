@@ -1,9 +1,11 @@
 package com.haalthy.service.controller.post;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -126,9 +128,11 @@ public class PostSecurityController {
 					mention.setPostID(post.getPostID());
 					String mUsername = usernameItr.next();
 					mention.setUsername(mUsername);
-
 					mentionList.add(mention);
-					jPushService.SendMessageToUser(mUsername, addPostRequest.getInsertUsername(), "{\"type\":\"mentioned\",\"id\":"+post.getPostID()+", \"title\": \"科利\", \"content\":\"您被@\"}");
+					Map<String,String> extras = new HashMap<String, String>();
+					extras.put("type", "mentioned");
+					extras.put("id", String.valueOf(post.getPostID()));
+					jPushService.SendMessageToUser(mUsername, addPostRequest.getInsertUsername(), "您一条新消息@", extras);
 					System.out.println("send jpush message from " + addPostRequest.getInsertUsername() + " to " + mUsername);
 
 				}

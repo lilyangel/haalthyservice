@@ -3,8 +3,10 @@ package com.haalthy.service.controller.user;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -416,9 +418,10 @@ public class UserSecurityController {
 			suggestedUserPair.setSuggestedUsername(follow.getUsername());
 			suggestedUserPair.setUsername(follow.getFollowingUser());
 			userService.deleteFromSuggestUserByProfile(suggestedUserPair);
-			
-			jPushService.SendMessageToUser(follow.getFollowingUser(), follow.getUsername(), "{\"type\":\"followed\",\"username\":\""+follow.getUsername()+", \"title\": \"科利\", \"content\":\"您被新用户关注\"}",null);
-			System.out.println("send jpush message from " + follow.getUsername() + " to " + follow.getFollowingUser());
+			Map<String,String> extras = new HashMap();
+			extras.put("type", "followed");
+			extras.put("username", follow.getUsername());
+			jPushService.SendMessageToUser(follow.getFollowingUser(), follow.getUsername(), "您被用户关注",extras);
 
 			// increase
 			int updateNewFollowerCountResult = followService.updateNewFollowerCount(follow.getFollowingUser());
