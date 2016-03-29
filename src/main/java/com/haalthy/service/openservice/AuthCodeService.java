@@ -95,7 +95,7 @@ public class AuthCodeService {
         * */
         StringBuilder stringBuilder = new StringBuilder("AuthCode.Mobile.");
         StringBuilder append = stringBuilder.append(toMobile.toLowerCase());
-        redisCache.putObject(stringBuilder.toString(),EncodeUtil.md5Encrypt(strAuthCode),1200);
+        redisCache.putObject(stringBuilder.toString(),EncodeUtil.md5Encrypt(strAuthCode),3000);
         return strAuthCode;
     }
 
