@@ -8,6 +8,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.log4j.Logger;
+import org.springframework.data.redis.connection.RedisServer;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -20,6 +22,7 @@ import java.util.Map;
 public class WeixinService {
 
 
+    protected Logger logger=Logger.getLogger(this.getClass());
     String appid = "wxe1ddd7a7d6ab1bf7";
 
     String secret = "578bff819bc390448e26adb75c43190e";
@@ -31,7 +34,8 @@ public class WeixinService {
 
     HttpClient client = new HttpClient();
 
-    public WeixinService() {client.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "utf-8");
+    public WeixinService() {
+        client.getParams().setParameter(HttpMethodParams.HTTP_CONTENT_CHARSET, "utf-8");
     }
 
     /**
@@ -50,6 +54,7 @@ public class WeixinService {
         String resp = method.getResponseBodyAsString();
         Map<String, String> map = JsonUtils.fromJson(resp);
         System.out.println(resp);
+        logger.trace(resp);
         return map.get("access_token");
     }
 
@@ -89,6 +94,7 @@ public class WeixinService {
         String resp = method.getResponseBodyAsString();
         Map<String, String> map = JsonUtils.fromJson(resp);
         System.out.println(code + " " +resp);
+        logger.trace(code + " " +resp);
         return map;
     }
 
@@ -170,6 +176,7 @@ public class WeixinService {
         String resp = method.getResponseBodyAsString();
         Map<String, String> map = JsonUtils.fromJson(resp);
         System.out.println(resp);
+        logger.trace(openId + " "+resp);
         return map;
     }
 
