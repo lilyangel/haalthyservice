@@ -62,25 +62,26 @@ public class WeixinController {
     {
         Response response = new Response();
         WeixinUserInfo wx = new WeixinUserInfo();
+        //weixinService = WeixinService
         try {
-            Map<String,String> accToken = weixinService.getAccessToken(request.getContent());
+            final Map<String,String> accToken = weixinService.getAccessToken(request.getContent());
             Map<String,String> userinfo = weixinService.getUserInfo(accToken.get("access_token"),accToken.get("openid"));
-            wx.setOpenid(userinfo.get("openid"));
-            wx.setCity(userinfo.get("city"));
-            wx.setCountry(userinfo.get("country"));
-            wx.setHeadimgurl(userinfo.get("headimgurl"));
-            wx.setNickname(userinfo.get("nickname"));
-            wx.setProvince(userinfo.get("province"));
-            wx.setUnionid(userinfo.get("unionid"));
-            wx.setSex(Integer.getInteger(userinfo.get("sex")));
+//            wx.setOpenid(userinfo.get("openid"));
+//            wx.setCity(userinfo.get("city"));
+//            wx.setCountry(userinfo.get("country"));
+//            wx.setHeadimgurl(userinfo.get("headimgurl"));
+//            wx.setNickname(userinfo.get("nickname"));
+//            wx.setProvince(userinfo.get("province"));
+//            wx.setUnionid(userinfo.get("unionid"));
+//            wx.setSex(userinfo.get("sex").toString());
             response.setResult(1);
-            response.setResultDesp("获取签名成功");
-            response.setContent(wx);
+            response.setResultDesp("获取用户信息成功");
+            response.setContent(userinfo);
         } catch (Exception e) {
             e.printStackTrace();
             response.setResult(-1);
-            response.setResultDesp("获取签名失败");
-            response.setContent(null);
+            response.setResultDesp("获取用户信息失败");
+            response.setContent(e);
         }
         return response;
     }
