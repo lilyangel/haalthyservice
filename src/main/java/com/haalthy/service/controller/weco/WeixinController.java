@@ -66,17 +66,17 @@ public class WeixinController {
         try {
             final Map<String,String> accToken = weixinService.getAccessToken(request.getContent());
             Map<String,String> userinfo = weixinService.getUserInfo(accToken.get("access_token"),accToken.get("openid"));
-            wx.setOpenid(userinfo.get("openid"));
-            wx.setCity(userinfo.get("city"));
-            wx.setCountry(userinfo.get("country"));
-            wx.setHeadimgurl(userinfo.get("headimgurl"));
-            wx.setNickname(userinfo.get("nickname"));
-            wx.setProvince(userinfo.get("province"));
-            wx.setUnionid(userinfo.get("unionid"));
-            wx.setSex(userinfo.get("sex"));
+//            wx.setOpenid(userinfo.get("openid"));
+//            wx.setCity(userinfo.get("city"));
+//            wx.setCountry(userinfo.get("country"));
+//            wx.setHeadimgurl(userinfo.get("headimgurl"));
+//            wx.setNickname(userinfo.get("nickname"));
+//            wx.setProvince(userinfo.get("province"));
+//            wx.setUnionid(userinfo.get("unionid"));
+//            wx.setSex(userinfo.get("sex").toString());
             response.setResult(1);
             response.setResultDesp("获取用户信息成功");
-            response.setContent(wx);
+            response.setContent(userinfo);
         } catch (Exception e) {
             e.printStackTrace();
             response.setResult(-1);

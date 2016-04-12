@@ -6,7 +6,7 @@ package com.haalthy.service.controller.Interface;
 public class WeixinUserInfo {
 	private String openid;
 	private String nickname;
-	private String   sex;
+	private String sex;
 	private String province;
 	private String city;
 	private String country;
