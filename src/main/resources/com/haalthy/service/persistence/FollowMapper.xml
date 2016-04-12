@@ -108,6 +108,6 @@
 	<select id="isFollowingUser" parameterType="Follow" resultType="int">
 		SELECT count(*) 
 		FROM follow
-		WHERE Username = #{username} AND FollowingUser = #{followingUser}
+		WHERE Username = #{username} AND FollowingUser = #{followingUser} AND IsActive = 1
 	</select>
 </mapper>

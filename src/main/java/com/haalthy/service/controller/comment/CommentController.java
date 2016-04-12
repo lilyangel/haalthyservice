@@ -31,6 +31,11 @@ public class CommentController {
     	try{
     		intRequest.setBeginIndex(intRequest.getCount() * intRequest.getPage());
     		List<Comment> comments = commentService.getCommentsByPostId(intRequest);
+    		for (Comment comment: comments) {
+    			if (comment.getImageURL() == null){
+    				comment.setImageURL("");
+    			}
+    		}
     		if (comments.size() > 0){
         		getCommentsByPostIdResponse.setResult(1);
         		getCommentsByPostIdResponse.setResultDesp("返回成功");
