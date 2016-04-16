@@ -18,9 +18,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 
-//import org.springframework.mail.javamail.JavaMailSender;
-//import org.springframework.mail.javamail.JavaMailSenderImpl;
-//import org.springframework.mail.javamail.MimeMessageHelper;
 
 
 /**
@@ -29,9 +26,6 @@ import java.util.*;
 @Service
 public class AuthCodeService {
     protected Logger logger=Logger.getLogger(this.getClass());
-    //private  static String eMailTemplate = "<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/></head><body><div>尊敬的用户：</div><div>&nbsp; &nbsp; 您好！</div><div>&nbsp; &nbsp; 您验证码为：<b><span style=\"color: rgb(0, 128, 0);\">&#8203;{authCode}</span>（不区分大小写）</b></div><div>&nbsp; &nbsp; 验证码有效期为2天（有效期至：<span style=\"color: rgb(0, 128, 0);\"><b>{validity}</b></span>），请尽快验证您的验证码。</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;haalthy团队</div></body>";
-    private  static String eMailTemplate = "<body><div>尊敬的用户：</div><div>&nbsp; &nbsp; 您好！</div><div>&nbsp; &nbsp; 您验证码为：<b><span style=\"color: rgb(0, 128, 0);\">&#8203;{authCode}</span>（不区分大小写）</b></div><div>&nbsp; &nbsp; 验证码有效期为2天（有效期至：<span style=\"color: rgb(0, 128, 0);\"><b>{validity}</b></span>），请尽快验证您的验证码。</div><div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;haalthy团队</div></body>";
-
     @Autowired
     private EMailMapper eMailMapper;
 
@@ -59,11 +53,11 @@ public class AuthCodeService {
         title = new String(configLoader
                 .getConfigProperty("email."+messager+".title")
                 .getBytes("ISO-8859-1"),
-                "GBK");
+                "utf-8");
         content = new String(configLoader
                         .getConfigProperty("email."+messager+".content")
                         .getBytes("ISO-8859-1"),
-                "GBK");
+                "utf-8");
         type = configLoader.getConfigProperty("email."+messager+".type");
 
         logger.error(host+"\n"+from+"\n"+port+"\n"+username+"\n"+password+"\n");
@@ -71,40 +65,21 @@ public class AuthCodeService {
 
     private String setContent(String content,Map<String,String> params)
     {
-        for ( Map.Entry<String, String> entry:params.entrySet()
-                ) {
-            content = content.replace("{"+entry.getKey()+"}",entry.getValue());
+        if(params != null) {
+            for (Map.Entry<String, String> entry : params.entrySet()
+                    ) {
+                content = content.replace("{" + entry.getKey() + "}", entry.getValue());
+            }
         }
         //String result = content;
         return content;
     }
 
-//    public void javaSendMail(String receiver, Map<String,String>params) throws MessagingException,UnsupportedEncodingException
-//    {
-//        getMailConfig("info","authcode");
-//        JavaMailSender javaMailSender = new JavaMailSenderImpl();
-//        MimeMessage msg =javaMailSender.createMimeMessage();
-//
-//        MimeMessageHelper messageHelper = new MimeMessageHelper(msg, true,
-//                "UTF-8");
-//        // messageHelper.setFrom(mailBean.getFrom());
-//        try {
-//            messageHelper.setFrom(from, username);
-//        } catch (UnsupportedEncodingException e) {
-//            logger.error(e);
-//
-//        }
-//        messageHelper.setSubject(title);
-//        messageHelper.setTo(receiver);
-//        messageHelper.setText(setContent(content,params), true); // html: true
-//        javaMailSender.send(msg);
-//    }
-
     public void sendEmail(String receiver, Map<String,String>params) throws MessagingException,UnsupportedEncodingException
     {
         try {
             getMailConfig("info","authcode");
-            String contentReal = setContent(eMailTemplate, params);
+            String contentReal = setContent(content, params);
             Properties props = new Properties();
             props.put("mail.smtp.host", host);
             //props.put("mail.smtp.starttls.enable", "true");// 使用 STARTTLS安全连接
@@ -128,10 +103,8 @@ public class AuthCodeService {
 
             msg.setRecipient(MimeMessage.RecipientType.TO, new InternetAddress(receiver));
 
-//            msg.setSubject(MimeUtility.encodeText(title,"gb2312","B"));
-//            msg.setContent(contentReal, "text/html;charset=gb2312");
-            msg.setSubject("[科利]验证码");
-            msg.setContent(contentReal,"text/html;charset=utf-8");
+            msg.setSubject(title);
+            msg.setContent(contentReal,"text/html;charset=UTF-8");
             Transport.send(msg);
         }
         catch (MessagingException e)
@@ -147,15 +120,7 @@ public class AuthCodeService {
         map.put("authCode",strAuthCode);
         map.put("validity",DateUtils.addDay2(new Date(), 2));
         sendEmail(toEmail.toLowerCase(),map);
-        String context = (eMailTemplate.replace("{authCode}", strAuthCode)).replace("{validity}", DateUtils.addDay2(new Date(), 2));
-        EMail eMail = new EMail();
-        eMail.setContent(context);
-        eMail.setCreateTime(new Date());
-        eMail.setPriority(0);
-        eMail.setSubject("haalthy用户验证码");
-        eMail.setToEmail(toEmail.toLowerCase());
 
-        eMailMapper.insertEmail(eMail);
         StringBuilder stringBuilder = new StringBuilder("AuthCode.Email.");
         StringBuilder append = stringBuilder.append(toEmail.toLowerCase());
         redisCache.putObject(stringBuilder.toString(),EncodeUtil.md5Encrypt(strAuthCode),172800);
