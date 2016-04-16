@@ -13,10 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeUtility;
-//import java.io.UnsupportedEncodingException;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -53,15 +50,20 @@ public class AuthCodeService {
     private String type = null;
 //    private JavaMailSender javaMailSender;
 
-    private void getMailConfig(String sender,String messager)
-    {
+    private void getMailConfig(String sender,String messager) throws UnsupportedEncodingException {
         host = configLoader.getConfigProperty("email."+sender+".host");
         from = configLoader.getConfigProperty("email."+sender+".from");
         port = configLoader.getConfigProperty("email."+sender+".port");
         username = configLoader.getConfigProperty("email."+sender+".username");
         password = configLoader.getConfigProperty("email."+sender+".password");
-        title = configLoader.getConfigProperty("email."+messager+".title");
-        content = configLoader.getConfigProperty("email."+messager+".content");
+        title = new String(configLoader
+                .getConfigProperty("email."+messager+".title")
+                .getBytes("ISO-8859-1"),
+                "GBK");
+        content = new String(configLoader
+                        .getConfigProperty("email."+messager+".content")
+                        .getBytes("ISO-8859-1"),
+                "GBK");
         type = configLoader.getConfigProperty("email."+messager+".type");
 
         logger.error(host+"\n"+from+"\n"+port+"\n"+username+"\n"+password+"\n");
