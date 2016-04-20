@@ -1,6 +1,5 @@
 package com.haalthy.service.common;
 
-import com.sun.deploy.util.SessionState;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
@@ -22,11 +21,8 @@ public class ConfigLoader {
 
     private ConfigLoader(){
         try {
-            redisProps = new Properties();
-            redisProps.load(new InputStreamReader(SessionState.Client.class.getClassLoader().getResourceAsStream("redis.properties"), "UTF-8"));
-            configProps = new Properties();
-            configProps.load(new InputStreamReader(SessionState.Client.class.getClassLoader().getResourceAsStream("config.properties"), "UTF-8"));
-            //PropertiesLoaderUtils.loadAllProperties("config.properties");
+            redisProps = PropertiesLoaderUtils.loadAllProperties("redis.properties");
+            configProps = PropertiesLoaderUtils.loadAllProperties("config.properties");
         } catch (IOException e) {
             // TODO 自动生成 catch 块
             logger.error("load chartServer Config failed!",e);
